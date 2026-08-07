@@ -13,6 +13,12 @@ return new class extends Migration
     {
         Schema::create('tim_satgas', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('instansi_id')->constrained()->cascadeOnDelete();
+            $table->string('nama_tim');
+            $table->string('ketua');
+            $table->integer('jumlah_anggota')->default(0);
+            $table->string('kontak');
+            $table->enum('status', ['aktif','nonaktif'])->default('aktif');
             $table->timestamps();
         });
     }

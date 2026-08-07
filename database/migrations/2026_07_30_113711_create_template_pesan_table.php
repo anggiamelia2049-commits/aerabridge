@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::create('template_pesan', function (Blueprint $table) {
             $table->id();
+            $table->string('kode_template')->unique();
+            $table->string('judul');
+            $table->text('isi_pesan');
+            $table->enum('kategori', ['laporan','penugasan','sla','reward','lainnya']);
+            $table->enum('status', ['aktif','nonaktif'])->default('aktif');
             $table->timestamps();
         });
     }

@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::create('sla_konfigurasi', function (Blueprint $table) {
             $table->id();
+            $table->enum('prioritas', ['kritis','sedang','rendah']);
+            $table->integer('waktu_respon');
+            $table->integer('waktu_penyelesaian');
+            $table->text('deskripsi')->nullable();
+            $table->enum('status', ['aktif','nonaktif'])->default('aktif');
             $table->timestamps();
         });
     }

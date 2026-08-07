@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::create('user_edukasi_progress', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('konten_id')->constrained('konten_edukasi')->cascadeOnDelete();
+            $table->enum('status', ['belum_dibaca','sedang','selesai']);
+            $table->integer('progress')->default(0);
+            $table->dateTime('selesai_pada')->nullable();
             $table->timestamps();
         });
     }

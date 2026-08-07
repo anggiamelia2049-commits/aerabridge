@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::create('poin_kontribusi_log', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('laporan_id')->nullable()->constrained()->nullOnDelete();
+            $table->string('jenis_aktivitas');
+            $table->integer('poin');
+            $table->text('keterangan')->nullable();
             $table->timestamps();
         });
     }

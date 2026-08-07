@@ -13,6 +13,12 @@ return new class extends Migration
     {
         Schema::create('konten_edukasi', function (Blueprint $table) {
             $table->id();
+            $table->string('judul');
+            $table->string('thumbnail')->nullable();
+            $table->text('isi');
+            $table->string('kategori');
+            $table->foreignId('penulis')->constrained('users');
+            $table->enum('status', ['draft','publish','nonaktif'])->default('draft');
             $table->timestamps();
         });
     }

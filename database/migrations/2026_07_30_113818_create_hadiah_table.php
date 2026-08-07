@@ -13,6 +13,12 @@ return new class extends Migration
     {
         Schema::create('hadiah', function (Blueprint $table) {
             $table->id();
+            $table->string('nama_hadiah', 150);
+            $table->text('deskripsi')->nullable();
+            $table->integer('poin_dibutuhkan');
+            $table->integer('stok')->default(0);
+            $table->string('gambar')->nullable();
+            $table->enum('status', ['tersedia','habis','nonaktif'])->default('tersedia');
             $table->timestamps();
         });
     }

@@ -13,6 +13,13 @@ return new class extends Migration
     {
         Schema::create('instansi', function (Blueprint $table) {
             $table->id();
+            $table->string('nama_instansi');
+            $table->text('deskripsi');
+            $table->text('alamat')->nullable();
+            $table->string('no_telp');
+            $table->string('email')->unique();
+            $table->string('logo');
+            $table->enum('status', ['Aktif','Nonaktif'])->default('Aktif');
             $table->timestamps();
         });
     }
