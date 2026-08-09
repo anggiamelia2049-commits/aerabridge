@@ -13,8 +13,7 @@ return new class extends Migration
     {
         Schema::create('notifikasi', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('laporan_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignId('laporan_id')->nullable()->constrained('laporan')->nullOnDelete();
             $table->string('judul', 150);
             $table->text('isi');
             $table->enum('tipe', ['informasi','warning','reward','lainnya']);

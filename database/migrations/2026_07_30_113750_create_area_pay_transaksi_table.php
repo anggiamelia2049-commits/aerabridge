@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('area_pay_transaksi', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('laporan_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignId('laporan_id')->nullable()->constrained('laporan')->nullOnDelete();
             $table->enum('jenis_transaksi', ['reward','redeem','admin_adjust']);
             $table->integer('nominal');
             $table->integer('saldo_sebelum');
