@@ -13,11 +13,7 @@ return new class extends Migration
     {
         Schema::create('deteksi_ai', function (Blueprint $table) {
             $table->id();
-
-            $table->foreignId('laporan_id')
-                ->constrained('laporan')
-                ->cascadeOnDelete();
-
+            $table->foreignId('laporan_id')->constrained('laporan')->cascadeOnDelete();
             $table->string('jenis_objek');
             $table->decimal('confidence');
             $table->enum('tingkat_kerusakan', ['ringan', 'sedang', 'berat']);

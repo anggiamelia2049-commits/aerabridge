@@ -86,9 +86,13 @@ class SlaKonfigurasiController extends Controller
     public function destroy(SlaKonfigurasi $slaKonfigurasi)
     {
         $slaKonfigurasi->delete();
-
         return redirect()
             ->route('sla-konfigurasi.index')
             ->with('success', 'Konfigurasi SLA berhasil dihapus.');
     }
+
 }
+
+
+
+
