@@ -17,9 +17,14 @@ class UserEdukasiProgressController extends Controller
         $progress = UserEdukasiProgress::with([
             'user',
             'konten'
-        ])->latest()->get();
+        ])
+        ->latest()
+        ->get();
 
-        return view('user_edukasi_progress.index', compact('progress'));
+        return view(
+            'user_edukasi_progress.index',
+            compact('progress')
+        );
     }
 
     /**
@@ -30,7 +35,10 @@ class UserEdukasiProgressController extends Controller
         $users = User::all();
         $konten = KontenEdukasi::all();
 
-        return view('user_edukasi_progress.create', compact('user', 'konten'));
+        return view(
+            'user_edukasi_progress.create',
+            compact('users', 'konten')
+        );
     }
 
     /**
@@ -39,8 +47,8 @@ class UserEdukasiProgressController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'user_id' => 'required|exists:user,id',
-            'konten_id' => 'required|exixts:konten_edukasi,id',
+            'user_id' => 'required|exists:users,id',
+            'konten_id' => 'required|exists:konten_edukasi,id',
             'status' => 'required|in:belum_dibaca,sedang,selesai',
             'progress' => 'required|integer|min:0|max:100',
             'selesai_pada' => 'nullable|date',
@@ -51,54 +59,85 @@ class UserEdukasiProgressController extends Controller
             'konten_id' => $request->konten_id,
             'status' => $request->status,
             'progress' => $request->progress,
-            'selesai_pada' => $request->selesai_pada
+            'selesai_pada' => $request->selesai_pada,
         ]);
 
-        return redirect()->route('user_edukasi_progress.index')->with('success', 'Progress edukasi berhasil ditambahkan');
+        return redirect()
+            ->route('user-edukasi-progress.index')
+            ->with('success', 'Progress edukasi berhasil ditambahkan.');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(UserEdukasiProgress $userEdukasiProgress)
     {
-        $userEdukasiProgress->load(['user', 'konten']);
+        $userEdukasiProgress->load([
+            'user',
+            'konten'
+        ]);
 
-        return view('user_edukasi_progress.show', compact('userEdukasiProgress'));
+        return view(
+            'user_edukasi_progress.show',
+            compact('userEdukasiProgress')
+        );
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(UserEdukasiProgress $userEdukasiProgress)
     {
         $users = User::all();
         $konten = KontenEdukasi::all();
 
-        return view('user_edukasi_progress.edit', compact('userEdukasiProgress', 'users', 'konten'));
+        return view(
+            'user_edukasi_progress.edit',
+            compact(
+                'userEdukasiProgress',
+                'users',
+                'konten'
+            )
+        );
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
-    {
+    public function update(
+        Request $request,
+        UserEdukasiProgress $userEdukasiProgress
+    ) {
         $request->validate([
-            'user_id' => 'required|exists:user,id',
-            'konten_id' => 'required|exixts:konten_edukasi,id',
-            'status' => 'requires|in:belum_dibaca,sedang,selesai',
+            'user_id' => 'required|exists:users,id',
+            'konten_id' => 'required|exists:konten_edukasi,id',
+            'status' => 'required|in:belum_dibaca,sedang,selesai',
             'progress' => 'required|integer|min:0|max:100',
-            'selesai_pada' => 'nullable|date'
+            'selesai_pada' => 'nullable|date',
         ]);
 
-        return redirect()->route('user_edukasi_progress.index')->with('success', 'Progress edukasi berhasil diperbarui.');
+        $userEdukasiProgress->update([
+            'user_id' => $request->user_id,
+            'konten_id' => $request->konten_id,
+            'status' => $request->status,
+            'progress' => $request->progress,
+            'selesai_pada' => $request->selesai_pada,
+        ]);
+
+        return redirect()
+            ->route('user-edukasi-progress.index')
+            ->with('success', 'Progress edukasi berhasil diperbarui.');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(UserEdukasiProgress $userEdukasiProgress)
     {
-        
+        $userEdukasiProgress->delete();
+
+        return redirect()
+            ->route('user-edukasi-progress.index')
+            ->with('success', 'Progress edukasi berhasil dihapus.');
     }
 }
