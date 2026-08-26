@@ -9,6 +9,7 @@ use App\Http\Controllers\PenugasanController;
 use App\Http\Controllers\SlaKonfigurasiController;
 use App\Http\Controllers\TemplatePesanController;
 use App\Http\Controllers\TimSatgasController;
+use App\Http\Controllers\UserEdukasiProgressController;
 use App\Http\Controllers\HadiahController;
 use App\Http\Controllers\InstansiController;
 use App\Http\Controllers\DeteksiAIController;
@@ -148,6 +149,14 @@ Route::get('/tim-satgas/{timSatgas}', [TimSatgasController::class, 'show'])->nam
 Route::get('/tim-satgas/{timSatgas}/edit', [TimSatgasController::class, 'edit'])->name('tim-satgas.edit');
 Route::put('/tim-satgas/{timSatgas}', [TimSatgasController::class, 'update'])->name('tim-satgas.update');
 Route::delete('/tim-satgas/{timSatgas}', [TimSatgasController::class, 'destroy'])->name('tim-satgas.destroy');
+
+Route::get('/user-edukasi-progress', [UserEdukasiProgressController::class, 'index'])->name('user-edukasi-progress.index');
+Route::get('/user-edukasi-progress/create', [UserEdukasiProgressController::class, 'create'])->name('user-edukasi-progress.create');
+Route::post('/user-edukasi-progress', [UserEdukasiProgressController::class, 'store'])->name('user-edukasi-progress.store');
+Route::get('/user-edukasi-progress/{userEdukasiProgress}', [UserEdukasiProgressController::class, 'show'])->name('user-edukasi-progress.show');
+Route::get('/user-edukasi-progress/{userEdukasiProgress}/edit', [UserEdukasiProgressController::class, 'edit'])->name('user-edukasi-progress.edit');
+Route::put('/user-edukasi-progress/{userEdukasiProgress}', [UserEdukasiProgressController::class, 'update'])->name('user-edukasi-progress.update');
+Route::delete('/user-edukasi-progress/{userEdukasiProgress}', [UserEdukasiProgressController::class, 'destroy'])->name('user-edukasi-progress.destroy');
 
 // Aera Pay Transaksi
 Route::get('/aera_pay_transaksi', [AeraPayTransaksiController::class, 'index'])->name('aera_pay_transaksi.index');
