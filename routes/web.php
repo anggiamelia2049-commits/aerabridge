@@ -30,7 +30,7 @@ Route::prefix('KontenEdukasi')->name('KontenEdukasi.')->group(function () {
     Route::get('/{id}/edit', [KontenEdukasiController::class, 'edit'])->name('edit');
     Route::put('/{id}', [KontenEdukasiController::class, 'update'])->name('update');
     Route::delete('/{id}', [KontenEdukasiController::class, 'destroy'])->name('destroy');
-    
+
     // Additional routes
     Route::get('/status/{status}', [KontenEdukasiController::class, 'getByStatus'])->name('status');
     Route::get('/kategori/{kategori}', [KontenEdukasiController::class, 'getByKategori'])->name('kategori');
@@ -48,7 +48,7 @@ Route::prefix('Laporan')->name('Laporan.')->group(function () {
     Route::get('/{id}/edit', [LaporanController::class, 'edit'])->name('edit');
     Route::put('/{id}', [LaporanController::class, 'update'])->name('update');
     Route::delete('/{id}', [LaporanController::class, 'destroy'])->name('destroy');
-    
+
     // Additional routes
     Route::put('/{id}/verify', [LaporanController::class, 'verify'])->name('verify');
     Route::get('/status/{status}', [LaporanController::class, 'getByStatus'])->name('status');
@@ -70,7 +70,7 @@ Route::prefix('Notifikasi')->name('Notifikasi.')->group(function () {
     Route::get('/{id}/edit', [NotifikasiController::class, 'edit'])->name('edit');
     Route::put('/{id}', [NotifikasiController::class, 'update'])->name('update');
     Route::delete('/{id}', [NotifikasiController::class, 'destroy'])->name('destroy');
-    
+
     // Additional routes
     Route::get('/unread', [NotifikasiController::class, 'getUnread'])->name('unread');
     Route::put('/{id}/read', [NotifikasiController::class, 'markAsRead'])->name('read');
@@ -79,3 +79,4 @@ Route::prefix('Notifikasi')->name('Notifikasi.')->group(function () {
     Route::get('/count', [NotifikasiController::class, 'getCount'])->name('count');
     Route::get('/latest', [NotifikasiController::class, 'getLatest'])->name('latest');
 });
+
