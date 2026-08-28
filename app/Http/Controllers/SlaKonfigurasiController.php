@@ -11,12 +11,12 @@ class SlaKonfigurasiController extends Controller
     {
         $slaKonfigurasi = SlaKonfigurasi::latest()->get();
 
-        return view('sla_konfigurasi.index', compact('slaKonfigurasi'));
+        return view('Slakonfigurasi.index', compact('slaKonfigurasi'));
     }
 
         public function create()
     {
-        return view('sla_konfigurasi.create');
+        return view('Slakonfigurasi.create');
     }
 
         public function store(Request $request)
@@ -45,7 +45,7 @@ class SlaKonfigurasiController extends Controller
         public function show(SlaKonfigurasi $slaKonfigurasi)
     {
         return view(
-            'sla_konfigurasi.show',
+            'Slakonfigurasi.show',
             compact('slaKonfigurasi')
         );
     }
@@ -53,7 +53,7 @@ class SlaKonfigurasiController extends Controller
         public function edit(SlaKonfigurasi $slaKonfigurasi)
     {
         return view(
-            'sla_konfigurasi.edit',
+            'Slakonfigurasi.edit',
             compact('slaKonfigurasi')
         );
     }
