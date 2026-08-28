@@ -20,6 +20,8 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+
+
 // ==================== ROUTE KATEGORI KERUSAKAN ====================
 Route::get('/KategoriKerusakan', [KategoriKerusakanController::class, 'index'])->name('KategoriKerusakan.index');
 Route::get('/KategoriKerusakan/create', [KategoriKerusakanController::class, 'create'])->name('KategoriKerusakan.create');

@@ -5,139 +5,134 @@ namespace App\Http\Controllers;
 use App\Models\KontenEdukasi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class KontenEdukasiController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Menampilkan semua konten edukasi.
      */
     public function index()
     {
-        $konten = KontenEdukasi::with('penulis')->get();
-        return response()->json([
-            'success' => true,
-            'data' => $konten
-        ]);
+        $konten = KontenEdukasi::with('super_admin')->get();
+
+        return view('KontenEdukasi.index', compact('konten'));
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Menampilkan form tambah konten.
      */
     public function create()
     {
-        // Untuk API biasanya tidak digunakan, tetapi bisa return view jika menggunakan blade
-        // return view('konten_edukasi.create');
+        return view('KontenEdukasi.create');
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Menyimpan konten baru.
      */
     public function store(Request $request)
     {
         $request->validate([
             'judul' => 'required|string|max:255',
-            'thumbnail' => 'nullable|string|max:255',
+            'thumbnail' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'isi' => 'required|string',
             'kategori' => 'required|string|max:255',
             'status' => 'nullable|in:draft,publish,nonaktif'
         ]);
 
-        $konten = KontenEdukasi::create([
+        $thumbnail = null;
+
+        if ($request->hasFile('thumbnail')) {
+            $thumbnail = $request->file('thumbnail')->store('thumbnail', 'public');
+        }
+
+        KontenEdukasi::create([
             'judul' => $request->judul,
-            'thumbnail' => $request->thumbnail,
+            'thumbnail' => $thumbnail,
             'isi' => $request->isi,
             'kategori' => $request->kategori,
-            'penulis' => Auth::id(), // Mengambil ID user yang sedang login
+            'super_admin' => 1,
             'status' => $request->status ?? 'draft'
         ]);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Konten edukasi berhasil dibuat',
-            'data' => $konten
-        ], 201);
+        return redirect()
+            ->route('KontenEdukasi.index')
+            ->with('success', 'Konten edukasi berhasil dibuat');
     }
 
     /**
-     * Display the specified resource.
+     * Menampilkan detail konten.
      */
     public function show(string $id)
     {
-        $konten = KontenEdukasi::with('penulis')->find($id);
-        
-        if (!$konten) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Konten edukasi tidak ditemukan'
-            ], 404);
-        }
+        $konten = KontenEdukasi::with('super_admin')->findOrFail($id);
 
-        return response()->json([
-            'success' => true,
-            'data' => $konten
-        ]);
+        return view('KontenEdukasi.show', compact('konten'));
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Menampilkan form edit konten.
      */
     public function edit(string $id)
     {
-        // Untuk API biasanya tidak digunakan, tetapi bisa return view dengan data
-        // $konten = KontenEdukasi::find($id);
-        // return view('konten_edukasi.edit', compact('konten'));
+        $konten = KontenEdukasi::findOrFail($id);
+
+        return view('KontenEdukasi.edit', compact('konten'));
     }
 
     /**
-     * Update the specified resource in storage.
+     * Memperbarui konten.
      */
     public function update(Request $request, string $id)
     {
-        $konten = KontenEdukasi::find($id);
-        
-        if (!$konten) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Konten edukasi tidak ditemukan'
-            ], 404);
-        }
+        $konten = KontenEdukasi::findOrFail($id);
 
         $request->validate([
-            'judul' => 'sometimes|required|string|max:255',
-            'thumbnail' => 'nullable|string|max:255',
-            'isi' => 'sometimes|required|string',
-            'kategori' => 'sometimes|required|string|max:255',
+            'judul' => 'required|string|max:255',
+            'thumbnail' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'isi' => 'required|string',
+            'kategori' => 'required|string|max:255',
             'status' => 'nullable|in:draft,publish,nonaktif'
         ]);
 
-        $konten->update($request->only(['judul', 'thumbnail', 'isi', 'kategori', 'status']));
+        $thumbnail = $konten->thumbnail;
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Konten edukasi berhasil diperbarui',
-            'data' => $konten
+        if ($request->hasFile('thumbnail')) {
+            if ($konten->thumbnail) {
+                Storage::disk('public')->delete($konten->thumbnail);
+            }
+
+            $thumbnail = $request->file('thumbnail')->store('thumbnail', 'public');
+        }
+
+        $konten->update([
+            'judul' => $request->judul,
+            'thumbnail' => $thumbnail,
+            'isi' => $request->isi,
+            'kategori' => $request->kategori,
+            'status' => $request->status ?? 'draft'
         ]);
+
+        return redirect()
+            ->route('KontenEdukasi.index')
+            ->with('success', 'Konten edukasi berhasil diperbarui');
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Menghapus konten.
      */
     public function destroy(string $id)
     {
-        $konten = KontenEdukasi::find($id);
-        
-        if (!$konten) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Konten edukasi tidak ditemukan'
-            ], 404);
+        $konten = KontenEdukasi::findOrFail($id);
+
+        if ($konten->thumbnail) {
+            Storage::disk('public')->delete($konten->thumbnail);
         }
 
         $konten->delete();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Konten edukasi berhasil dihapus'
-        ]);
+        return redirect()
+            ->route('KontenEdukasi.index')
+            ->with('success', 'Konten edukasi berhasil dihapus');
     }
 }
