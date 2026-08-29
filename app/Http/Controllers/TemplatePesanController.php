@@ -15,7 +15,7 @@ class TemplatePesanController extends Controller
         $templatePesan = TemplatePesan::latest()->get();
 
         return view(
-            'template_pesan.index',
+            'TemplatePesan.index',
             compact('templatePesan')
         );
     }
@@ -25,7 +25,7 @@ class TemplatePesanController extends Controller
      */
     public function create()
     {
-        return view('template_pesan.create');
+        return view('TemplatePesan.create');
     }
 
     /**
@@ -60,7 +60,7 @@ class TemplatePesanController extends Controller
     public function show(TemplatePesan $templatePesan)
     {
         return view(
-            'template_pesan.show',
+            'TemplatePesan.show',
             compact('templatePesan')
         );
     }
@@ -71,7 +71,7 @@ class TemplatePesanController extends Controller
     public function edit(TemplatePesan $templatePesan)
     {
         return view(
-            'template_pesan.edit',
+            'TemplatePesan.edit',
             compact('templatePesan')
         );
     }

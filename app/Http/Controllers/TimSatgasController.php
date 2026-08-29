@@ -18,7 +18,7 @@ class TimSatgasController extends Controller
             ->get();
 
         return view(
-            'tim_satgas.index',
+            'TimSatgas.index',
             compact('timSatgas')
         );
     }
@@ -31,7 +31,7 @@ class TimSatgasController extends Controller
         $instansi = Instansi::all();
 
         return view(
-            'tim_satgas.create',
+            'TimSatgas.create',
             compact('instansi')
         );
     }
@@ -72,7 +72,7 @@ class TimSatgasController extends Controller
         $timSatgas->load('instansi');
 
         return view(
-            'tim_satgas.show',
+            'TimSatgas.show',
             compact('timSatgas')
         );
     }
@@ -80,12 +80,12 @@ class TimSatgasController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(TimSatgas $timSatgas)
     {
         $instansi = Instansi::all();
 
         return view(
-            'tim_satgas.edit',
+            'TimSatgas.edit',
             compact('timSatgas', 'instansi')
         );
     }

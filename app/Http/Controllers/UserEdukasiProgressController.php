@@ -22,7 +22,7 @@ class UserEdukasiProgressController extends Controller
         ->get();
 
         return view(
-            'user_edukasi_progress.index',
+            'UserEdukasiProgress.index',
             compact('progress')
         );
     }
@@ -36,7 +36,7 @@ class UserEdukasiProgressController extends Controller
         $konten = KontenEdukasi::all();
 
         return view(
-            'user_edukasi_progress.create',
+            'UserEdukasiProgress.create',
             compact('users', 'konten')
         );
     }
@@ -78,7 +78,7 @@ class UserEdukasiProgressController extends Controller
         ]);
 
         return view(
-            'user_edukasi_progress.show',
+            'UserEdukasiProgress.show',
             compact('userEdukasiProgress')
         );
     }
@@ -92,7 +92,7 @@ class UserEdukasiProgressController extends Controller
         $konten = KontenEdukasi::all();
 
         return view(
-            'user_edukasi_progress.edit',
+            'UserEdukasiProgress.edit',
             compact(
                 'userEdukasiProgress',
                 'users',
