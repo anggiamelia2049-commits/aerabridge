@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\KategoriKerusakan;
 use Illuminate\Http\Request;
 
+
 class KategoriKerusakanController extends Controller
 {
     /**
