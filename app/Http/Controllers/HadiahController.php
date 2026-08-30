@@ -34,7 +34,7 @@ class HadiahController extends Controller
             'deskripsi' => 'nullable|string',
             'poin_dibutuhkan' => 'required|integer|min:0',
             'stok' => 'required|integer|min:0',
-            'gambar' => 'nullable|string|max:255',
+            'gambar' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'status' => 'required|in:tersedia,habis,nonaktif',
         ]);
 
@@ -55,7 +55,7 @@ class HadiahController extends Controller
      */
     public function show(string $id)
     {
-        return view('hadiah.show', compact('hadiah'));
+        //
     }
 
     /**
@@ -63,7 +63,8 @@ class HadiahController extends Controller
      */
     public function edit(string $id)
     {
-        return view('hadiah.show', compact('hadiah'));
+        $hadiah = Hadiah::findOrFail($id);
+        return view('Hadiah.edit', compact('hadiah'));
     }
 
     /**
@@ -71,12 +72,12 @@ class HadiahController extends Controller
      */
     public function update(Request $request, string $id)
     {
-         $request->validate([
+        $request->validate([
             'nama_hadiah' => 'required|string|max:150',
             'deskripsi' => 'nullable|string',
             'poin_dibutuhkan' => 'required|integer|min:0',
             'stok' => 'required|integer|min:0',
-            'gambar' => 'nullable|string|max:255',
+            'gambar' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'status' => 'required|in:tersedia,habis,nonaktif',
         ]);
 
@@ -100,6 +101,7 @@ class HadiahController extends Controller
     {
         $hadiah = Hadiah::findOrFail($id);
         $hadiah->delete();
-        return redirect()->route('instansi.index')->with('success', 'Instansi berhasil dihapus.');
+
+        return redirect()->route('hadiah.index')->with('success', 'Instansi berhasil dihapus.');
     }
 }

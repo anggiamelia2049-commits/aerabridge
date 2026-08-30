@@ -10,20 +10,20 @@ use Illuminate\Http\Request;
 
 class PenugasanController extends Controller
 {
-       public function index()
+    public function index()
     {
         $penugasan = Penugasan::with([
             'laporan',
             'timSatgas',
             'petugas'
         ])
-        ->latest()
-        ->get();
+            ->latest()
+            ->get();
 
         return view('penugasan.index', compact('penugasan'));
     }
 
-        public function create()
+    public function create()
     {
         $laporan = Laporan::all();
         $timSatgas = TimSatgas::where('status', 'aktif')->get();
@@ -38,7 +38,7 @@ class PenugasanController extends Controller
         ));
     }
 
-        public function store(Request $request)
+    public function store(Request $request)
     {
         $request->validate([
             'laporan_id' => 'required|exists:laporan,id',
@@ -65,7 +65,7 @@ class PenugasanController extends Controller
             ->with('success', 'Penugasan berhasil ditambahkan.');
     }
 
-        public function show(Penugasan $penugasan)
+    public function show(Penugasan $penugasan)
     {
         $penugasan->load([
             'laporan',
@@ -76,7 +76,7 @@ class PenugasanController extends Controller
         return view('penugasan.show', compact('penugasan'));
     }
 
-        public function edit(Penugasan $penugasan)
+    public function edit(Penugasan $penugasan)
     {
         $laporan = Laporan::all();
         $timSatgas = TimSatgas::where('status', 'aktif')->get();
@@ -92,7 +92,7 @@ class PenugasanController extends Controller
         ));
     }
 
-        public function update(Request $request, Penugasan $penugasan)
+    public function update(Request $request, Penugasan $penugasan)
     {
         $request->validate([
             'laporan_id' => 'required|exists:laporan,id',
@@ -119,7 +119,7 @@ class PenugasanController extends Controller
             ->with('success', 'Penugasan berhasil diperbarui.');
     }
 
-        public function destroy(Penugasan $penugasan)
+    public function destroy(Penugasan $penugasan)
     {
         $penugasan->delete();
 

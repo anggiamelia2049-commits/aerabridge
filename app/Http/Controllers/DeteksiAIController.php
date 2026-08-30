@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\DeteksiAI;
+use App\Models\Laporan;
 use Illuminate\Http\Request;
 
 class DeteksiAiController extends Controller
@@ -21,7 +22,8 @@ class DeteksiAiController extends Controller
      */
     public function create()
     {
-        return view('deteksi_ai.create');
+        $laporans = Laporan::all();
+        return view('deteksi_ai.create', compact('laporans'));
     }
 
     /**
@@ -57,9 +59,7 @@ class DeteksiAiController extends Controller
      */
     public function show(string $id)
     {
-        $deteksiAI = DeteksiAI::findOrFail($id);
-        $deteksiAI->load('laporan');
-        return view('deteksi_ai.show', compact('deteksiAI'));
+        //
     }
 
     /**
@@ -68,7 +68,8 @@ class DeteksiAiController extends Controller
     public function edit(string $id)
     {
         $deteksiAI = DeteksiAI::findOrFail($id);
-        return view('deteksi_ai.edit', compact('deteksiAI'));
+        $laporans = Laporan::all();
+        return view('deteksi_ai.edit', compact('deteksiAI', 'laporans'));
     }
 
     /**

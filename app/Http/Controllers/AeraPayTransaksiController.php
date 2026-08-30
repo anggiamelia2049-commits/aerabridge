@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\AeraPayTransaksi;
+use App\Models\Laporan;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class AeraPayTransaksiController extends Controller
@@ -13,7 +15,7 @@ class AeraPayTransaksiController extends Controller
     public function index()
     {
         $transaksis = AeraPayTransaksi::with(['user', 'laporan'])->latest()->get();
-        return view('aera_pay_transaksi.index', compact('transaksis'));
+        return view('AeraPayTransaksi.index', compact('transaksis'));
     }
 
     /**
@@ -21,7 +23,9 @@ class AeraPayTransaksiController extends Controller
      */
     public function create()
     {
-        return view('aera_pay_transaksi.create');
+        $users = User::all();
+        $laporans = Laporan::all();
+        return view('AeraPayTransaksi.create', compact('users', 'laporans'));
     }
 
     /**
@@ -49,7 +53,7 @@ class AeraPayTransaksiController extends Controller
             'status' => $request->status,
         ]);
 
-        return redirect()->route('aera_pay_transaksi.index')->with('success', 'Transaksi berhasil ditambahkan.');
+        return redirect()->route('AeraPayTransaksi.index')->with('success', 'Transaksi berhasil ditambahkan.');
     }
 
     /**
@@ -57,11 +61,7 @@ class AeraPayTransaksiController extends Controller
      */
     public function show(string $id)
     {
-        $aeraPayTransaksi = AeraPayTransaksi::findOrFail($id);
-        $aeraPayTransaksi->load(['user', 'laporan']);
-
-        return view('aera_pay_transaksi.show',compact('aeraPayTransaksi')
-        );
+        //
     }
 
     /**

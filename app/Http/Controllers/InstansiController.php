@@ -33,10 +33,10 @@ class InstansiController extends Controller
             'nama_instansi' => 'required|string|max:100',
             'deskripsi' => 'nullable|string',
             'alamat' => 'nullable|string',
-            'no_telp' => 'nullable|string|max:20',
+            'no_telp' => 'required|string|max:20',
             'email' => 'nullable|email|max:100',
             'logo' => 'nullable|string|max:255',
-            'status' => 'required|in:aktif,nonaktif',
+            'status' => 'required|in:Aktif,Nonaktif',
         ]);
 
         Instansi::create([
@@ -57,8 +57,7 @@ class InstansiController extends Controller
      */
     public function show(string $id)
     {
-        $instansi = Instansi::findOrFail($id);
-        return view('instansi.show', compact('instansi'));
+        //
     }
 
     /**
@@ -82,7 +81,7 @@ class InstansiController extends Controller
             'no_telp' => 'nullable|string|max:20',
             'email' => 'nullable|email|max:100',
             'logo' => 'nullable|string|max:255',
-            'status' => 'required|in:aktif,nonaktif',
+            'status' => 'required|in:Aktif,Nonaktif',
         ]);
 
         $instansi = Instansi::findOrFail($id);
