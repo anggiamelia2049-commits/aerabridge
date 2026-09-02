@@ -28,9 +28,7 @@
                     {{ csrf_field() }}
                     @method('DELETE')
 
-                    <a href="{{ route('aera_pay_transaksi.show', $v->id) }}">
-                        Detail
-                    </a>
+                    <a href="{{ route('aera_pay_transaksi.show', $v->id) }}">Detail</a>
                     <a href="{{ route('aera_pay_transaksi.edit', $v->id) }}">Edit</a>
 
                     <button type="submit"
