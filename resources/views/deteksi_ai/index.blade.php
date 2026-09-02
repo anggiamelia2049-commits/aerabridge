@@ -28,6 +28,7 @@
                 {{ csrf_field() }}
                 @method('DELETE')
 
+                 <a href="{{ route('deteksi_ai.show', $v->id) }}">Detail</a>
                 <a href="{{ route('deteksi_ai.edit', $v->id) }}">Edit</a>
 
                 <button type="submit" onclick="return confirm('Are you sure you want to delete this data?')">Delete</button>

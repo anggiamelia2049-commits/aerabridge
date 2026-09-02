@@ -57,7 +57,12 @@ class InstansiController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $instansi = Instansi::findOrFail($id);
+
+        return view(
+            'instansi.show',
+            compact('instansi')
+        );
     }
 
     /**

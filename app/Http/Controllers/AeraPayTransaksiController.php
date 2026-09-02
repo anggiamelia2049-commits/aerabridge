@@ -61,7 +61,12 @@ class AeraPayTransaksiController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $aeraPayTransaksi = AeraPayTransaksi::with([
+            'user',
+            'laporan'
+        ])->findOrFail($id);
+        return view('aerapaytransaksi.show',compact('aeraPayTransaksi')
+        );
     }
 
     /**
@@ -70,7 +75,9 @@ class AeraPayTransaksiController extends Controller
     public function edit(string $id)
     {
         $aeraPayTransaksi = AeraPayTransaksi::findOrFail($id);
-        return view('aera_pay_transaksi.edit',compact('aeraPayTransaksi')
+        return view(
+            'aera_pay_transaksi.edit',
+            compact('aeraPayTransaksi')
         );
     }
 

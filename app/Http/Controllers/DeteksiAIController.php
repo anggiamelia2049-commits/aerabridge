@@ -59,7 +59,14 @@ class DeteksiAiController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $deteksiAi = DeteksiAI::with([
+            'laporan'
+        ])->findOrFail($id);
+
+        return view(
+            'deteksi_ai.show',
+            compact('deteksiAi')
+        );
     }
 
     /**

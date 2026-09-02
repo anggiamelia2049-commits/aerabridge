@@ -29,6 +29,7 @@
                 {{ csrf_field() }}
                 @method('DELETE')
 
+                  <a href="{{ route('instansi.show', $v->id) }}">Detail</a>
                 <a href="{{ route('instansi.edit', $v->id) }}">Edit</a>
 
                 <button type="submit" onclick="return confirm('Apakah Anda yakin ingin menghapus instansi ini?')">Delete</button>
