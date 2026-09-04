@@ -7,6 +7,7 @@ use App\Models\KategoriKerusakan;
 use App\Models\Instansi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class LaporanController extends Controller
 {
@@ -16,11 +17,8 @@ class LaporanController extends Controller
     public function index()
     {
         $laporan = Laporan::with(['user', 'kategori', 'instansi', 'diverifikasiOleh'])->get();
-        
-        return response()->json([
-            'success' => true,
-            'data' => $laporan
-        ]);
+
+        return view('Laporan.index', compact('laporan'));
     }
 
     /**
@@ -28,8 +26,10 @@ class LaporanController extends Controller
      */
     public function create()
     {
-        // Untuk API biasanya tidak digunakan
-        // return view('laporan.create');
+        $kategoris = KategoriKerusakan::all();
+        $instansis = Instansi::all();
+
+        return view('Laporan.create', compact('kategoris', 'instansis'));
     }
 
     /**
@@ -42,7 +42,7 @@ class LaporanController extends Controller
             'instansi_id' => 'required|exists:instansi,id',
             'judul' => 'required|string|max:255',
             'deskripsi' => 'required|string',
-            'foto' => 'nullable|string|max:255',
+            'foto' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'latitude' => 'required|numeric|between:-90,90',
             'longitude' => 'required|numeric|between:-180,180',
             'alamat' => 'nullable|string',
@@ -50,13 +50,19 @@ class LaporanController extends Controller
             'status' => 'nullable|in:Menunggu,Diverifikasi,Diproses,Selesai,Ditolak'
         ]);
 
-        $laporan = Laporan::create([
+        $foto = null;
+
+        if ($request->hasFile('foto')) {
+            $foto = $request->file('foto')->store('laporan', 'public');
+        }
+
+        Laporan::create([
             'user_id' => Auth::id(),
             'kategori_id' => $request->kategori_id,
             'instansi_id' => $request->instansi_id,
             'judul' => $request->judul,
             'deskripsi' => $request->deskripsi,
-            'foto' => $request->foto,
+            'foto' => $foto,
             'latitude' => $request->latitude,
             'longitude' => $request->longitude,
             'alamat' => $request->alamat,
@@ -65,11 +71,9 @@ class LaporanController extends Controller
             'diverifikasi_oleh' => null
         ]);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Laporan berhasil dibuat',
-            'data' => $laporan
-        ], 201);
+        return redirect()
+            ->route('Laporan.index')
+            ->with('success', 'Laporan berhasil dibuat');
     }
 
     /**
@@ -77,19 +81,9 @@ class LaporanController extends Controller
      */
     public function show(string $id)
     {
-        $laporan = Laporan::with(['user', 'kategori', 'instansi', 'diverifikasiOleh'])->find($id);
-        
-        if (!$laporan) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Laporan tidak ditemukan'
-            ], 404);
-        }
+        $laporan = Laporan::with(['user', 'kategori', 'instansi', 'diverifikasiOleh'])->findOrFail($id);
 
-        return response()->json([
-            'success' => true,
-            'data' => $laporan
-        ]);
+        return view('Laporan.show', compact('laporan'));
     }
 
     /**
@@ -97,9 +91,11 @@ class LaporanController extends Controller
      */
     public function edit(string $id)
     {
-        // Untuk API biasanya tidak digunakan
-        // $laporan = Laporan::find($id);
-        // return view('laporan.edit', compact('laporan'));
+        $laporan = Laporan::findOrFail($id);
+        $kategoris = KategoriKerusakan::all();
+        $instansis = Instansi::all();
+
+        return view('Laporan.edit', compact('laporan', 'kategoris', 'instansis'));
     }
 
     /**
@@ -107,48 +103,47 @@ class LaporanController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $laporan = Laporan::find($id);
-        
-        if (!$laporan) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Laporan tidak ditemukan'
-            ], 404);
-        }
+        $laporan = Laporan::findOrFail($id);
 
         $request->validate([
-            'kategori_id' => 'sometimes|required|exists:kategori_kerusakan,id',
-            'instansi_id' => 'sometimes|required|exists:instansi,id',
-            'judul' => 'sometimes|required|string|max:255',
-            'deskripsi' => 'sometimes|required|string',
-            'foto' => 'nullable|string|max:255',
-            'latitude' => 'sometimes|required|numeric|between:-90,90',
-            'longitude' => 'sometimes|required|numeric|between:-180,180',
+            'kategori_id' => 'required|exists:kategori_kerusakan,id',
+            'instansi_id' => 'required|exists:instansi,id',
+            'judul' => 'required|string|max:255',
+            'deskripsi' => 'required|string',
+            'foto' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'latitude' => 'required|numeric|between:-90,90',
+            'longitude' => 'required|numeric|between:-180,180',
             'alamat' => 'nullable|string',
             'tingkat_prioritas' => 'nullable|in:Krisis,Sedang,Rendah',
-            'status' => 'nullable|in:Menunggu,Diverifikasi,Diproses,Selesai,Ditolak',
-            'diverifikasi_oleh' => 'nullable|exists:users,id'
+            'status' => 'nullable|in:Menunggu,Diverifikasi,Diproses,Selesai,Ditolak'
         ]);
 
-        $laporan->update($request->only([
-            'kategori_id', 
-            'instansi_id', 
-            'judul', 
-            'deskripsi', 
-            'foto', 
-            'latitude', 
-            'longitude', 
-            'alamat', 
-            'tingkat_prioritas', 
-            'status',
-            'diverifikasi_oleh'
-        ]));
+        $foto = $laporan->foto;
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Laporan berhasil diperbarui',
-            'data' => $laporan
+        if ($request->hasFile('foto')) {
+            if ($laporan->foto) {
+                Storage::disk('public')->delete($laporan->foto);
+            }
+
+            $foto = $request->file('foto')->store('laporan', 'public');
+        }
+
+        $laporan->update([
+            'kategori_id' => $request->kategori_id,
+            'instansi_id' => $request->instansi_id,
+            'judul' => $request->judul,
+            'deskripsi' => $request->deskripsi,
+            'foto' => $foto,
+            'latitude' => $request->latitude,
+            'longitude' => $request->longitude,
+            'alamat' => $request->alamat,
+            'tingkat_prioritas' => $request->tingkat_prioritas ?? 'Sedang',
+            'status' => $request->status ?? 'Menunggu'
         ]);
+
+        return redirect()
+            ->route('Laporan.index')
+            ->with('success', 'Laporan berhasil diperbarui');
     }
 
     /**
@@ -156,36 +151,25 @@ class LaporanController extends Controller
      */
     public function destroy(string $id)
     {
-        $laporan = Laporan::find($id);
-        
-        if (!$laporan) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Laporan tidak ditemukan'
-            ], 404);
+        $laporan = Laporan::findOrFail($id);
+
+        if ($laporan->foto) {
+            Storage::disk('public')->delete($laporan->foto);
         }
 
         $laporan->delete();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Laporan berhasil dihapus'
-        ]);
+        return redirect()
+            ->route('Laporan.index')
+            ->with('success', 'Laporan berhasil dihapus');
     }
 
     /**
-     * Additional method: Verify laporan
+     * Verify laporan.
      */
     public function verify(Request $request, string $id)
     {
-        $laporan = Laporan::find($id);
-        
-        if (!$laporan) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Laporan tidak ditemukan'
-            ], 404);
-        }
+        $laporan = Laporan::findOrFail($id);
 
         $request->validate([
             'status' => 'required|in:Diverifikasi,Diproses,Selesai,Ditolak'
@@ -196,40 +180,8 @@ class LaporanController extends Controller
             'diverifikasi_oleh' => Auth::id()
         ]);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Status laporan berhasil diperbarui',
-            'data' => $laporan
-        ]);
-    }
-
-    /**
-     * Get laporan by status
-     */
-    public function getByStatus($status)
-    {
-        $laporan = Laporan::with(['user', 'kategori', 'instansi'])
-            ->where('status', $status)
-            ->get();
-
-        return response()->json([
-            'success' => true,
-            'data' => $laporan
-        ]);
-    }
-
-    /**
-     * Get laporan by user
-     */
-    public function getByUser($userId)
-    {
-        $laporan = Laporan::with(['kategori', 'instansi', 'diverifikasiOleh'])
-            ->where('user_id', $userId)
-            ->get();
-
-        return response()->json([
-            'success' => true,
-            'data' => $laporan
-        ]);
+        return redirect()
+            ->route('Laporan.index')
+            ->with('success', 'Status laporan berhasil diperbarui');
     }
 }

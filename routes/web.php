@@ -21,32 +21,42 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // Route resource untuk semua fitur AERA Bridge
-    // Sementara semua bisa diakses siapa saja yang login,
-    // nanti middleware role ditambahkan per masing-masing setelah RBAC selesai
-    Route::resource('user', UserController::class);
-    Route::resource('instansi', InstansiController::class);
-    Route::resource('kategori-kerusakan', KategoriKerusakanController::class);
-    Route::resource('laporan', LaporanController::class);
-    Route::resource('deteksi-ai', DeteksiAiController::class);
-    Route::resource('tim-satgas', TimSatgasController::class);
-    Route::resource('penugasan', PenugasanController::class);
-    Route::resource('sla-konfigurasi', SlaKonfigurasiController::class);
-    Route::resource('template-pesan', TemplatePesanController::class);
-    Route::resource('konten-edukasi', KontenEdukasiController::class);
-    Route::resource('user-edukasi-progress', UserEdukasiProgressController::class);
-    Route::resource('aera-pay-transaksi', AeraPayTransaksiController::class);
-    Route::resource('notifikasi', NotifikasiController::class);
-    Route::resource('hadiah', HadiahController::class);
-});
+    // ==== Khusus Super Admin ====
+    Route::middleware('role:super_admin')->group(function () {
+        Route::resource('user', UserController::class);
+        Route::resource('instansi', InstansiController::class);
+        Route::resource('KategoriKerusakan', KategoriKerusakanController::class);
+        Route::resource('tim-satgas', TimSatgasController::class);
+        Route::resource('sla-konfigurasi', SlaKonfigurasiController::class);
+        Route::resource('template-pesan', TemplatePesanController::class);
+        Route::resource('hadiah', HadiahController::class);
+        Route::resource('konten-edukasi', KontenEdukasiController::class);
+    });
 
-require __DIR__.'/auth.php';
+    // ==== Super Admin & Instansi ====
+    Route::middleware('role:super_admin,instansi')->group(function () {
+        Route::resource('deteksi-ai', DeteksiAiController::class);
+    });
+
+    // ==== Super Admin, Instansi & Petugas ====
+    Route::middleware('role:super_admin,instansi,petugas')->group(function () {
+        Route::resource('penugasan', PenugasanController::class);
+    });
+
+    // ==== Semua role bisa akses (laporan & notifikasi) ====
+    Route::middleware('role:super_admin,instansi,petugas,warga')->group(function () {
+        Route::resource('laporan', LaporanController::class);
+        Route::resource('notifikasi', NotifikasiController::class);
+    });
+
+    // ==== Khusus Warga ====
+    Route::middleware('role:warga')->group(function () {
+        Route::resource('user-edukasi-progress', UserEdukasiProgressController::class);
+        Route::resource('aera-pay-transaksi', AeraPayTransaksiController::class);
+    });
+});
