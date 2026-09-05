@@ -1,4 +1,4 @@
-<form action="{{ route('KategoriKerusakan.update', $kategori->id) }}" method="POST">
+<form action="{{ route('kategori.update', $kategori->id) }}" method="POST">
     {{ csrf_field() }}
     @method('PUT')
 
@@ -31,5 +31,5 @@
     <br>
 
     <button type="submit">Update</button>
-    <a href="{{ route('KategoriKerusakan.index') }}">Back</a>
+    <a href="{{ route('kategori.index') }}">Back</a>
 </form>

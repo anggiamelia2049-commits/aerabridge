@@ -1,4 +1,4 @@
-<form action="{{ route('KategoriKerusakan.store') }}" method="POST">
+<form action="{{ route('kategori.store') }}" method="POST">
     {{ csrf_field() }}
 
     Nama Kategori :
@@ -42,5 +42,5 @@
     <br>
 
     <button type="submit">Save</button>
-    <a href="{{ route('KategoriKerusakan.index') }}">Back</a>
+    <a href="{{ route('kategori.index') }}">Back</a>
 </form>
