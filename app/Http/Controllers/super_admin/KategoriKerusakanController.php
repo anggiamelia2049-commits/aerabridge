@@ -91,7 +91,7 @@ class KategoriKerusakanController extends Controller
             'status' => $request->status
         ]);
 
-        return redirect()->route('kategori.index')
+        return redirect()->route('KategoriKerusakan.index')
             ->with('success', 'Kategori Kerusakan berhasil diperbarui.');
     }
 
@@ -103,7 +103,7 @@ class KategoriKerusakanController extends Controller
         $kategori = KategoriKerusakan::findOrFail($id);
         $kategori->delete();
 
-        return redirect()->route('kategori.index')
+        return redirect()->route('KategoriKerusakan.index')
             ->with('success', 'Kategori Kerusakan berhasil dihapus.');
     }
 }

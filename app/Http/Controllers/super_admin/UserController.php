@@ -59,7 +59,7 @@ class UserController extends Controller
             'nama' => $request->nama,
             'username' => $request->username,
             'email' => $request->email,
-            'password' => $request->password,
+            'password' => bcrypt($request->password),
             'no_hp' => $request->no_hp,
             'jenis_kelamin' => $request->jenis_kelamin,
             'pekerjaan' => $request->pekerjaan,
@@ -136,8 +136,8 @@ class UserController extends Controller
         ];
 
         if ($request->filled('password')) {
-            $data['password'] = $request->password;
-        }
+            $data['password'] = bcrypt($request->password);
+            }
 
         if ($request->hasFile('foto')) {
             if ($user->foto) {
