@@ -1,4 +1,4 @@
-<form action="{{ route('aera_pay_transaksi.store') }}" method="POST">
+<form action="{{ route('super_admin.aeraPay.store') }}" method="POST">
     {{ csrf_field() }}
 
     User :
@@ -104,5 +104,5 @@
     <br>
 
     <button type="submit">Save</button>
-    <a href="{{ route('aera_pay_transaksi.index') }}">Back</a>
+    <a href="{{ route('super_admin.aeraPay.index') }}">Back</a>
 </form>

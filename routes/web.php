@@ -60,8 +60,8 @@ Route::middleware('auth')->group(function () {
 
     // ==== Khusus Warga ====
     Route::middleware('role:warga')->group(function () {
-        Route::resource('user-edukasi-progress', UserEdukasiProgressController::class);
-        Route::resource('aera-pay-transaksi', AeraPayTransaksiController::class);
+        Route::resource('userEdukasi', UserEdukasiProgressController::class);
+        Route::resource('aeraPay', AeraPayTransaksiController::class);
     });
 });
 require __DIR__.'/auth.php';

@@ -15,7 +15,7 @@ class AeraPayTransaksiController extends Controller
     public function index()
     {
         $transaksis = AeraPayTransaksi::with(['user', 'laporan'])->latest()->get();
-        return view('AeraPayTransaksi.index', compact('transaksis'));
+        return view('super_admin.aeraPay.index', compact('transaksis'));
     }
 
     /**
@@ -25,7 +25,7 @@ class AeraPayTransaksiController extends Controller
     {
         $users = User::all();
         $laporans = Laporan::all();
-        return view('AeraPayTransaksi.create', compact('users', 'laporans'));
+        return view('super_admin.aeraPay.create', compact('users', 'laporans'));
     }
 
     /**
@@ -53,7 +53,7 @@ class AeraPayTransaksiController extends Controller
             'status' => $request->status,
         ]);
 
-        return redirect()->route('AeraPayTransaksi.index')->with('success', 'Transaksi berhasil ditambahkan.');
+       return redirect()->route('aeraPay.index')->with('success', 'Transaksi berhasil ditambahkan.');
     }
 
     /**
@@ -65,7 +65,7 @@ class AeraPayTransaksiController extends Controller
             'user',
             'laporan'
         ])->findOrFail($id);
-        return view('aerapaytransaksi.show',compact('aeraPayTransaksi')
+        return view('super_admin.aeraPay.show',compact('aeraPayTransaksi')
         );
     }
 
@@ -76,7 +76,7 @@ class AeraPayTransaksiController extends Controller
     {
         $aeraPayTransaksi = AeraPayTransaksi::findOrFail($id);
         return view(
-            'aera_pay_transaksi.edit',
+            'super_admin.aeraPay.edit',
             compact('aeraPayTransaksi')
         );
     }
@@ -108,7 +108,7 @@ class AeraPayTransaksiController extends Controller
             'status' => $request->status,
         ]);
 
-        return redirect()->route('aera_pay_transaksi.index')->with('success', 'Transaksi berhasil diperbarui.');
+        return redirect()->route('aeraPay.index')->with('success', 'Transaksi berhasil diperbarui.');
     }
 
     /**
@@ -118,6 +118,6 @@ class AeraPayTransaksiController extends Controller
     {
         $aeraPayTransaksi = AeraPayTransaksi::findOrFail($id);
         $aeraPayTransaksi->delete();
-        return redirect()->route('aera_pay_transaksi.index')->with('success', 'Transaksi berhasil dihapus.');
+        return redirect()->route('aeraPay.index')->with('success', 'Transaksi berhasil dihapus.');
     }
 }
