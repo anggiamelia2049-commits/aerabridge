@@ -3,13 +3,14 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\User;
 
 class KontenEdukasi extends Model
 {
     protected $table = 'konten_edukasi';
 
     protected $fillable = [
-        'super_admin',
+        'penulis',
         'judul',
         'thumbnail',
         'isi',
@@ -17,9 +18,9 @@ class KontenEdukasi extends Model
         'status',
     ];
 
-    // relasi ke user sebagai penulis
-    public function super_admin()
+    // Relasi ke user sebagai penulis
+    public function penulis()
     {
-        return $this->belongsTo(User::class, 'super_admin');
+        return $this->belongsTo(User::class, 'penulis');
     }
 }

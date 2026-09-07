@@ -1,13 +1,13 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\AeraPayTransaksiController;
-use App\Http\Controllers\DeteksiAiController;
-use App\Http\Controllers\HadiahController;
-use App\Http\Controllers\InstansiController;
-use App\Http\Controllers\KategoriKerusakanController;
-use App\Http\Controllers\KontenEdukasiController;
+use App\Http\Controllers\SuperAdmin\UserController;
+use App\Http\Controllers\SuperAdmin\AeraPayTransaksiController;
+use App\Http\Controllers\SuperAdmin\DeteksiAiController;
+use App\Http\Controllers\SuperAdmin\HadiahController;
+use App\Http\Controllers\SuperAdmin\InstansiController;
+use App\Http\Controllers\SuperAdmin\KategoriKerusakanController;
+use App\Http\Controllers\SuperAdmin\KontenEdukasiController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\NotifikasiController;
 use App\Http\Controllers\PenugasanController;
@@ -40,6 +40,7 @@ Route::middleware('auth')->group(function () {
         Route::resource('template-pesan', TemplatePesanController::class);
         Route::resource('hadiah', HadiahController::class);
         Route::resource('konten-edukasi', KontenEdukasiController::class);
+        Route::resource('aeraPay', AeraPayTransaksiController::class);
     });
 
     // ==== Super Admin & Instansi ====
@@ -61,7 +62,6 @@ Route::middleware('auth')->group(function () {
     // ==== Khusus Warga ====
     Route::middleware('role:warga')->group(function () {
         Route::resource('userEdukasi', UserEdukasiProgressController::class);
-        Route::resource('aeraPay', AeraPayTransaksiController::class);
     });
 });
 require __DIR__.'/auth.php';

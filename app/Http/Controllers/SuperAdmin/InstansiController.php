@@ -1,9 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\SuperAdmin;
 
+use App\Http\Controllers\Controller;
 use App\Models\Instansi;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class InstansiController extends Controller
 {
@@ -13,7 +15,11 @@ class InstansiController extends Controller
     public function index()
     {
         $instansis = Instansi::latest()->get();
-        return view('instansi.index', compact('instansis'));
+
+        return view(
+            'super_admin.instansi.index',
+            compact('instansis')
+        );
     }
 
     /**
@@ -21,7 +27,7 @@ class InstansiController extends Controller
      */
     public function create()
     {
-        return view('instansi.create');
+        return view('super_admin.instansi.create');
     }
 
     /**
@@ -35,21 +41,32 @@ class InstansiController extends Controller
             'alamat' => 'nullable|string',
             'no_telp' => 'required|string|max:20',
             'email' => 'nullable|email|max:100',
-            'logo' => 'nullable|string|max:255',
+            'logo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'status' => 'required|in:Aktif,Nonaktif',
         ]);
 
-        Instansi::create([
+        $data = [
             'nama_instansi' => $request->nama_instansi,
             'deskripsi' => $request->deskripsi,
             'alamat' => $request->alamat,
             'no_telp' => $request->no_telp,
             'email' => $request->email,
-            'logo' => $request->logo,
             'status' => $request->status,
-        ]);
+        ];
 
-        return redirect()->route('instansi.index')->with('success', 'Instansi berhasil ditambahkan.');
+        // Jika user memilih logo
+        if ($request->hasFile('logo')) {
+            $data['logo'] = $request->file('logo')->store(
+                'instansi',
+                'public'
+            );
+        }
+
+        Instansi::create($data);
+
+        return redirect()
+            ->route('instansi.index')
+            ->with('success', 'Instansi berhasil ditambahkan.');
     }
 
     /**
@@ -60,7 +77,7 @@ class InstansiController extends Controller
         $instansi = Instansi::findOrFail($id);
 
         return view(
-            'instansi.show',
+            'super_admin.instansi.show',
             compact('instansi')
         );
     }
@@ -71,7 +88,11 @@ class InstansiController extends Controller
     public function edit(string $id)
     {
         $instansi = Instansi::findOrFail($id);
-        return view('instansi.edit', compact('instansi'));
+
+        return view(
+            'super_admin.instansi.edit',
+            compact('instansi')
+        );
     }
 
     /**
@@ -83,25 +104,43 @@ class InstansiController extends Controller
             'nama_instansi' => 'required|string|max:100',
             'deskripsi' => 'nullable|string',
             'alamat' => 'nullable|string',
-            'no_telp' => 'nullable|string|max:20',
+            'no_telp' => 'required|string|max:20',
             'email' => 'nullable|email|max:100',
-            'logo' => 'nullable|string|max:255',
+            'logo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'status' => 'required|in:Aktif,Nonaktif',
         ]);
 
         $instansi = Instansi::findOrFail($id);
 
-        $instansi->update([
+        $data = [
             'nama_instansi' => $request->nama_instansi,
             'deskripsi' => $request->deskripsi,
             'alamat' => $request->alamat,
             'no_telp' => $request->no_telp,
             'email' => $request->email,
-            'logo' => $request->logo,
             'status' => $request->status,
-        ]);
+        ];
 
-        return redirect()->route('instansi.index')->with('success', 'Instansi berhasil diperbarui.');
+        // Jika user memilih logo baru
+        if ($request->hasFile('logo')) {
+
+            // Hapus logo lama jika ada
+            if ($instansi->logo) {
+                Storage::disk('public')->delete($instansi->logo);
+            }
+
+            // Simpan logo baru
+            $data['logo'] = $request->file('logo')->store(
+                'instansi',
+                'public'
+            );
+        }
+
+        $instansi->update($data);
+
+        return redirect()
+            ->route('instansi.index')
+            ->with('success', 'Instansi berhasil diperbarui.');
     }
 
     /**
@@ -110,7 +149,16 @@ class InstansiController extends Controller
     public function destroy(string $id)
     {
         $instansi = Instansi::findOrFail($id);
+
+        // Hapus file logo jika ada
+        if ($instansi->logo) {
+            Storage::disk('public')->delete($instansi->logo);
+        }
+
         $instansi->delete();
-        return redirect()->route('instansi.index')->with('success', 'Instansi berhasil dihapus.');
+
+        return redirect()
+            ->route('instansi.index')
+            ->with('success', 'Instansi berhasil dihapus.');
     }
 }

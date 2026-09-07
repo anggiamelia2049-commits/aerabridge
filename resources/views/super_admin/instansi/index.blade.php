@@ -14,27 +14,60 @@
     </tr>
 
     @foreach ($instansis as $v)
-    <tr>
-        <td>{{ $loop->iteration }}</td>
-        <td>{{ $v->nama_instansi }}</td>
-        <td>{{ $v->deskripsi }}</td>
-        <td>{{ $v->alamat }}</td>
-        <td>{{ $v->no_telp }}</td>
-        <td>{{ $v->email }}</td>
-        <td>
-            <img src="{{ asset('storage/' . $v->logo) }}" width="100"></td>
-        <td>{{ $v->status }}</td>
-        <td>
-            <form action="{{ route('instansi.destroy', $v->id) }}" method="POST">
-                {{ csrf_field() }}
-                @method('DELETE')
+        <tr>
+            <td>{{ $loop->iteration }}</td>
 
-                  <a href="{{ route('instansi.show', $v->id) }}">Detail</a>
-                <a href="{{ route('instansi.edit', $v->id) }}">Edit</a>
+            <td>{{ $v->nama_instansi }}</td>
 
-                <button type="submit" onclick="return confirm('Apakah Anda yakin ingin menghapus instansi ini?')">Delete</button>
-            </form>
-        </td>
-    </tr>
+            <td>{{ $v->deskripsi }}</td>
+
+            <td>{{ $v->alamat }}</td>
+
+            <td>{{ $v->no_telp }}</td>
+
+            <td>{{ $v->email }}</td>
+
+            <td>
+                @if ($v->logo)
+                    <img
+                        src="{{ asset('storage/' . $v->logo) }}"
+                        alt="Logo {{ $v->nama_instansi }}"
+                        width="100"
+                        height="100"
+                        style="object-fit: contain;"
+                    >
+                @else
+                    Tidak ada logo
+                @endif
+            </td>
+
+            <td>{{ $v->status }}</td>
+
+            <td>
+                <a href="{{ route('instansi.show', $v->id) }}">
+                    Detail
+                </a>
+
+                <a href="{{ route('instansi.edit', $v->id) }}">
+                    Edit
+                </a>
+
+                <form
+                    action="{{ route('instansi.destroy', $v->id) }}"
+                    method="POST"
+                    style="display: inline;"
+                >
+                    @csrf
+                    @method('DELETE')
+
+                    <button
+                        type="submit"
+                        onclick="return confirm('Apakah Anda yakin ingin menghapus instansi ini?')"
+                    >
+                        Delete
+                    </button>
+                </form>
+            </td>
+        </tr>
     @endforeach
 </table>

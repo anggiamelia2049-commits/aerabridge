@@ -9,7 +9,7 @@
         <th>Hasil Validasi</th>
         <th>Respon LLM</th>
         <th>
-            <a href="{{ route('deteksi_ai.create') }}">Tambah Data</a>
+            <a href="{{ route('deteksi-ai.create') }}">Tambah Data</a>
         </th>
     </tr>
 
@@ -24,12 +24,12 @@
         <td>{{ $v->hasil_validasi }}</td>
         <td>{{ $v->response_llm }}</td>
         <td>
-            <form action="{{ route('deteksi_ai.destroy', $v->id) }}" method="POST">
+            <form action="{{ route('deteksi-ai.destroy', $v->id) }}" method="POST">
                 {{ csrf_field() }}
                 @method('DELETE')
 
-                 <a href="{{ route('deteksi_ai.show', $v->id) }}">Detail</a>
-                <a href="{{ route('deteksi_ai.edit', $v->id) }}">Edit</a>
+                 <a href="{{ route('deteksi-ai.show', $v->id) }}">Detail</a>
+                <a href="{{ route('deteksi-ai.edit', $v->id) }}">Edit</a>
 
                 <button type="submit" onclick="return confirm('Are you sure you want to delete this data?')">Delete</button>
             </form>

@@ -1,6 +1,7 @@
 <h2>Detail Instansi</h2>
 
 <table border="1" cellpadding="10">
+
     <tr>
         <td>ID</td>
         <td>{{ $instansi->id }}</td>
@@ -33,11 +34,22 @@
 
     <tr>
         <td>Logo</td>
+
         <td>
-            @if($instansi->logo)
-                <img src="{{ asset($instansi->logo) }}" width="150">
+            @if ($instansi->logo)
+
+                <img
+                    src="{{ asset('storage/' . $instansi->logo) }}"
+                    alt="Logo {{ $instansi->nama_instansi }}"
+                    width="150"
+                    height="150"
+                    style="object-fit: contain;"
+                >
+
             @else
+
                 Tidak ada logo
+
             @endif
         </td>
     </tr>
@@ -46,8 +58,11 @@
         <td>Status</td>
         <td>{{ $instansi->status }}</td>
     </tr>
+
 </table>
 
 <br>
 
-<a href="{{ route('instansi.index') }}">Kembali</a>
+<a href="{{ route('instansi.index') }}">
+    Kembali
+</a>

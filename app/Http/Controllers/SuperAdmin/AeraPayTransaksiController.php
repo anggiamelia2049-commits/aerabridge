@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\SuperAdmin;
 
+use App\Http\Controllers\Controller;
 use App\Models\AeraPayTransaksi;
 use App\Models\Laporan;
 use App\Models\User;
@@ -35,7 +36,7 @@ class AeraPayTransaksiController extends Controller
     {
         $request->validate([
             'user_id' => 'required|exists:users,id',
-            'laporan_id' => 'nullable|exists:laporans,id',
+            'laporan_id' => 'nullable|exists:laporan,id',
             'jenis_transaksi' => 'required|in:reward,redeem,admin_adjust',
             'nominal' => 'required|integer',
             'saldo_sebelum' => 'required|integer',
@@ -75,10 +76,10 @@ class AeraPayTransaksiController extends Controller
     public function edit(string $id)
     {
         $aeraPayTransaksi = AeraPayTransaksi::findOrFail($id);
-        return view(
-            'super_admin.aeraPay.edit',
-            compact('aeraPayTransaksi')
-        );
+        $users = User::all();
+        $laporans = Laporan::all();
+
+        return view('super_admin.aeraPay.edit', compact('aeraPayTransaksi', 'users', 'laporans'));
     }
 
     /**
@@ -88,7 +89,7 @@ class AeraPayTransaksiController extends Controller
     {
         $request->validate([
             'user_id' => 'required|exists:users,id',
-            'laporan_id' => 'nullable|exists:laporans,id',
+            'laporan_id' => 'nullable|exists:laporan,id',
             'jenis_transaksi' => 'required|in:reward,redeem,admin_adjust',
             'nominal' => 'required|integer',
             'saldo_sebelum' => 'required|integer',

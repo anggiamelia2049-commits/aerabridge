@@ -53,4 +53,4 @@
 
 <br>
 
-<a href="{{ route('deteksi_ai.index') }}">Kembali</a>
+<a href="{{ route('deteksi-ai.index') }}">Kembali</a>

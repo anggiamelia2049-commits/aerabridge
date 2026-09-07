@@ -1,9 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\SuperAdmin;
 
+use App\Http\Controllers\Controller;
 use App\Models\Hadiah;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class HadiahController extends Controller
 {
@@ -13,7 +15,8 @@ class HadiahController extends Controller
     public function index()
     {
         $hadiahs = Hadiah::latest()->get();
-        return view('hadiah.index', compact('hadiahs'));
+
+        return view('super_admin.hadiah.index', compact('hadiahs'));
     }
 
     /**
@@ -21,7 +24,7 @@ class HadiahController extends Controller
      */
     public function create()
     {
-        return view('hadiah.create');
+        return view('super_admin.hadiah.create');
     }
 
     /**
@@ -38,16 +41,23 @@ class HadiahController extends Controller
             'status' => 'required|in:tersedia,habis,nonaktif',
         ]);
 
-        Hadiah::create([
+        $data = [
             'nama_hadiah' => $request->nama_hadiah,
             'deskripsi' => $request->deskripsi,
             'poin_dibutuhkan' => $request->poin_dibutuhkan,
             'stok' => $request->stok,
-            'gambar' => $request->gambar,
             'status' => $request->status,
-        ]);
+        ];
 
-        return redirect()->route('hadiah.index')->with('success', 'Hadiah berhasil ditambahkan.');
+        if ($request->hasFile('gambar')) {
+            $data['gambar'] = $request->file('gambar')->store('hadiah', 'public');
+        }
+
+        Hadiah::create($data);
+
+        return redirect()
+            ->route('hadiah.index')
+            ->with('success', 'Hadiah berhasil ditambahkan.');
     }
 
     /**
@@ -64,7 +74,8 @@ class HadiahController extends Controller
     public function edit(string $id)
     {
         $hadiah = Hadiah::findOrFail($id);
-        return view('Hadiah.edit', compact('hadiah'));
+
+        return view('super_admin.hadiah.edit', compact('hadiah'));
     }
 
     /**
@@ -72,6 +83,8 @@ class HadiahController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        $hadiah = Hadiah::findOrFail($id);
+
         $request->validate([
             'nama_hadiah' => 'required|string|max:150',
             'deskripsi' => 'nullable|string',
@@ -81,17 +94,30 @@ class HadiahController extends Controller
             'status' => 'required|in:tersedia,habis,nonaktif',
         ]);
 
-        $hadiah = Hadiah::findOrFail($id);
-        $hadiah->update([
+        $data = [
             'nama_hadiah' => $request->nama_hadiah,
             'deskripsi' => $request->deskripsi,
             'poin_dibutuhkan' => $request->poin_dibutuhkan,
             'stok' => $request->stok,
-            'gambar' => $request->gambar,
             'status' => $request->status,
-        ]);
+        ];
 
-        return redirect()->route('hadiah.index')->with('success', 'Hadiah berhasil diperbarui.');
+        if ($request->hasFile('gambar')) {
+
+            // Hapus gambar lama jika ada
+            if ($hadiah->gambar) {
+                Storage::disk('public')->delete($hadiah->gambar);
+            }
+
+            // Simpan gambar baru
+            $data['gambar'] = $request->file('gambar')->store('hadiah', 'public');
+        }
+
+        $hadiah->update($data);
+
+        return redirect()
+            ->route('hadiah.index')
+            ->with('success', 'Hadiah berhasil diperbarui.');
     }
 
     /**
@@ -100,8 +126,16 @@ class HadiahController extends Controller
     public function destroy(string $id)
     {
         $hadiah = Hadiah::findOrFail($id);
+
+        // Hapus file gambar jika ada
+        if ($hadiah->gambar) {
+            Storage::disk('public')->delete($hadiah->gambar);
+        }
+
         $hadiah->delete();
 
-        return redirect()->route('hadiah.index')->with('success', 'Instansi berhasil dihapus.');
+        return redirect()
+            ->route('hadiah.index')
+            ->with('success', 'Hadiah berhasil dihapus.');
     }
 }

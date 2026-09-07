@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\SuperAdmin;
 
+use App\Http\Controllers\Controller;
 use App\Models\KategoriKerusakan;
 use Illuminate\Http\Request;
 
@@ -14,7 +15,7 @@ class KategoriKerusakanController extends Controller
     public function index()
     {
         $kategoris = KategoriKerusakan::all();
-        return view('kategori.index', compact('kategoris'));
+        return view('super_admin.kategori.index', compact('kategoris'));
     }
 
     /**
@@ -22,7 +23,7 @@ class KategoriKerusakanController extends Controller
      */
     public function create()
     {
-        return view('kategori.create');
+        return view('super_admin.kategori.create');
     }
 
     /**
@@ -46,7 +47,7 @@ class KategoriKerusakanController extends Controller
             'status' => $request->status
         ]);
 
-        return redirect()->route('KategoriKerusakan.index')
+        return redirect()->route('kategori.index')
             ->with('success', 'Kategori Kerusakan berhasil ditambahkan.');
     }
 
@@ -56,7 +57,7 @@ class KategoriKerusakanController extends Controller
     public function show(string $id)
     {
         $kategori = KategoriKerusakan::findOrFail($id);
-        return view('kategori.show', compact('kategori'));
+        return view('super_admin.kategori.show', compact('kategori'));
     }
 
     /**
@@ -65,7 +66,7 @@ class KategoriKerusakanController extends Controller
     public function edit(string $id)
     {
         $kategori = KategoriKerusakan::findOrFail($id);
-        return view('kategori.edit', compact('kategori'));
+        return view('super_admin.kategori.edit', compact('kategori'));
     }
 
     /**
@@ -91,7 +92,7 @@ class KategoriKerusakanController extends Controller
             'status' => $request->status
         ]);
 
-        return redirect()->route('KategoriKerusakan.index')
+        return redirect()->route('kategori.index')
             ->with('success', 'Kategori Kerusakan berhasil diperbarui.');
     }
 
@@ -103,7 +104,7 @@ class KategoriKerusakanController extends Controller
         $kategori = KategoriKerusakan::findOrFail($id);
         $kategori->delete();
 
-        return redirect()->route('KategoriKerusakan.index')
+        return redirect()->route('kategori.index')
             ->with('success', 'Kategori Kerusakan berhasil dihapus.');
     }
 }

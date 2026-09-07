@@ -29,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('area_pay_transaksi');
+        Schema::dropIfExists('aera_pay_transaksi');
     }
 };

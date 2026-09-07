@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\SuperAdmin;
 
-use App\Models\DeteksiAI;
+use App\Http\Controllers\Controller;
+use App\Models\DeteksiAi;
 use App\Models\Laporan;
 use Illuminate\Http\Request;
 
@@ -13,8 +14,9 @@ class DeteksiAiController extends Controller
      */
     public function index()
     {
-        $deteksiAIs = DeteksiAI::with('laporan')->latest()->get();
-        return view('deteksi_ai.index', compact('deteksiAIs'));
+        $deteksiAIs = DeteksiAi::with('laporan')->latest()->get();
+
+        return view('super_admin.deteksiAi.index', compact('deteksiAIs'));
     }
 
     /**
@@ -23,7 +25,7 @@ class DeteksiAiController extends Controller
     public function create()
     {
         $laporans = Laporan::all();
-        return view('deteksi_ai.create', compact('laporans'));
+        return view('super_admin.deteksiAi.create', compact('laporans'));
     }
 
     /**
@@ -32,7 +34,7 @@ class DeteksiAiController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'laporan_id' => 'required|exists:laporans,id|unique:deteksi_ai,laporan_id',
+            'laporan_id' => 'required|exists:laporan,id|unique:deteksi_ai,laporan_id',
             'jenis_objek' => 'required|string|max:100',
             'confidence' => 'required|numeric|between:0,1',
             'tingkat_kerusakan' => 'required|in:ringan,sedang,berat',
@@ -41,7 +43,7 @@ class DeteksiAiController extends Controller
             'response_llm' => 'nullable|string',
         ]);
 
-        DeteksiAI::create([
+        DeteksiAi::create([
             'laporan_id' => $request->laporan_id,
             'jenis_objek' => $request->jenis_objek,
             'confidence' => $request->confidence,
@@ -51,7 +53,7 @@ class DeteksiAiController extends Controller
             'response_llm' => $request->response_llm,
         ]);
 
-        return redirect()->route('deteksi_ai.index')->with('success', 'Data deteksi AI berhasil ditambahkan.');
+        return redirect()->route('deteksi-ai.index')->with('success', 'Data deteksi AI berhasil ditambahkan.');
     }
 
     /**
@@ -59,14 +61,8 @@ class DeteksiAiController extends Controller
      */
     public function show(string $id)
     {
-        $deteksiAi = DeteksiAI::with([
-            'laporan'
-        ])->findOrFail($id);
-
-        return view(
-            'deteksi_ai.show',
-            compact('deteksiAi')
-        );
+        $deteksiAi = DeteksiAi::with(['laporan'])->findOrFail($id);
+        return view('super_admin.deteksiAi.show', compact('deteksiAi'));
     }
 
     /**
@@ -74,9 +70,9 @@ class DeteksiAiController extends Controller
      */
     public function edit(string $id)
     {
-        $deteksiAI = DeteksiAI::findOrFail($id);
+        $deteksiAi = DeteksiAi::findOrFail($id);
         $laporans = Laporan::all();
-        return view('deteksi_ai.edit', compact('deteksiAI', 'laporans'));
+        return view('super_admin.deteksiAi.edit', compact('deteksiAi', 'laporans'));
     }
 
     /**
@@ -84,10 +80,10 @@ class DeteksiAiController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $deteksiAI = DeteksiAI::findOrFail($id);
+        $deteksiAi = DeteksiAi::findOrFail($id);
 
         $request->validate([
-            'laporan_id' => 'required|exists:laporans,id|unique:deteksi_ai,laporan_id,' . $deteksiAI->id,
+            'laporan_id' => 'required|exists:laporan,id|unique:deteksi_ai,laporan_id,' . $deteksiAi->id,
             'jenis_objek' => 'required|string|max:100',
             'confidence' => 'required|numeric|between:0,1',
             'tingkat_kerusakan' => 'required|in:ringan,sedang,berat',
@@ -96,7 +92,7 @@ class DeteksiAiController extends Controller
             'response_llm' => 'nullable|string',
         ]);
 
-        $deteksiAI->update([
+        $deteksiAi->update([
             'laporan_id' => $request->laporan_id,
             'jenis_objek' => $request->jenis_objek,
             'confidence' => $request->confidence,
@@ -106,7 +102,7 @@ class DeteksiAiController extends Controller
             'response_llm' => $request->response_llm,
         ]);
 
-        return redirect()->route('deteksi_ai.index')->with('success', 'Data deteksi AI berhasil diperbarui.');
+        return redirect()->route('deteksi-ai.index')->with('success', 'Data deteksi AI berhasil diperbarui.');
     }
 
     /**
@@ -114,8 +110,8 @@ class DeteksiAiController extends Controller
      */
     public function destroy(string $id)
     {
-        $deteksiAI = DeteksiAI::findOrFail($id);
-        $deteksiAI->delete();
-        return redirect()->route('deteksi_ai.index')->with('success', 'Data deteksi AI berhasil dihapus.');
+        $deteksiAi = DeteksiAi::findOrFail($id);
+        $deteksiAi->delete();
+        return redirect()->route('deteksi-ai.index')->with('success', 'Data deteksi AI berhasil dihapus.');
     }
 }

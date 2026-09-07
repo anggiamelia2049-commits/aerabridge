@@ -1,45 +1,160 @@
-<form action="{{ route('KontenEdukasi.update', $konten->id) }}" method="POST" enctype="multipart/form-data">
-    {{ csrf_field() }}
-    @method('PUT')
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Konten Edukasi</title>
+</head>
+<body>
 
-    Judul :
-    <input type="text" name="judul" value="{{ $konten->judul }}" required>
+    <h1>Edit Konten Edukasi</h1>
 
-    <br>
+    @if ($errors->any())
+        <div>
+            <strong>Terjadi kesalahan:</strong>
 
-    Thumbnail :
-    <input type="file" name="thumbnail">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
 
-    @if ($konten->thumbnail)
+    <form
+        action="{{ route('konten-edukasi.update', $konten->id) }}"
+        method="POST"
+        enctype="multipart/form-data"
+    >
+        @csrf
+        @method('PUT')
+
+
+        <label for="judul">Judul:</label>
         <br>
-        <img src="{{ asset('storage/' . $konten->thumbnail) }}" width="150">
-    @endif
 
-    @if ($errors->has('thumbnail'))
-    <span>{{ $errors->first('thumbnail') }}</span>
-    @endif
+        <input
+            type="text"
+            id="judul"
+            name="judul"
+            value="{{ old('judul', $konten->judul) }}"
+            required
+        >
 
-    <br>
+        <br><br>
 
-    Isi :
-    <textarea name="isi" required>{{ $konten->isi }}</textarea>
 
-    <br>
+        <label>Thumbnail Saat Ini:</label>
+        <br>
 
-    Kategori :
-    <input type="text" name="kategori" value="{{ $konten->kategori }}" required>
+        @if ($konten->thumbnail)
 
-    <br>
+            <img
+                src="{{ asset('storage/' . $konten->thumbnail) }}"
+                alt="Thumbnail {{ $konten->judul }}"
+                width="150"
+                height="150"
+                style="object-fit: contain;"
+            >
 
-    Status :
-    <select name="status">
-        <option value="draft" {{ $konten->status == 'draft' ? 'selected' : '' }}>Draft</option>
-        <option value="publish" {{ $konten->status == 'publish' ? 'selected' : '' }}>Publish</option>
-        <option value="nonaktif" {{ $konten->status == 'nonaktif' ? 'selected' : '' }}>Nonaktif</option>
-    </select>
+        @else
 
-    <br>
+            <p>
+                Belum ada thumbnail.
+            </p>
 
-    <button type="submit">Update</button>
-    <a href="{{ route('KontenEdukasi.index') }}">Back</a>
-</form>
+        @endif
+
+        <br><br>
+
+
+        <label for="thumbnail">Ganti Thumbnail:</label>
+        <br>
+
+        <input
+            type="file"
+            id="thumbnail"
+            name="thumbnail"
+            accept=".jpg,.jpeg,.png"
+        >
+
+        <br>
+
+        <small>
+            Kosongkan jika tidak ingin mengganti thumbnail.
+        </small>
+
+        <br><br>
+
+
+        <label for="isi">Isi:</label>
+        <br>
+
+        <textarea
+            id="isi"
+            name="isi"
+            rows="8"
+            cols="50"
+            required
+        >{{ old('isi', $konten->isi) }}</textarea>
+
+        <br><br>
+
+
+        <label for="kategori">Kategori:</label>
+        <br>
+
+        <input
+            type="text"
+            id="kategori"
+            name="kategori"
+            value="{{ old('kategori', $konten->kategori) }}"
+            required
+        >
+
+        <br><br>
+
+
+        <label for="status">Status:</label>
+        <br>
+
+        <select id="status" name="status">
+
+            <option
+                value="draft"
+                {{ old('status', $konten->status) == 'draft' ? 'selected' : '' }}
+            >
+                Draft
+            </option>
+
+            <option
+                value="publish"
+                {{ old('status', $konten->status) == 'publish' ? 'selected' : '' }}
+            >
+                Publish
+            </option>
+
+            <option
+                value="nonaktif"
+                {{ old('status', $konten->status) == 'nonaktif' ? 'selected' : '' }}
+            >
+                Nonaktif
+            </option>
+
+        </select>
+
+        <br><br>
+
+
+        <button type="submit">
+            Update
+        </button>
+
+        <a href="{{ route('konten-edukasi.index') }}">
+            Kembali
+        </a>
+
+    </form>
+
+</body>
+</html>

@@ -53,4 +53,4 @@
 
 <br>
 
-<a href="{{ route('super_admin.aeraPay.index') }}">Kembali</a>
+<a href="{{ route('aeraPay.index') }}">Kembali</a>

@@ -1,47 +1,134 @@
-<form action="{{ route('KontenEdukasi.store') }}" method="POST" enctype="multipart/form-data">
-    {{ csrf_field() }}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tambah Konten Edukasi</title>
+</head>
+<body>
 
-    Judul :
-    <input type="text" name="judul" value="{{ old('judul') }}">
-    @if ($errors->has('judul'))
-    <span>{{ $errors->first('judul') }}</span>
+    <h1>Tambah Konten Edukasi</h1>
+
+    @if ($errors->any())
+        <div>
+            <strong>Terjadi kesalahan:</strong>
+
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
     @endif
 
-    <br>
+    <form
+        action="{{ route('konten-edukasi.store') }}"
+        method="POST"
+        enctype="multipart/form-data"
+    >
+        @csrf
 
-    Thumbnail :
-    <input type="file" name="thumbnail">
-    @if ($errors->has('thumbnail'))
-    <span>{{ $errors->first('thumbnail') }}</span>
-    @endif
+        <label for="judul">Judul:</label>
+        <br>
 
-    <br>
+        <input
+            type="text"
+            id="judul"
+            name="judul"
+            value="{{ old('judul') }}"
+            required
+        >
 
-    Isi :
-    <textarea name="isi">{{ old('isi') }}</textarea>
-    @if ($errors->has('isi'))
-    <span>{{ $errors->first('isi') }}</span>
-    @endif
+        <br><br>
 
-    <br>
 
-    Kategori :
-    <input type="text" name="kategori" value="{{ old('kategori') }}">
-    @if ($errors->has('kategori'))
-    <span>{{ $errors->first('kategori') }}</span>
-    @endif
+        <label for="thumbnail">Thumbnail:</label>
+        <br>
 
-    <br>
+        <input
+            type="file"
+            id="thumbnail"
+            name="thumbnail"
+            accept=".jpg,.jpeg,.png"
+        >
 
-    Status :
-    <select name="status">
-        <option value="draft">Draft</option>
-        <option value="publish">Publish</option>
-        <option value="nonaktif">Nonaktif</option>
-    </select>
+        <br>
 
-    <br>
+        <small>
+            Format: JPG, JPEG, PNG. Maksimal 2MB.
+        </small>
 
-    <button type="submit">Save</button>
-    <a href="{{ route('KontenEdukasi.index') }}">Back</a>
-</form>
+        <br><br>
+
+
+        <label for="isi">Isi:</label>
+        <br>
+
+        <textarea
+            id="isi"
+            name="isi"
+            rows="8"
+            cols="50"
+            required
+        >{{ old('isi') }}</textarea>
+
+        <br><br>
+
+
+        <label for="kategori">Kategori:</label>
+        <br>
+
+        <input
+            type="text"
+            id="kategori"
+            name="kategori"
+            value="{{ old('kategori') }}"
+            required
+        >
+
+        <br><br>
+
+
+        <label for="status">Status:</label>
+        <br>
+
+        <select id="status" name="status">
+
+            <option
+                value="draft"
+                {{ old('status', 'draft') == 'draft' ? 'selected' : '' }}
+            >
+                Draft
+            </option>
+
+            <option
+                value="publish"
+                {{ old('status') == 'publish' ? 'selected' : '' }}
+            >
+                Publish
+            </option>
+
+            <option
+                value="nonaktif"
+                {{ old('status') == 'nonaktif' ? 'selected' : '' }}
+            >
+                Nonaktif
+            </option>
+
+        </select>
+
+        <br><br>
+
+
+        <button type="submit">
+            Simpan
+        </button>
+
+        <a href="{{ route('konten-edukasi.index') }}">
+            Kembali
+        </a>
+
+    </form>
+
+</body>
+</html>
