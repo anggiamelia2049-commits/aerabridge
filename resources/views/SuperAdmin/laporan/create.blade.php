@@ -1,111 +1,161 @@
-<form action="{{ route('laporan.store') }}" method="POST" enctype="multipart/form-data">
-    {{ csrf_field() }}
+<form
+    action="{{ route('laporan.store') }}"
+    method="POST"
+    enctype="multipart/form-data"
+>
+    @csrf
 
-    Kategori :
-    <select name="kategori_id">
+    <label>Kategori:</label>
+    <select name="kategori_id" required>
         <option value="">Pilih Kategori</option>
 
         @foreach ($kategoris as $v)
-            <option value="{{ $v->id }}">{{ $v->nama_kategori }}</option>
+            <option
+                value="{{ $v->id }}"
+                {{ old('kategori_id') == $v->id ? 'selected' : '' }}
+            >
+                {{ $v->nama_kategori }}
+            </option>
         @endforeach
     </select>
 
-    @if ($errors->has('kategori_id'))
-    <span>{{ $errors->first('kategori_id') }}</span>
-    @endif
+    @error('kategori_id')
+        <span>{{ $message }}</span>
+    @enderror
 
-    <br>
+    <br><br>
 
-    Instansi :
-    <select name="instansi_id">
+    <label>Instansi:</label>
+    <select name="instansi_id" required>
         <option value="">Pilih Instansi</option>
 
         @foreach ($instansis as $v)
-            <option value="{{ $v->id }}">{{ $v->nama_instansi }}</option>
+            <option
+                value="{{ $v->id }}"
+                {{ old('instansi_id') == $v->id ? 'selected' : '' }}
+            >
+                {{ $v->nama_instansi }}
+            </option>
         @endforeach
     </select>
 
-    @if ($errors->has('instansi_id'))
-    <span>{{ $errors->first('instansi_id') }}</span>
-    @endif
+    @error('instansi_id')
+        <span>{{ $message }}</span>
+    @enderror
 
-    <br>
+    <br><br>
 
-    Judul :
-    <input type="text" name="judul" value="{{ old('judul') }}">
+    <label>Judul:</label>
+    <input
+        type="text"
+        name="judul"
+        value="{{ old('judul') }}"
+        required
+    >
 
-    @if ($errors->has('judul'))
-    <span>{{ $errors->first('judul') }}</span>
-    @endif
+    @error('judul')
+        <span>{{ $message }}</span>
+    @enderror
 
-    <br>
+    <br><br>
 
-    Deskripsi :
-    <textarea name="deskripsi">{{ old('deskripsi') }}</textarea>
+    <label>Deskripsi:</label>
+    <textarea
+        name="deskripsi"
+        required
+    >{{ old('deskripsi') }}</textarea>
 
-    @if ($errors->has('deskripsi'))
-    <span>{{ $errors->first('deskripsi') }}</span>
-    @endif
+    @error('deskripsi')
+        <span>{{ $message }}</span>
+    @enderror
 
-    <br>
+    <br><br>
 
-    Foto :
-    <input type="file" name="foto">
+    <label>Foto:</label>
+    <input
+        type="file"
+        name="foto"
+        accept="image/jpeg,image/png"
+    >
 
-    @if ($errors->has('foto'))
-    <span>{{ $errors->first('foto') }}</span>
-    @endif
+    @error('foto')
+        <span>{{ $message }}</span>
+    @enderror
 
-    <br>
+    <br><br>
 
-    Latitude :
-    <input type="text" name="latitude" value="{{ old('latitude') }}">
+    <label>Latitude:</label>
+    <input
+        type="text"
+        name="latitude"
+        value="{{ old('latitude') }}"
+        required
+    >
 
-    @if ($errors->has('latitude'))
-    <span>{{ $errors->first('latitude') }}</span>
-    @endif
+    @error('latitude')
+        <span>{{ $message }}</span>
+    @enderror
 
-    <br>
+    <br><br>
 
-    Longitude :
-    <input type="text" name="longitude" value="{{ old('longitude') }}">
+    <label>Longitude:</label>
+    <input
+        type="text"
+        name="longitude"
+        value="{{ old('longitude') }}"
+        required
+    >
 
-    @if ($errors->has('longitude'))
-    <span>{{ $errors->first('longitude') }}</span>
-    @endif
+    @error('longitude')
+        <span>{{ $message }}</span>
+    @enderror
 
-    <br>
+    <br><br>
 
-    Alamat :
+    <label>Alamat:</label>
     <textarea name="alamat">{{ old('alamat') }}</textarea>
 
-    @if ($errors->has('alamat'))
-    <span>{{ $errors->first('alamat') }}</span>
-    @endif
+    @error('alamat')
+        <span>{{ $message }}</span>
+    @enderror
 
-    <br>
+    <br><br>
 
-    Tingkat Prioritas :
+    <label>Tingkat Prioritas:</label>
     <select name="tingkat_prioritas">
-        <option value="Krisis">Krisis</option>
-        <option value="Sedang">Sedang</option>
-        <option value="Rendah">Rendah</option>
+        <option
+            value="Krisis"
+            {{ old('tingkat_prioritas', 'Sedang') == 'Krisis' ? 'selected' : '' }}
+        >
+            Krisis
+        </option>
+
+        <option
+            value="Sedang"
+            {{ old('tingkat_prioritas', 'Sedang') == 'Sedang' ? 'selected' : '' }}
+        >
+            Sedang
+        </option>
+
+        <option
+            value="Rendah"
+            {{ old('tingkat_prioritas', 'Sedang') == 'Rendah' ? 'selected' : '' }}
+        >
+            Rendah
+        </option>
     </select>
 
-    <br>
+    @error('tingkat_prioritas')
+        <span>{{ $message }}</span>
+    @enderror
 
-    Status :
-    <select name="status">
-        <option value="Menunggu">Menunggu</option>
-        <option value="Diverifikasi">Diverifikasi</option>
-        <option value="Diproses">Diproses</option>
-        <option value="Selesai">Selesai</option>
-        <option value="Ditolak">Ditolak</option>
-    </select>
+    <br><br>
 
-    <br>
+    <button type="submit">
+        Simpan Laporan
+    </button>
 
-    <button type="submit">Save</button>
-
-    <a href="{{ route('laporan.index') }}">Back</a>
+    <a href="{{ route('laporan.index') }}">
+        Kembali
+    </a>
 </form>

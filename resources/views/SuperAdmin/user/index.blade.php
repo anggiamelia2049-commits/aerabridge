@@ -12,10 +12,6 @@
     <p style="color: green;">{{ session('success') }}</p>
 @endif
 
-<a href="{{ route('user.create') }}">+ Tambah User</a>
-
-<br><br>
-
 <table border="1" cellpadding="8" cellspacing="0">
     <thead>
         <tr>
@@ -30,7 +26,7 @@
             <th>Pekerjaan</th>
             <th>Role</th>
             <th>Status</th>
-            <th>Aksi</th>
+            <th><a href="{{ route('user.create') }}">Tambah User</a></th>
         </tr>
     </thead>
 

@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\SuperAdmin;
 
+use App\Http\Controllers\Controller;
 use App\Models\TemplatePesan;
 use Illuminate\Http\Request;
 
@@ -15,7 +16,7 @@ class TemplatePesanController extends Controller
         $templatePesan = TemplatePesan::latest()->get();
 
         return view(
-            'TemplatePesan.index',
+            'SuperAdmin.templatePesan.index',
             compact('templatePesan')
         );
     }
@@ -25,7 +26,7 @@ class TemplatePesanController extends Controller
      */
     public function create()
     {
-        return view('TemplatePesan.create');
+        return view('SuperAdmin.templatePesan.create');
     }
 
     /**
@@ -60,7 +61,7 @@ class TemplatePesanController extends Controller
     public function show(TemplatePesan $templatePesan)
     {
         return view(
-            'TemplatePesan.show',
+            'SuperAdmin.templatePesan.show',
             compact('templatePesan')
         );
     }
@@ -71,7 +72,7 @@ class TemplatePesanController extends Controller
     public function edit(TemplatePesan $templatePesan)
     {
         return view(
-            'TemplatePesan.edit',
+            'SuperAdmin.templatePesan.edit',
             compact('templatePesan')
         );
     }

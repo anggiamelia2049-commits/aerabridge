@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\SuperAdmin;
 
+use App\Http\Controllers\Controller;
 use App\Models\Penugasan;
 use App\Models\Laporan;
 use App\Models\TimSatgas;
@@ -20,7 +21,7 @@ class PenugasanController extends Controller
             ->latest()
             ->get();
 
-        return view('penugasan.index', compact('penugasan'));
+        return view('SuperAdmin.penugasan.index', compact('penugasan'));
     }
 
     public function create()
@@ -31,7 +32,7 @@ class PenugasanController extends Controller
             ->where('status', 'Aktif')
             ->get();
 
-        return view('penugasan.create', compact(
+        return view('SuperAdmin.penugasan.create', compact(
             'laporan',
             'timSatgas',
             'petugas'
@@ -73,7 +74,7 @@ class PenugasanController extends Controller
             'petugas'
         ]);
 
-        return view('penugasan.show', compact('penugasan'));
+        return view('SuperAdmin.penugasan.show', compact('penugasan'));
     }
 
     public function edit(Penugasan $penugasan)
@@ -84,7 +85,7 @@ class PenugasanController extends Controller
             ->where('status', 'Aktif')
             ->get();
 
-        return view('penugasan.edit', compact(
+        return view('SuperAdmin.penugasan.edit', compact(
             'penugasan',
             'laporan',
             'timSatgas',

@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\SuperAdmin;
 
+use App\Http\Controllers\Controller;
 use App\Models\SlaKonfigurasi;
 use Illuminate\Http\Request;
 
@@ -11,12 +12,12 @@ class SlaKonfigurasiController extends Controller
     {
         $slaKonfigurasi = SlaKonfigurasi::latest()->get();
 
-        return view('Slakonfigurasi.index', compact('slaKonfigurasi'));
+        return view('SuperAdmin.slakonfigurasi.index', compact('slaKonfigurasi'));
     }
 
         public function create()
     {
-        return view('Slakonfigurasi.create');
+        return view('SuperAdmin.slakonfigurasi.create');
     }
 
         public function store(Request $request)
@@ -45,7 +46,7 @@ class SlaKonfigurasiController extends Controller
         public function show(SlaKonfigurasi $slaKonfigurasi)
     {
         return view(
-            'Slakonfigurasi.show',
+            'SuperAdmin.slakonfigurasi.show',
             compact('slaKonfigurasi')
         );
     }
@@ -53,7 +54,7 @@ class SlaKonfigurasiController extends Controller
         public function edit(SlaKonfigurasi $slaKonfigurasi)
     {
         return view(
-            'Slakonfigurasi.edit',
+            'SuperAdmin.slakonfigurasi.edit',
             compact('slaKonfigurasi')
         );
     }

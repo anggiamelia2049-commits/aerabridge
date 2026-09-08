@@ -26,7 +26,7 @@ class LaporanController extends Controller
         ->latest()
         ->get();
 
-        return view('super_admin.laporan.index', compact('laporan'));
+        return view('SuperAdmin.laporan.index', compact('laporan'));
     }
 
     /**
@@ -38,7 +38,7 @@ class LaporanController extends Controller
         $instansis = Instansi::all();
 
         return view(
-            'super_admin.laporan.create',
+            'SuperAdmin.laporan.create',
             compact('kategoris', 'instansis')
         );
     }
@@ -101,7 +101,7 @@ class LaporanController extends Controller
         ])
         ->findOrFail($id);
 
-        return view('super_admin.laporan.show', compact('laporan'));
+        return view('SuperAdmin.laporan.show', compact('laporan'));
     }
 
     /**
@@ -115,7 +115,7 @@ class LaporanController extends Controller
         $instansis = Instansi::all();
 
         return view(
-            'super_admin.laporan.edit',
+            'SuperAdmin.laporan.edit',
             compact('laporan', 'kategoris', 'instansis')
         );
     }

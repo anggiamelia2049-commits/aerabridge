@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\SuperAdmin;
 
+use App\Http\Controllers\Controller;
 use App\Models\TimSatgas;
 use App\Models\Instansi;
 use Illuminate\Http\Request;
@@ -18,7 +19,7 @@ class TimSatgasController extends Controller
             ->get();
 
         return view(
-            'TimSatgas.index',
+            'SuperAdmin.timSatgas.index',
             compact('timSatgas')
         );
     }
@@ -31,7 +32,7 @@ class TimSatgasController extends Controller
         $instansi = Instansi::all();
 
         return view(
-            'TimSatgas.create',
+            'SuperAdmin.timSatgas.create',
             compact('instansi')
         );
     }
@@ -72,7 +73,7 @@ class TimSatgasController extends Controller
         $timSatgas->load('instansi');
 
         return view(
-            'TimSatgas.show',
+            'SuperAdmin.timSatgas.show',
             compact('timSatgas')
         );
     }
@@ -85,7 +86,7 @@ class TimSatgasController extends Controller
         $instansi = Instansi::all();
 
         return view(
-            'TimSatgas.edit',
+            'SuperAdmin.timSatgas.edit',
             compact('timSatgas', 'instansi')
         );
     }

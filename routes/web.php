@@ -9,11 +9,11 @@ use App\Http\Controllers\SuperAdmin\InstansiController;
 use App\Http\Controllers\SuperAdmin\KategoriKerusakanController;
 use App\Http\Controllers\SuperAdmin\KontenEdukasiController;
 use App\Http\Controllers\SuperAdmin\LaporanController;
-use App\Http\Controllers\NotifikasiController;
-use App\Http\Controllers\PenugasanController;
-use App\Http\Controllers\SlaKonfigurasiController;
-use App\Http\Controllers\TemplatePesanController;
-use App\Http\Controllers\TimSatgasController;
+use App\Http\Controllers\SuperAdmin\NotifikasiController;
+use App\Http\Controllers\SuperAdmin\PenugasanController;
+use App\Http\Controllers\SuperAdmin\SlaKonfigurasiController;
+use App\Http\Controllers\SuperAdmin\TemplatePesanController;
+use App\Http\Controllers\SuperAdmin\TimSatgasController;
 use App\Http\Controllers\UserEdukasiProgressController;
 use Illuminate\Support\Facades\Route;
 

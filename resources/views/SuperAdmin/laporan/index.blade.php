@@ -13,47 +13,82 @@
         <th>Prioritas</th>
         <th>Status</th>
         <th>Verifikasi Oleh</th>
-        <th><a href="{{ route('laporan.create') }}">Tambah Laporan</a></th>
+        <th><a href="{{ route('laporan.create') }}">
+    Tambah Laporan
+</a></th>
     </tr>
 
     @foreach ($laporan as $v)
-    <tr>
-        <td>{{ $loop->iteration }}</td>
-        <td>{{ $v->user->name ?? '-' }}</td>
-        <td>{{ $v->kategori->nama_kategori ?? '-' }}</td>
-        <td>{{ $v->instansi->nama_instansi ?? '-' }}</td>
-        <td>{{ $v->judul }}</td>
-        <td>{{ $v->deskripsi }}</td>
+        <tr>
+            <td>{{ $loop->iteration }}</td>
 
-        <td>
-            @if ($v->foto)
-                <img src="{{ asset('storage/' . $v->foto) }}" width="100">
-            @else
-                Tidak ada foto
-            @endif
-        </td>
+            <td>
+                {{ optional($v->user)->name ?? '-' }}
+            </td>
 
-        <td>{{ $v->latitude }}</td>
-        <td>{{ $v->longitude }}</td>
-        <td>{{ $v->alamat }}</td>
-        <td>{{ $v->tingkat_prioritas }}</td>
-        <td>{{ $v->status }}</td>
-        <td>{{ $v->diverifikasiOleh->name ?? '-' }}</td>
+            <td>
+                {{ optional($v->kategori)->nama_kategori ?? '-' }}
+            </td>
 
-        <td>
-            <a href="{{ route('laporan.show', $v->id) }}">Show</a>
+            <td>
+                {{ optional($v->instansi)->nama_instansi ?? '-' }}
+            </td>
 
-            <a href="{{ route('laporan.edit', $v->id) }}">Edit</a>
+            <td>{{ $v->judul }}</td>
 
-            <form action="{{ route('laporan.destroy', $v->id) }}" method="POST">
-                {{ csrf_field() }}
-                @method('DELETE')
+            <td>{{ $v->deskripsi }}</td>
 
-                <button type="submit" onclick="return confirm('Are you sure you want to delete this report?')">
-                    Delete
-                </button>
-            </form>
-        </td>
-    </tr>
-    @endforeach 
+            <td>
+                @if ($v->foto)
+                    <img
+                        src="{{ asset('storage/' . $v->foto) }}"
+                        width="100"
+                        alt="Foto laporan"
+                    >
+                @else
+                    Tidak ada foto
+                @endif
+            </td>
+
+            <td>{{ $v->latitude }}</td>
+
+            <td>{{ $v->longitude }}</td>
+
+            <td>{{ $v->alamat ?? '-' }}</td>
+
+            <td>{{ $v->tingkat_prioritas }}</td>
+
+            <td>{{ $v->status }}</td>
+
+            <td>
+                {{ optional($v->diverifikasiOleh)->name ?? '-' }}
+            </td>
+
+            <td>
+                <a href="{{ route('laporan.show', $v->id) }}">
+                    Show
+                </a>
+
+                <a href="{{ route('laporan.edit', $v->id) }}">
+                    Edit
+                </a>
+
+                <form
+                    action="{{ route('laporan.destroy', $v->id) }}"
+                    method="POST"
+                    style="display: inline;"
+                >
+                    @csrf
+                    @method('DELETE')
+
+                    <button
+                        type="submit"
+                        onclick="return confirm('Apakah kamu yakin ingin menghapus laporan ini?')"
+                    >
+                        Delete
+                    </button>
+                </form>
+            </td>
+        </tr>
+    @endforeach
 </table>

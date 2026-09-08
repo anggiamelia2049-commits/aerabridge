@@ -16,7 +16,7 @@ class UserController extends Controller
     {
         $users = User::all();
 
-        return view('user.index', compact('users'));
+        return view('SuperAdmin.user.index', compact('users'));
     }
 
     /**
@@ -24,7 +24,7 @@ class UserController extends Controller
      */
     public function create()
     {
-        return view('user.create');
+        return view('SuperAdmin.user.create');
     }
 
     /**
@@ -84,7 +84,7 @@ class UserController extends Controller
     {
         $user = User::findOrFail($id);
 
-        return view('user.show', compact('user'));
+        return view('SuperAdmin.user.show', compact('user'));
     }
 
     /**
@@ -94,7 +94,7 @@ class UserController extends Controller
     {
         $dataedituser = User::findOrFail($id);
 
-        return view('user.edit', compact('dataedituser'));
+        return view('SuperAdmin.user.edit', compact('dataedituser'));
     }
 
     /**
