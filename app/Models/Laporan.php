@@ -3,6 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\User;
+use App\Models\KategoriKerusakan;
+use App\Models\Instansi;
 
 class Laporan extends Model
 {
@@ -20,30 +23,39 @@ class Laporan extends Model
         'alamat',
         'tingkat_prioritas',
         'status',
-        'diverifikasi_oleh'
+        'diverifikasi_oleh',
     ];
 
-    // relasi ke user yang membuat laporan
+    // User yang membuat laporan
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    // relasi ke kategori kerusakan
+    // Kategori kerusakan laporan
     public function kategori()
     {
-        return $this->belongsTo(KategoriKerusakan::class, 'kategori_id');
+        return $this->belongsTo(
+            KategoriKerusakan::class,
+            'kategori_id'
+        );
     }
 
-    // relasi ke instansi
+    // Instansi tujuan laporan
     public function instansi()
     {
-        return $this->belongsTo(Instansi::class, 'instansi_id');
+        return $this->belongsTo(
+            Instansi::class,
+            'instansi_id'
+        );
     }
 
-    // relasi ke user yang melakukakn verifikasi
-    public function verifier()
+    // User yang melakukan verifikasi
+    public function diverifikasiOleh()
     {
-        return $this->belongsTo(User::class, 'diverifikasi_oleh');
+        return $this->belongsTo(
+            User::class,
+            'diverifikasi_oleh'
+        );
     }
 }

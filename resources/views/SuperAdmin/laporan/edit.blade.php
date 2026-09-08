@@ -1,4 +1,4 @@
-<form action="{{ route('Laporan.update', $laporan->id) }}" method="POST" enctype="multipart/form-data">
+<form action="{{ route('laporan.update', $laporan->id) }}" method="POST" enctype="multipart/form-data">
     {{ csrf_field() }}
     @method('PUT')
 
@@ -103,5 +103,5 @@
 
     <button type="submit">Update</button>
 
-    <a href="{{ route('Laporan.index') }}">Back</a>
+    <a href="{{ route('laporan.index') }}">Back</a>
 </form>

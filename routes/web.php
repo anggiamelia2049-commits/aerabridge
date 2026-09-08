@@ -8,7 +8,7 @@ use App\Http\Controllers\SuperAdmin\HadiahController;
 use App\Http\Controllers\SuperAdmin\InstansiController;
 use App\Http\Controllers\SuperAdmin\KategoriKerusakanController;
 use App\Http\Controllers\SuperAdmin\KontenEdukasiController;
-use App\Http\Controllers\LaporanController;
+use App\Http\Controllers\SuperAdmin\LaporanController;
 use App\Http\Controllers\NotifikasiController;
 use App\Http\Controllers\PenugasanController;
 use App\Http\Controllers\SlaKonfigurasiController;

@@ -1,4 +1,4 @@
-<form action="{{ route('Laporan.store') }}" method="POST" enctype="multipart/form-data">
+<form action="{{ route('laporan.store') }}" method="POST" enctype="multipart/form-data">
     {{ csrf_field() }}
 
     Kategori :
@@ -107,5 +107,5 @@
 
     <button type="submit">Save</button>
 
-    <a href="{{ route('Laporan.index') }}">Back</a>
+    <a href="{{ route('laporan.index') }}">Back</a>
 </form>

@@ -68,6 +68,6 @@
 
 <br>
 
-<a href="{{ route('Laporan.index') }}">Back</a>
+<a href="{{ route('laporan.index') }}">Back</a>
 
-<a href="{{ route('Laporan.edit', $laporan->id) }}">Edit</a>
+<a href="{{ route('laporan.edit', $laporan->id) }}">Edit</a>

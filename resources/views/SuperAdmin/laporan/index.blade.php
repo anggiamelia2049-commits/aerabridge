@@ -13,7 +13,7 @@
         <th>Prioritas</th>
         <th>Status</th>
         <th>Verifikasi Oleh</th>
-        <th>Aksi</th>
+        <th><a href="{{ route('laporan.create') }}">Tambah Laporan</a></th>
     </tr>
 
     @foreach ($laporan as $v)
@@ -41,11 +41,11 @@
         <td>{{ $v->diverifikasiOleh->name ?? '-' }}</td>
 
         <td>
-            <a href="{{ route('Laporan.show', $v->id) }}">Show</a>
+            <a href="{{ route('laporan.show', $v->id) }}">Show</a>
 
-            <a href="{{ route('Laporan.edit', $v->id) }}">Edit</a>
+            <a href="{{ route('laporan.edit', $v->id) }}">Edit</a>
 
-            <form action="{{ route('Laporan.destroy', $v->id) }}" method="POST">
+            <form action="{{ route('laporan.destroy', $v->id) }}" method="POST">
                 {{ csrf_field() }}
                 @method('DELETE')
 
@@ -55,9 +55,5 @@
             </form>
         </td>
     </tr>
-    @endforeach
+    @endforeach 
 </table>
-
-<br>
-
-<a href="{{ route('Laporan.create') }}">Tambah Laporan</a>

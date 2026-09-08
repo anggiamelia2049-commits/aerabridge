@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\SuperAdmin;
 
+use App\Http\Controllers\Controller;
 use App\Models\Laporan;
 use App\Models\KategoriKerusakan;
 use App\Models\Instansi;
@@ -16,9 +17,16 @@ class LaporanController extends Controller
      */
     public function index()
     {
-        $laporan = Laporan::with(['user', 'kategori', 'instansi', 'diverifikasiOleh'])->get();
+        $laporan = Laporan::with([
+            'user',
+            'kategori',
+            'instansi',
+            'diverifikasiOleh'
+        ])
+        ->latest()
+        ->get();
 
-        return view('Laporan.index', compact('laporan'));
+        return view('super_admin.laporan.index', compact('laporan'));
     }
 
     /**
@@ -29,7 +37,10 @@ class LaporanController extends Controller
         $kategoris = KategoriKerusakan::all();
         $instansis = Instansi::all();
 
-        return view('Laporan.create', compact('kategoris', 'instansis'));
+        return view(
+            'super_admin.laporan.create',
+            compact('kategoris', 'instansis')
+        );
     }
 
     /**
@@ -47,13 +58,14 @@ class LaporanController extends Controller
             'longitude' => 'required|numeric|between:-180,180',
             'alamat' => 'nullable|string',
             'tingkat_prioritas' => 'nullable|in:Krisis,Sedang,Rendah',
-            'status' => 'nullable|in:Menunggu,Diverifikasi,Diproses,Selesai,Ditolak'
+            'status' => 'nullable|in:Menunggu,Diverifikasi,Diproses,Selesai,Ditolak',
         ]);
 
         $foto = null;
 
         if ($request->hasFile('foto')) {
-            $foto = $request->file('foto')->store('laporan', 'public');
+            $foto = $request->file('foto')
+                ->store('laporan', 'public');
         }
 
         Laporan::create([
@@ -68,11 +80,11 @@ class LaporanController extends Controller
             'alamat' => $request->alamat,
             'tingkat_prioritas' => $request->tingkat_prioritas ?? 'Sedang',
             'status' => $request->status ?? 'Menunggu',
-            'diverifikasi_oleh' => null
+            'diverifikasi_oleh' => null,
         ]);
 
         return redirect()
-            ->route('Laporan.index')
+            ->route('laporan.index')
             ->with('success', 'Laporan berhasil dibuat');
     }
 
@@ -81,9 +93,15 @@ class LaporanController extends Controller
      */
     public function show(string $id)
     {
-        $laporan = Laporan::with(['user', 'kategori', 'instansi', 'diverifikasiOleh'])->findOrFail($id);
+        $laporan = Laporan::with([
+            'user',
+            'kategori',
+            'instansi',
+            'diverifikasiOleh'
+        ])
+        ->findOrFail($id);
 
-        return view('Laporan.show', compact('laporan'));
+        return view('super_admin.laporan.show', compact('laporan'));
     }
 
     /**
@@ -92,10 +110,14 @@ class LaporanController extends Controller
     public function edit(string $id)
     {
         $laporan = Laporan::findOrFail($id);
+
         $kategoris = KategoriKerusakan::all();
         $instansis = Instansi::all();
 
-        return view('Laporan.edit', compact('laporan', 'kategoris', 'instansis'));
+        return view(
+            'super_admin.laporan.edit',
+            compact('laporan', 'kategoris', 'instansis')
+        );
     }
 
     /**
@@ -115,17 +137,19 @@ class LaporanController extends Controller
             'longitude' => 'required|numeric|between:-180,180',
             'alamat' => 'nullable|string',
             'tingkat_prioritas' => 'nullable|in:Krisis,Sedang,Rendah',
-            'status' => 'nullable|in:Menunggu,Diverifikasi,Diproses,Selesai,Ditolak'
+            'status' => 'nullable|in:Menunggu,Diverifikasi,Diproses,Selesai,Ditolak',
         ]);
 
         $foto = $laporan->foto;
 
         if ($request->hasFile('foto')) {
+
             if ($laporan->foto) {
                 Storage::disk('public')->delete($laporan->foto);
             }
 
-            $foto = $request->file('foto')->store('laporan', 'public');
+            $foto = $request->file('foto')
+                ->store('laporan', 'public');
         }
 
         $laporan->update([
@@ -138,11 +162,11 @@ class LaporanController extends Controller
             'longitude' => $request->longitude,
             'alamat' => $request->alamat,
             'tingkat_prioritas' => $request->tingkat_prioritas ?? 'Sedang',
-            'status' => $request->status ?? 'Menunggu'
+            'status' => $request->status ?? 'Menunggu',
         ]);
 
         return redirect()
-            ->route('Laporan.index')
+            ->route('laporan.index')
             ->with('success', 'Laporan berhasil diperbarui');
     }
 
@@ -160,7 +184,7 @@ class LaporanController extends Controller
         $laporan->delete();
 
         return redirect()
-            ->route('Laporan.index')
+            ->route('laporan.index')
             ->with('success', 'Laporan berhasil dihapus');
     }
 
@@ -172,16 +196,16 @@ class LaporanController extends Controller
         $laporan = Laporan::findOrFail($id);
 
         $request->validate([
-            'status' => 'required|in:Diverifikasi,Diproses,Selesai,Ditolak'
+            'status' => 'required|in:Diverifikasi,Diproses,Selesai,Ditolak',
         ]);
 
         $laporan->update([
             'status' => $request->status,
-            'diverifikasi_oleh' => Auth::id()
+            'diverifikasi_oleh' => Auth::id(),
         ]);
 
         return redirect()
-            ->route('Laporan.index')
+            ->route('laporan.index')
             ->with('success', 'Status laporan berhasil diperbarui');
     }
 }
