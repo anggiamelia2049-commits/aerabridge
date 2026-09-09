@@ -21,7 +21,7 @@
         <td>{{ $v->status }}</td>
         <td>
             <a href="{{ route('template-pesan.edit', $v->id) }}">Edit</a>
-
+            <a href="{{ route('template-pesan.show', $v->id) }}">Detail</a>
             <form action="{{ route('template-pesan.destroy', $v->id) }}" method="POST" style="display:inline">
                 @csrf
                 @method('DELETE')

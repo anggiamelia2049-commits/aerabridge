@@ -14,9 +14,7 @@ use App\Http\Controllers\SuperAdmin\SlaKonfigurasiController;
 use App\Http\Controllers\SuperAdmin\TemplatePesanController;
 use App\Http\Controllers\SuperAdmin\TimSatgasController;
 use App\Http\Controllers\SuperAdmin\LaporanController as SuperAdminLaporanController;
-
 use App\Http\Controllers\Warga\LaporanController as WargaLaporanController;
-
 use App\Http\Controllers\Warga\PoinKontribusiController;
 use App\Http\Controllers\UserEdukasiProgressController;
 use Illuminate\Support\Facades\Route;
