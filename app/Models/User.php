@@ -43,4 +43,9 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function poinKontribusi()
+    {
+        return $this->hasMany(PoinKontribusiLog::class, 'user_id');
+    }
 }

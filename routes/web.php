@@ -8,12 +8,16 @@ use App\Http\Controllers\SuperAdmin\HadiahController;
 use App\Http\Controllers\SuperAdmin\InstansiController;
 use App\Http\Controllers\SuperAdmin\KategoriKerusakanController;
 use App\Http\Controllers\SuperAdmin\KontenEdukasiController;
-use App\Http\Controllers\SuperAdmin\LaporanController;
 use App\Http\Controllers\SuperAdmin\NotifikasiController;
 use App\Http\Controllers\SuperAdmin\PenugasanController;
 use App\Http\Controllers\SuperAdmin\SlaKonfigurasiController;
 use App\Http\Controllers\SuperAdmin\TemplatePesanController;
 use App\Http\Controllers\SuperAdmin\TimSatgasController;
+use App\Http\Controllers\SuperAdmin\LaporanController as SuperAdminLaporanController;
+
+use App\Http\Controllers\Warga\LaporanController as WargaLaporanController;
+
+use App\Http\Controllers\Warga\PoinKontribusiController;
 use App\Http\Controllers\UserEdukasiProgressController;
 use Illuminate\Support\Facades\Route;
 
@@ -61,6 +65,9 @@ Route::middleware('auth')->group(function () {
 
     // ==== Khusus Warga ====
     Route::middleware('role:warga')->group(function () {
+        Route::get('/poin-kontribusi', [PoinKontribusiController::class, 'index'])
+        ->name('warga.poinKontribusi.index');
+
         Route::resource('userEdukasi', UserEdukasiProgressController::class);
     });
 });
