@@ -46,28 +46,5 @@ Route::middleware('auth')->group(function () {
         Route::resource('aeraPay', AeraPayTransaksiController::class);
     });
 
-    // ==== Super Admin & Instansi ====
-    Route::middleware('role:super_admin,instansi')->group(function () {
-        Route::resource('deteksi-ai', DeteksiAiController::class);
-    });
-
-    // ==== Super Admin, Instansi & Petugas ====
-    Route::middleware('role:super_admin,instansi,petugas')->group(function () {
-        Route::resource('penugasan', PenugasanController::class);
-    });
-
-    // ==== Semua role bisa akses (laporan & notifikasi) ====
-    Route::middleware('role:instansi,petugas,warga')->group(function () {
-        Route::resource('laporan', WargaLaporanController::class);
-        Route::resource('notifikasi', NotifikasiController::class);
-    });
-
-    // ==== Khusus Warga ====
-    Route::middleware('role:warga')->group(function () {
-        Route::get('/poin-kontribusi', [PoinKontribusiController::class, 'index'])
-        ->name('warga.poinKontribusi.index');
-
-        Route::resource('userEdukasi', UserEdukasiProgressController::class);
-    });
 });
 require __DIR__.'/auth.php';
