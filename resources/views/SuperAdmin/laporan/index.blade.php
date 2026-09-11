@@ -13,9 +13,7 @@
         <th>Prioritas</th>
         <th>Status</th>
         <th>Verifikasi Oleh</th>
-        <th><a href="{{ route('laporan.create') }}">
-    Tambah Laporan
-</a></th>
+        <th>Aksi</th>
     </tr>
 
     @foreach ($laporan as $v)
