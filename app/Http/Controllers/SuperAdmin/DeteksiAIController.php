@@ -16,7 +16,7 @@ class DeteksiAiController extends Controller
     {
         $deteksiAIs = DeteksiAi::with('laporan')->latest()->get();
 
-        return view('super_admin.deteksiAi.index', compact('deteksiAIs'));
+        return view('SuperAdmin.deteksiAi.index', compact('deteksiAIs'));
     }
 
     /**
@@ -25,7 +25,7 @@ class DeteksiAiController extends Controller
     public function create()
     {
         $laporans = Laporan::all();
-        return view('super_admin.deteksiAi.create', compact('laporans'));
+        return view('SuperAdmin.deteksiAi.create', compact('laporans'));
     }
 
     /**
@@ -62,7 +62,7 @@ class DeteksiAiController extends Controller
     public function show(string $id)
     {
         $deteksiAi = DeteksiAi::with(['laporan'])->findOrFail($id);
-        return view('super_admin.deteksiAi.show', compact('deteksiAi'));
+        return view('SuperAdmin.deteksiAi.show', compact('deteksiAi'));
     }
 
     /**
@@ -72,7 +72,7 @@ class DeteksiAiController extends Controller
     {
         $deteksiAi = DeteksiAi::findOrFail($id);
         $laporans = Laporan::all();
-        return view('super_admin.deteksiAi.edit', compact('deteksiAi', 'laporans'));
+        return view('SuperAdmin.deteksiAi.edit', compact('deteksiAi', 'laporans'));
     }
 
     /**

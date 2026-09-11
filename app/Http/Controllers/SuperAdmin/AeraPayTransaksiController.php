@@ -16,7 +16,7 @@ class AeraPayTransaksiController extends Controller
     public function index()
     {
         $transaksis = AeraPayTransaksi::with(['user', 'laporan'])->latest()->get();
-        return view('super_admin.aeraPay.index', compact('transaksis'));
+        return view('SuperAdmin.aeraPay.index', compact('transaksis'));
     }
 
     /**
@@ -26,7 +26,7 @@ class AeraPayTransaksiController extends Controller
     {
         $users = User::all();
         $laporans = Laporan::all();
-        return view('super_admin.aeraPay.create', compact('users', 'laporans'));
+        return view('SuperAdmin.aeraPay.create', compact('users', 'laporans'));
     }
 
     /**
@@ -66,7 +66,7 @@ class AeraPayTransaksiController extends Controller
             'user',
             'laporan'
         ])->findOrFail($id);
-        return view('super_admin.aeraPay.show',compact('aeraPayTransaksi')
+        return view('SuperAdmin.aeraPay.show',compact('aeraPayTransaksi')
         );
     }
 
@@ -79,7 +79,7 @@ class AeraPayTransaksiController extends Controller
         $users = User::all();
         $laporans = Laporan::all();
 
-        return view('super_admin.aeraPay.edit', compact('aeraPayTransaksi', 'users', 'laporans'));
+        return view('SuperAdmin.aeraPay.edit', compact('aeraPayTransaksi', 'users', 'laporans'));
     }
 
     /**

@@ -15,7 +15,7 @@ class KategoriKerusakanController extends Controller
     public function index()
     {
         $kategoris = KategoriKerusakan::all();
-        return view('super_admin.kategori.index', compact('kategoris'));
+        return view('SuperAdmin.kategori.index', compact('kategoris'));
     }
 
     /**
@@ -23,7 +23,7 @@ class KategoriKerusakanController extends Controller
      */
     public function create()
     {
-        return view('super_admin.kategori.create');
+        return view('SuperAdmin.kategori.create');
     }
 
     /**
@@ -57,7 +57,7 @@ class KategoriKerusakanController extends Controller
     public function show(string $id)
     {
         $kategori = KategoriKerusakan::findOrFail($id);
-        return view('super_admin.kategori.show', compact('kategori'));
+        return view('SuperAdmin.kategori.show', compact('kategori'));
     }
 
     /**
@@ -66,7 +66,7 @@ class KategoriKerusakanController extends Controller
     public function edit(string $id)
     {
         $kategori = KategoriKerusakan::findOrFail($id);
-        return view('super_admin.kategori.edit', compact('kategori'));
+        return view('SuperAdmin.kategori.edit', compact('kategori'));
     }
 
     /**

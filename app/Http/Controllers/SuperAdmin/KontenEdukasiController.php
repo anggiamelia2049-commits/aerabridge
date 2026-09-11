@@ -16,12 +16,12 @@ class KontenEdukasiController extends Controller
             ->latest()
             ->get();
 
-        return view('super_admin.kontenEdukasi.index', compact('konten'));
+        return view('SuperAdmin.kontenEdukasi.index', compact('konten'));
     }
 
     public function create()
     {
-        return view('super_admin.kontenEdukasi.create');
+        return view('SuperAdmin.kontenEdukasi.create');
     }
 
     public function store(Request $request)
@@ -60,14 +60,14 @@ class KontenEdukasiController extends Controller
         $konten = KontenEdukasi::with('penulis')
             ->findOrFail($id);
 
-        return view('super_admin.kontenEdukasi.show', compact('konten'));
+        return view('SuperAdmin.kontenEdukasi.show', compact('konten'));
     }
 
     public function edit(string $id)
     {
         $konten = KontenEdukasi::findOrFail($id);
 
-        return view('super_admin.kontenEdukasi.edit', compact('konten'));
+        return view('SuperAdmin.kontenEdukasi.edit', compact('konten'));
     }
 
     public function update(Request $request, string $id)

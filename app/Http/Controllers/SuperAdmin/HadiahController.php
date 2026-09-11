@@ -16,7 +16,7 @@ class HadiahController extends Controller
     {
         $hadiahs = Hadiah::latest()->get();
 
-        return view('super_admin.hadiah.index', compact('hadiahs'));
+        return view('SuperAdmin.hadiah.index', compact('hadiahs'));
     }
 
     /**
@@ -24,7 +24,7 @@ class HadiahController extends Controller
      */
     public function create()
     {
-        return view('super_admin.hadiah.create');
+        return view('SuperAdmin.hadiah.create');
     }
 
     /**
@@ -75,7 +75,7 @@ class HadiahController extends Controller
     {
         $hadiah = Hadiah::findOrFail($id);
 
-        return view('super_admin.hadiah.edit', compact('hadiah'));
+        return view('SuperAdmin.hadiah.edit', compact('hadiah'));
     }
 
     /**
