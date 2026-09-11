@@ -17,7 +17,7 @@ class InstansiController extends Controller
         $instansis = Instansi::latest()->get();
 
         return view(
-            'super_admin.instansi.index',
+            'SuperAdmin.instansi.index',
             compact('instansis')
         );
     }
@@ -27,7 +27,7 @@ class InstansiController extends Controller
      */
     public function create()
     {
-        return view('super_admin.instansi.create');
+        return view('SuperAdmin.instansi.create');
     }
 
     /**
@@ -77,7 +77,7 @@ class InstansiController extends Controller
         $instansi = Instansi::findOrFail($id);
 
         return view(
-            'super_admin.instansi.show',
+            'SuperAdmin.instansi.show',
             compact('instansi')
         );
     }
@@ -90,7 +90,7 @@ class InstansiController extends Controller
         $instansi = Instansi::findOrFail($id);
 
         return view(
-            'super_admin.instansi.edit',
+            'SuperAdmin.instansi.edit',
             compact('instansi')
         );
     }
