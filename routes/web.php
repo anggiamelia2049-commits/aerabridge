@@ -36,6 +36,7 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:super_admin')->group(function () {
         Route::resource('user', UserController::class);
         Route::resource('instansi', InstansiController::class);
+        Route::resource('laporan', SuperAdminLaporanController::class);
         Route::resource('kategori', KategoriKerusakanController::class);
         Route::resource('tim-satgas', TimSatgasController::class);
         Route::resource('sla-konfigurasi', SlaKonfigurasiController::class);
@@ -56,8 +57,8 @@ Route::middleware('auth')->group(function () {
     });
 
     // ==== Semua role bisa akses (laporan & notifikasi) ====
-    Route::middleware('role:super_admin,instansi,petugas,warga')->group(function () {
-        Route::resource('laporan', LaporanController::class);
+    Route::middleware('role:instansi,petugas,warga')->group(function () {
+        Route::resource('laporan', WargaLaporanController::class);
         Route::resource('notifikasi', NotifikasiController::class);
     });
 
