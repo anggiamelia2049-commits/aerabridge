@@ -3,142 +3,81 @@
 namespace App\Http\Controllers\Warga;
 
 use App\Http\Controllers\Controller;
-use App\Models\UserEdukasiProgress;
-use App\Models\User;
 use App\Models\KontenEdukasi;
+use App\Models\PoinKontribusiLog;
+use App\Models\UserEdukasiProgress;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class UserEdukasiProgressController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Tampilkan daftar konten edukasi & progress baca milik warga yang login.
      */
     public function index()
     {
-        $progress = UserEdukasiProgress::with([
-            'user',
-            'konten'
-        ])
-        ->latest()
-        ->get();
+        $user = Auth::user();
 
-        return view(
-            'UserEdukasiProgress.index',
-            compact('progress')
+        // Semua konten edukasi, digabung dengan progress milik user (kalau ada)
+        $kontenList = KontenEdukasi::with(['progress' => function ($query) use ($user) {
+            $query->where('user_id', $user->id);
+        }])->get();
+
+        return view('warga.user-edukasi.index', compact('kontenList'));
+    }
+
+    /**
+     * Tampilkan detail 1 konten edukasi untuk dibaca warga.
+     */
+    public function show(string $kontenId)
+    {
+        $konten = KontenEdukasi::findOrFail($kontenId);
+
+        $progress = UserEdukasiProgress::firstOrCreate(
+            ['user_id' => Auth::id(), 'konten_id' => $kontenId],
+            ['status' => 'belum_dibaca', 'progress' => 0]
         );
+
+        return view('warga.user-edukasi.show', compact('konten', 'progress'));
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Tandai konten selesai dibaca oleh warga, otomatis dapat +10 poin
+     * (sesuai proposal 6.B.5: "+10 (baca edukasi)").
      */
-    public function create()
+    public function tandaiSelesai(Request $request, string $kontenId)
     {
-        $users = User::all();
-        $konten = KontenEdukasi::all();
+        $user = Auth::user();
 
-        return view(
-            'UserEdukasiProgress.create',
-            compact('users', 'konten')
+        $progress = UserEdukasiProgress::firstOrCreate(
+            ['user_id' => $user->id, 'konten_id' => $kontenId],
+            ['status' => 'belum_dibaca', 'progress' => 0]
         );
-    }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'konten_id' => 'required|exists:konten_edukasi,id',
-            'status' => 'required|in:belum_dibaca,sedang,selesai',
-            'progress' => 'required|integer|min:0|max:100',
-            'selesai_pada' => 'nullable|date',
+        // Cegah dapat poin berkali-kali untuk konten yang sama
+        if ($progress->status === 'selesai') {
+            return back()->with('info', 'Konten ini sudah pernah kamu selesaikan.');
+        }
+
+        $progress->update([
+            'status' => 'selesai',
+            'progress' => 100,
+            'selesai_pada' => now(),
         ]);
 
-        UserEdukasiProgress::create([
-            'user_id' => $request->user_id,
-            'konten_id' => $request->konten_id,
-            'status' => $request->status,
-            'progress' => $request->progress,
-            'selesai_pada' => $request->selesai_pada,
+        PoinKontribusiLog::create([
+            'user_id' => $user->id,
+            'laporan_id' => null,
+            'jenis_aktivitas' => 'baca_edukasi',
+            'poin' => 10,
+            'keterangan' => 'Menyelesaikan konten edukasi: ' . $progress->konten->judul,
         ]);
 
-        return redirect()
-            ->route('user-edukasi-progress.index')
-            ->with('success', 'Progress edukasi berhasil ditambahkan.');
+        return redirect()->route('warga.user-edukasi.index')
+            ->with('success', 'Selamat! Kamu mendapat 10 poin kontribusi.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(UserEdukasiProgress $userEdukasiProgress)
-    {
-        $userEdukasiProgress->load([
-            'user',
-            'konten'
-        ]);
-
-        return view(
-            'UserEdukasiProgress.show',
-            compact('userEdukasiProgress')
-        );
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(UserEdukasiProgress $userEdukasiProgress)
-    {
-        $users = User::all();
-        $konten = KontenEdukasi::all();
-
-        return view(
-            'UserEdukasiProgress.edit',
-            compact(
-                'userEdukasiProgress',
-                'users',
-                'konten'
-            )
-        );
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(
-        Request $request,
-        UserEdukasiProgress $userEdukasiProgress
-    ) {
-        $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'konten_id' => 'required|exists:konten_edukasi,id',
-            'status' => 'required|in:belum_dibaca,sedang,selesai',
-            'progress' => 'required|integer|min:0|max:100',
-            'selesai_pada' => 'nullable|date',
-        ]);
-
-        $userEdukasiProgress->update([
-            'user_id' => $request->user_id,
-            'konten_id' => $request->konten_id,
-            'status' => $request->status,
-            'progress' => $request->progress,
-            'selesai_pada' => $request->selesai_pada,
-        ]);
-
-        return redirect()
-            ->route('user-edukasi-progress.index')
-            ->with('success', 'Progress edukasi berhasil diperbarui.');
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(UserEdukasiProgress $userEdukasiProgress)
-    {
-        $userEdukasiProgress->delete();
-
-        return redirect()
-            ->route('user-edukasi-progress.index')
-            ->with('success', 'Progress edukasi berhasil dihapus.');
-    }
+    // create(), store(), edit(), update(), destroy() generik TIDAK ADA.
+    // Progress dibuat otomatis saat warga membuka konten (lihat show()),
+    // dan diselesaikan lewat method tandaiSelesai(), bukan form CRUD manual.
 }

@@ -3,63 +3,46 @@
 namespace App\Http\Controllers\Warga;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Models\Notifikasi;
+use Illuminate\Support\Facades\Auth;
 
 class NotifikasiController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Tampilkan semua notifikasi terkait laporan milik warga yang login.
      */
     public function index()
     {
-        //
+        $notifikasis = Notifikasi::whereHas('laporan', function ($query) {
+            $query->where('user_id', Auth::id());
+        })
+            ->with('laporan')
+            ->latest()
+            ->get();
+
+        return view('warga.notifikasi.index', compact('notifikasis'));
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
+     * Tampilkan detail 1 notifikasi (pastikan terkait laporan milik warga ini).
      */
     public function show(string $id)
     {
-        //
+        $notifikasi = Notifikasi::whereHas('laporan', function ($query) {
+            $query->where('user_id', Auth::id());
+        })
+            ->with('laporan')
+            ->findOrFail($id);
+
+        // Tandai sudah dibaca saat dibuka
+        if (!$notifikasi->dibaca) {
+            $notifikasi->update(['dibaca' => true]);
+        }
+
+        return view('warga.notifikasi.show', compact('notifikasi'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
+    // create(), store(), edit(), update(), destroy() TIDAK ADA.
+    // Notifikasi dibuat otomatis oleh sistem (saat laporan diverifikasi,
+    // ditugaskan, selesai, dll), bukan diinput manual oleh warga.
 }

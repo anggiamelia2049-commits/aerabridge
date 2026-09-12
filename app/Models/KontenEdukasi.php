@@ -23,4 +23,9 @@ class KontenEdukasi extends Model
     {
         return $this->belongsTo(User::class, 'penulis');
     }
+
+    public function progress()
+    {
+        return $this->hasMany(UserEdukasiProgress::class, 'konten_id');
+    }
 }

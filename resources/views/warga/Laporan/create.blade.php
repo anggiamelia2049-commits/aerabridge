@@ -1,161 +1,127 @@
-<form
-    action="{{ route('laporan.store') }}"
-    method="POST"
-    enctype="multipart/form-data"
->
-    @csrf
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            Buat Laporan Baru
+        </h2>
+    </x-slot>
 
-    <label>Kategori:</label>
-    <select name="kategori_id" required>
-        <option value="">Pilih Kategori</option>
+    <div class="py-6">
+        <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white shadow rounded-lg p-6">
 
-        @foreach ($kategoris as $v)
-            <option
-                value="{{ $v->id }}"
-                {{ old('kategori_id') == $v->id ? 'selected' : '' }}
-            >
-                {{ $v->nama_kategori }}
-            </option>
-        @endforeach
-    </select>
+                @if ($errors->any())
+                    <div class="mb-4 p-4 bg-red-100 text-red-700 rounded">
+                        <ul class="list-disc list-inside">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
 
-    @error('kategori_id')
-        <span>{{ $message }}</span>
-    @enderror
+                <form action="{{ route('warga.laporan.store') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
 
-    <br><br>
+                    <div class="mb-4">
+                        <label class="block font-medium mb-1">Kategori Kerusakan</label>
+                        <select name="kategori_id" class="w-full border rounded p-2" required>
+                            <option value="">-- Pilih Kategori --</option>
+                            @foreach ($kategoris as $kategori)
+                                <option value="{{ $kategori->id }}" {{ old('kategori_id') == $kategori->id ? 'selected' : '' }}>
+                                    {{ $kategori->nama }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
 
-    <label>Instansi:</label>
-    <select name="instansi_id" required>
-        <option value="">Pilih Instansi</option>
+                    <div class="mb-4">
+                        <label class="block font-medium mb-1">Instansi Tujuan</label>
+                        <select name="instansi_id" class="w-full border rounded p-2" required>
+                            <option value="">-- Pilih Instansi --</option>
+                            @foreach ($instansis as $instansi)
+                                <option value="{{ $instansi->id }}" {{ old('instansi_id') == $instansi->id ? 'selected' : '' }}>
+                                    {{ $instansi->nama_instansi }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
 
-        @foreach ($instansis as $v)
-            <option
-                value="{{ $v->id }}"
-                {{ old('instansi_id') == $v->id ? 'selected' : '' }}
-            >
-                {{ $v->nama_instansi }}
-            </option>
-        @endforeach
-    </select>
+                    <div class="mb-4">
+                        <label class="block font-medium mb-1">Judul Laporan</label>
+                        <input type="text" name="judul" value="{{ old('judul') }}"
+                               class="w-full border rounded p-2" required>
+                    </div>
 
-    @error('instansi_id')
-        <span>{{ $message }}</span>
-    @enderror
+                    <div class="mb-4">
+                        <label class="block font-medium mb-1">Deskripsi</label>
+                        <textarea name="deskripsi" rows="4" class="w-full border rounded p-2" required>{{ old('deskripsi') }}</textarea>
+                    </div>
 
-    <br><br>
+                    <div class="mb-4">
+                        <label class="block font-medium mb-1">Foto Kerusakan</label>
+                        <input type="file" name="foto" accept="image/*" capture="environment"
+                               class="w-full border rounded p-2" required>
+                        <p class="text-xs text-gray-500 mt-1">Format JPG/PNG, maksimal 5MB.</p>
+                    </div>
 
-    <label>Judul:</label>
-    <input
-        type="text"
-        name="judul"
-        value="{{ old('judul') }}"
-        required
-    >
+                    <div class="mb-4">
+                        <label class="block font-medium mb-1">Alamat / Patokan Lokasi</label>
+                        <input type="text" name="alamat" value="{{ old('alamat') }}"
+                               class="w-full border rounded p-2" placeholder="Contoh: Depan Indomaret, Jl. Merdeka">
+                    </div>
 
-    @error('judul')
-        <span>{{ $message }}</span>
-    @enderror
+                    <div class="mb-4 grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block font-medium mb-1">Latitude</label>
+                            <input type="text" name="latitude" id="latitude" value="{{ old('latitude') }}"
+                                   class="w-full border rounded p-2 bg-gray-100" readonly required>
+                        </div>
+                        <div>
+                            <label class="block font-medium mb-1">Longitude</label>
+                            <input type="text" name="longitude" id="longitude" value="{{ old('longitude') }}"
+                                   class="w-full border rounded p-2 bg-gray-100" readonly required>
+                        </div>
+                    </div>
 
-    <br><br>
+                    <div class="mb-6">
+                        <button type="button" onclick="ambilLokasi()"
+                                class="bg-gray-200 text-gray-800 px-4 py-2 rounded hover:bg-gray-300">
+                            📍 Ambil Lokasi Saat Ini
+                        </button>
+                        <span id="statusLokasi" class="text-sm text-gray-500 ml-2"></span>
+                    </div>
 
-    <label>Deskripsi:</label>
-    <textarea
-        name="deskripsi"
-        required
-    >{{ old('deskripsi') }}</textarea>
+                    <div class="flex justify-end gap-2">
+                        <a href="{{ route('warga.laporan.index') }}"
+                           class="px-4 py-2 rounded border">Batal</a>
+                        <button type="submit"
+                                class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">
+                            Kirim Laporan
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
-    @error('deskripsi')
-        <span>{{ $message }}</span>
-    @enderror
-
-    <br><br>
-
-    <label>Foto:</label>
-    <input
-        type="file"
-        name="foto"
-        accept="image/jpeg,image/png"
-    >
-
-    @error('foto')
-        <span>{{ $message }}</span>
-    @enderror
-
-    <br><br>
-
-    <label>Latitude:</label>
-    <input
-        type="text"
-        name="latitude"
-        value="{{ old('latitude') }}"
-        required
-    >
-
-    @error('latitude')
-        <span>{{ $message }}</span>
-    @enderror
-
-    <br><br>
-
-    <label>Longitude:</label>
-    <input
-        type="text"
-        name="longitude"
-        value="{{ old('longitude') }}"
-        required
-    >
-
-    @error('longitude')
-        <span>{{ $message }}</span>
-    @enderror
-
-    <br><br>
-
-    <label>Alamat:</label>
-    <textarea name="alamat">{{ old('alamat') }}</textarea>
-
-    @error('alamat')
-        <span>{{ $message }}</span>
-    @enderror
-
-    <br><br>
-
-    <label>Tingkat Prioritas:</label>
-    <select name="tingkat_prioritas">
-        <option
-            value="Krisis"
-            {{ old('tingkat_prioritas', 'Sedang') == 'Krisis' ? 'selected' : '' }}
-        >
-            Krisis
-        </option>
-
-        <option
-            value="Sedang"
-            {{ old('tingkat_prioritas', 'Sedang') == 'Sedang' ? 'selected' : '' }}
-        >
-            Sedang
-        </option>
-
-        <option
-            value="Rendah"
-            {{ old('tingkat_prioritas', 'Sedang') == 'Rendah' ? 'selected' : '' }}
-        >
-            Rendah
-        </option>
-    </select>
-
-    @error('tingkat_prioritas')
-        <span>{{ $message }}</span>
-    @enderror
-
-    <br><br>
-
-    <button type="submit">
-        Simpan Laporan
-    </button>
-
-    <a href="{{ route('laporan.index') }}">
-        Kembali
-    </a>
-</form>
+    <script>
+        function ambilLokasi() {
+            const status = document.getElementById('statusLokasi');
+            if (!navigator.geolocation) {
+                status.textContent = 'Browser tidak mendukung Geolocation.';
+                return;
+            }
+            status.textContent = 'Mengambil lokasi...';
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    document.getElementById('latitude').value = position.coords.latitude;
+                    document.getElementById('longitude').value = position.coords.longitude;
+                    status.textContent = 'Lokasi berhasil dikunci ✅';
+                },
+                (error) => {
+                    status.textContent = 'Gagal mengambil lokasi: ' + error.message;
+                }
+            );
+        }
+    </script>
+</x-app-layout>

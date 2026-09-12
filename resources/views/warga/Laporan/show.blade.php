@@ -1,73 +1,76 @@
-<table border="1">
-    <tr>
-        <th>User</th>
-        <td>{{ $laporan->user->name ?? '-' }}</td>
-    </tr>
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            Detail Laporan
+        </h2>
+    </x-slot>
 
-    <tr>
-        <th>Kategori</th>
-        <td>{{ $laporan->kategori->nama_kategori ?? '-' }}</td>
-    </tr>
+    <div class="py-6">
+        <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white shadow rounded-lg p-6">
 
-    <tr>
-        <th>Instansi</th>
-        <td>{{ $laporan->instansi->nama_instansi ?? '-' }}</td>
-    </tr>
+                @if (session('success'))
+                    <div class="mb-4 p-4 bg-green-100 text-green-700 rounded">
+                        {{ session('success') }}
+                    </div>
+                @endif
 
-    <tr>
-        <th>Judul</th>
-        <td>{{ $laporan->judul }}</td>
-    </tr>
+                <h3 class="text-xl font-semibold mb-1">{{ $laporan->judul }}</h3>
+                <p class="text-sm text-gray-500 mb-4">
+                    Dilaporkan pada {{ $laporan->created_at->format('d M Y, H:i') }}
+                </p>
 
-    <tr>
-        <th>Deskripsi</th>
-        <td>{{ $laporan->deskripsi }}</td>
-    </tr>
+                @if ($laporan->foto)
+                    <img src="{{ Storage::url($laporan->foto) }}" alt="Foto laporan"
+                         class="w-full max-h-96 object-cover rounded mb-4">
+                @endif
 
-    <tr>
-        <th>Foto</th>
-        <td>
-            @if ($laporan->foto)
-                <img src="{{ asset('storage/' . $laporan->foto) }}" width="200">
-            @else
-                Tidak ada foto
-            @endif
-        </td>
-    </tr>
+                <div class="grid grid-cols-2 gap-4 mb-4 text-sm">
+                    <div>
+                        <span class="text-gray-500">Kategori</span>
+                        <p class="font-medium">{{ $laporan->kategori->nama ?? '-' }}</p>
+                    </div>
+                    <div>
+                        <span class="text-gray-500">Instansi Tujuan</span>
+                        <p class="font-medium">{{ $laporan->instansi->nama_instansi ?? '-' }}</p>
+                    </div>
+                    <div>
+                        <span class="text-gray-500">Tingkat Prioritas</span>
+                        <p class="font-medium">{{ $laporan->tingkat_prioritas }}</p>
+                    </div>
+                    <div>
+                        <span class="text-gray-500">Status</span>
+                        <p class="font-medium">{{ $laporan->status }}</p>
+                    </div>
+                    <div>
+                        <span class="text-gray-500">Alamat</span>
+                        <p class="font-medium">{{ $laporan->alamat ?? '-' }}</p>
+                    </div>
+                    <div>
+                        <span class="text-gray-500">Diverifikasi Oleh</span>
+                        <p class="font-medium">{{ $laporan->diverifikasiOleh->nama ?? 'Belum diverifikasi' }}</p>
+                    </div>
+                </div>
 
-    <tr>
-        <th>Latitude</th>
-        <td>{{ $laporan->latitude }}</td>
-    </tr>
+                <div class="mb-4">
+                    <span class="text-gray-500 text-sm">Deskripsi</span>
+                    <p class="mt-1">{{ $laporan->deskripsi }}</p>
+                </div>
 
-    <tr>
-        <th>Longitude</th>
-        <td>{{ $laporan->longitude }}</td>
-    </tr>
+                <div class="mb-4">
+                    <span class="text-gray-500 text-sm">Koordinat Lokasi</span>
+                    <p class="mt-1">{{ $laporan->latitude }}, {{ $laporan->longitude }}</p>
+                    <a href="https://www.google.com/maps?q={{ $laporan->latitude }},{{ $laporan->longitude }}"
+                       target="_blank" class="text-indigo-600 text-sm hover:underline">
+                        Lihat di Google Maps
+                    </a>
+                </div>
 
-    <tr>
-        <th>Alamat</th>
-        <td>{{ $laporan->alamat }}</td>
-    </tr>
-
-    <tr>
-        <th>Tingkat Prioritas</th>
-        <td>{{ $laporan->tingkat_prioritas }}</td>
-    </tr>
-
-    <tr>
-        <th>Status</th>
-        <td>{{ $laporan->status }}</td>
-    </tr>
-
-    <tr>
-        <th>Diverifikasi Oleh</th>
-        <td>{{ $laporan->diverifikasiOleh->name ?? '-' }}</td>
-    </tr>
-</table>
-
-<br>
-
-<a href="{{ route('laporan.index') }}">Back</a>
-
-<a href="{{ route('laporan.edit', $laporan->id) }}">Edit</a>
+                <div class="flex justify-end">
+                    <a href="{{ route('warga.laporan.index') }}"
+                       class="px-4 py-2 rounded border">Kembali</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</x-app-layout>
