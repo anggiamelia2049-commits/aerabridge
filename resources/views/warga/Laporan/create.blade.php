@@ -58,10 +58,31 @@
                     </div>
 
                     <div class="mb-4">
-                        <label class="block font-medium mb-1">Foto Kerusakan</label>
-                        <input type="file" name="foto" accept="image/*" capture="environment"
-                               class="w-full border rounded p-2" required>
-                        <p class="text-xs text-gray-500 mt-1">Format JPG/PNG, maksimal 5MB.</p>
+                        <label class="block font-medium mb-1">Foto Kerusakan (Live Camera)</label>
+
+                        <div class="border rounded p-3 bg-gray-50">
+                            <video id="video" autoplay playsinline class="w-full rounded mb-2" style="display:none;"></video>
+                            <canvas id="canvas" style="display:none;"></canvas>
+                            <img id="hasilFoto" class="w-full rounded mb-2" style="display:none;">
+
+                            <div class="flex gap-2">
+                                <button type="button" onclick="nyalakanKamera()" id="btnNyalakan"
+                                        class="bg-gray-700 text-white px-4 py-2 rounded">
+                                    🎥 Nyalakan Kamera
+                                </button>
+                                <button type="button" onclick="ambilFoto()" id="btnAmbil"
+                                        class="bg-indigo-600 text-white px-4 py-2 rounded" style="display:none;">
+                                    📸 Ambil Foto
+                                </button>
+                                <button type="button" onclick="ulangiFoto()" id="btnUlangi"
+                                        class="bg-gray-400 text-white px-4 py-2 rounded" style="display:none;">
+                                    🔄 Ulangi
+                                </button>
+                            </div>
+                            <p id="statusKamera" class="text-xs text-gray-500 mt-2"></p>
+                        </div>
+
+                        <input type="hidden" name="foto_base64" id="foto_base64" required>
                     </div>
 
                     <div class="mb-4">
@@ -123,5 +144,65 @@
                 }
             );
         }
+
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const hasilFoto = document.getElementById('hasilFoto');
+        const inputFotoBase64 = document.getElementById('foto_base64');
+        const statusKamera = document.getElementById('statusKamera');
+
+        let stream = null;
+
+        function nyalakanKamera() {
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(function (mediaStream) {
+                    stream = mediaStream;
+                    video.srcObject = stream;
+                    video.style.display = 'block';
+                    document.getElementById('btnNyalakan').style.display = 'none';
+                    document.getElementById('btnAmbil').style.display = 'inline-block';
+                    statusKamera.textContent = 'Kamera aktif, arahkan ke objek kerusakan.';
+                })
+                .catch(function (error) {
+                    statusKamera.textContent = 'Kamera tidak bisa digunakan: ' + error.message;
+                });
+        }
+
+        function ambilFoto() {
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+
+            const context = canvas.getContext('2d');
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            const foto = canvas.toDataURL('image/jpeg', 0.8);
+
+            hasilFoto.src = foto;
+            hasilFoto.style.display = 'block';
+            video.style.display = 'none';
+
+            inputFotoBase64.value = foto;
+
+            document.getElementById('btnAmbil').style.display = 'none';
+            document.getElementById('btnUlangi').style.display = 'inline-block';
+            statusKamera.textContent = 'Foto berhasil diambil ✅';
+
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+            }
+        }
+
+        function ulangiFoto() {
+            hasilFoto.style.display = 'none';
+            inputFotoBase64.value = '';
+            document.getElementById('btnUlangi').style.display = 'none';
+            document.getElementById('btnNyalakan').style.display = 'inline-block';
+            statusKamera.textContent = '';
+        }
+
+        window.ambilLokasi = ambilLokasi;
+        window.nyalakanKamera = nyalakanKamera;
+        window.ambilFoto = ambilFoto;
+        window.ulangiFoto = ulangiFoto;
     </script>
 </x-app-layout>
