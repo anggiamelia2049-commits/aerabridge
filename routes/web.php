@@ -1,22 +1,26 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\SuperAdmin\UserController;
-use App\Http\Controllers\SuperAdmin\AeraPayTransaksiController;
-use App\Http\Controllers\SuperAdmin\DeteksiAiController;
-use App\Http\Controllers\SuperAdmin\HadiahController;
-use App\Http\Controllers\SuperAdmin\InstansiController;
-use App\Http\Controllers\SuperAdmin\KategoriKerusakanController;
-use App\Http\Controllers\SuperAdmin\KontenEdukasiController;
-use App\Http\Controllers\SuperAdmin\NotifikasiController;
-use App\Http\Controllers\SuperAdmin\PenugasanController;
-use App\Http\Controllers\SuperAdmin\SlaKonfigurasiController;
-use App\Http\Controllers\SuperAdmin\TemplatePesanController;
-use App\Http\Controllers\SuperAdmin\TimSatgasController;
+use App\Http\Controllers\SuperAdmin\UserController as SuperAdminUserController;
+use App\Http\Controllers\SuperAdmin\AeraPayTransaksiController as SuperAdminAeraPayTransaksiController;
+use App\Http\Controllers\SuperAdmin\DeteksiAiController as SuperAdminDeteksiAiController;
+use App\Http\Controllers\SuperAdmin\HadiahController as SuperAdminHadiahController;
+use App\Http\Controllers\SuperAdmin\InstansiController as SuperAdminInstansiController;
+use App\Http\Controllers\SuperAdmin\KategoriKerusakanController as SuperAdminKategoriKerusakanController;
+use App\Http\Controllers\SuperAdmin\KontenEdukasiController as SuperAdminKontenEdukasiController;
+use App\Http\Controllers\SuperAdmin\NotifikasiController as SuperAdminNotifikasiController;
+use App\Http\Controllers\SuperAdmin\PenugasanController as SuperAdminPenugasanController;
+use App\Http\Controllers\SuperAdmin\SlaKonfigurasiController as SuperAdminSlaKonfigurasiController;
+use App\Http\Controllers\SuperAdmin\TemplatePesanController as SuperAdminTemplatePesanController;
+use App\Http\Controllers\SuperAdmin\TimSatgasController as SuperAdminTimSatgasController;
 use App\Http\Controllers\SuperAdmin\LaporanController as SuperAdminLaporanController;
+
 use App\Http\Controllers\Warga\LaporanController as WargaLaporanController;
-use App\Http\Controllers\Warga\PoinKontribusiController;
-use App\Http\Controllers\UserEdukasiProgressController;
+use App\Http\Controllers\Warga\PoinKontribusiController as WargaPoinKontribusiController;
+use App\Http\Controllers\Warga\UserEdukasiProgressController as WargaUserEdukasiProgressController;
+use App\Http\Controllers\Warga\NotifikasiController as WargaNotifikasiControlller;
+use App\Http\Controllers\Warga\AeraPayController as WargaAeraPayController;
+
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -34,16 +38,29 @@ Route::middleware('auth')->group(function () {
 
     // ==== Khusus Super Admin ====
     Route::middleware('role:super_admin')->group(function () {
-        Route::resource('user', UserController::class);
-        Route::resource('instansi', InstansiController::class);
+        Route::resource('user', SuperAdminUserController::class);
+        Route::resource('instansi', SuperAdminInstansiController::class);
         Route::resource('laporan', SuperAdminLaporanController::class);
-        Route::resource('kategori', KategoriKerusakanController::class);
-        Route::resource('tim-satgas', TimSatgasController::class);
-        Route::resource('sla-konfigurasi', SlaKonfigurasiController::class);
-        Route::resource('template-pesan', TemplatePesanController::class);
-        Route::resource('hadiah', HadiahController::class);
-        Route::resource('konten-edukasi', KontenEdukasiController::class);
-        Route::resource('aeraPay', AeraPayTransaksiController::class);
+        Route::resource('kategori', SuperAdminKategoriKerusakanController::class);
+        Route::resource('tim-satgas', SuperAdminTimSatgasController::class);
+        Route::resource('sla-konfigurasi', SuperAdminSlaKonfigurasiController::class);
+        Route::resource('template-pesan', SuperAdminTemplatePesanController::class);
+        Route::resource('hadiah', SuperAdminHadiahController::class);
+        Route::resource('konten-edukasi', SuperAdminKontenEdukasiController::class);
+        Route::resource('deteksi-ai', SuperAdminDeteksiAiController::class);
+        Route::resource('notifikasi', SuperAdminNotifikasiController::class);
+        Route::resource('penugasan', SuperAdminPenugasanController::class);
+        Route::resource('aeraPay', SuperAdminAeraPayTransaksiController::class);
+        Route::resource('aeraPay', SuperAdminAeraPayTransaksiController::class);
+    });
+
+    // ==== Khusus Warga ====
+    Route::middleware('role:warga')->group(function () {
+        Route::resource('laporan', WargaLaporanController::class);
+        Route::resource('notifikasi', WargaNotifikasiControlller::class);
+        Route::resource('poin', WargaPoinKontribusiController::class);
+        Route::resource('aeraPay', WargaAeraPayController::class);
+        Route::resource('user-edukasi', WargaUserEdukasiProgressController::class);
     });
 
 });

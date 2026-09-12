@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Warga;
 
+use App\Http\Controllers\Controller;
 use App\Models\UserEdukasiProgress;
 use App\Models\User;
 use App\Models\KontenEdukasi;
