@@ -63,5 +63,15 @@ Route::middleware('auth')->group(function () {
         Route::resource('user-edukasi', WargaUserEdukasiProgressController::class);
     });
 
+
+Route::middleware('role:petugas')->group(function () {
+        Route::resource('laporan', UserController::class);
+        Route::resource('penugasan', PetugasPenugasanController::class);
+        Route::resource('laporan', SuperAdminLaporanController::class);
+        
+    });
+
+
+
 });
 require __DIR__.'/auth.php';

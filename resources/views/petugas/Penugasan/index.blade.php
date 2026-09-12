@@ -1,43 +1,49 @@
-<table border="1">
-    <tr>
-        <th>No</th>
-        <th>Laporan</th>
-        <th>Tim Petugas</th>
-        <th>Petugas</th>
-        <th>Status</th>
-        <th>Tanggal Penugasan</th>
-        <th>Tanggal Selesai</th>
-        <th>Catatan</th>
-        <th>
-            <a href="{{ route('penugasan.create') }}">Tambah Penugasan</a>
-        </th>
-    </tr>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Daftar Tugas Saya</title>
+</head>
+<body>
 
-    @forelse ($penugasan as $v)
-    <tr>
-        <td>{{ $loop->iteration }}</td>
-        <td>{{ $v->laporan->judul ?? '-' }}</td>
-        <td>{{ $v->timSatgas->nama_tim ?? '-' }}</td>
-        <td>{{ $v->petugas->name ?? '-' }}</td>
-        <td>{{ $v->status }}</td>
-        <td>{{ $v->tanggal_penugasan }}</td>
-        <td>{{ $v->tanggal_selesai }}</td>
-        <td>{{ $v->catatan }}</td>
-        <td>
-            <a href="{{ route('penugasan.edit', $v->id) }}">Edit</a>
+    <h1>Daftar Tugas Saya</h1>
 
-            <form action="{{ route('penugasan.destroy', $v->id) }}" method="POST" style="display:inline">
-                @csrf
-                @method('DELETE')
-                <button type="submit" onclick="return confirm('Are you sure you want to delete this penugasan?')">
-                    Delete
-                </button>
-            </form>
-        </td>
-    </tr>
-    @empty
-    <tr>
-        <td colspan="9">Belum ada data penugasan.</td>
-    </tr>
-    @endforelse
-</table>
+    @if (session('success'))
+        <p><strong>{{ session('success') }}</strong></p>
+    @endif
+    @if (session('error'))
+        <p><strong>{{ session('error') }}</strong></p>
+    @endif
+
+    <p>
+        <a href="{{ route('petugas.penugasan.index') }}">Semua</a> |
+        <a href="{{ route('petugas.penugasan.index', ['filter' => 'aktif']) }}">Aktif</a> |
+        <a href="{{ route('petugas.penugasan.index', ['filter' => 'prioritas']) }}">Prioritas</a> |
+        <a href="{{ route('petugas.penugasan.index', ['filter' => 'selesai']) }}">Selesai</a>
+    </p>
+
+    <table border="1" cellpadding="5">
+        <tr>
+            <th>Kategori</th>
+            <th>Lokasi</th>
+            <th>Prioritas</th>
+            <th>Status</th>
+            <th>Aksi</th>
+        </tr>
+
+        @forelse ($penugasan as $tugas)
+            <tr>
+                <td>{{ $tugas->laporan->kategori_kerusakan ?? '-' }}</td>
+                <td>{{ $tugas->laporan->lokasi ?? '-' }}</td>
+                <td>{{ $tugas->laporan->prioritas ?? '-' }}</td>
+                <td>{{ $tugas->status }}</td>
+                <td><a href="{{ route('petugas.penugasan.show', $tugas->id) }}">Lihat Detail</a></td>
+            </tr>
+        @empty
+            <tr>
+                <td colspan="5">Belum ada tugas.</td>
+            </tr>
+        @endforelse
+    </table>
+
+</body>
+</html>
