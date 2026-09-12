@@ -9,13 +9,15 @@ class Penugasan extends Model
     protected $table = 'penugasan';
 
     protected $fillable = [
-        'laporan_id',
-        'tim_satgas_id',
-        'petugas_id',
-        'status',
-        'tanggal_penugasan',
-        'tanggal_selesai',
-        'catatan',
+    'laporan_id',
+    'tim_satgas_id',
+    'petugas_id',
+    'status',
+    'tanggal_penugasan',
+    'tanggal_selesai',
+    'catatan',
+    'foto_hasil',
+    'catatan_penyelesaian',
     ];
 
     // Relasi ke Laporan

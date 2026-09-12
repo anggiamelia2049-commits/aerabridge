@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
 use App\Models\KategoriKerusakan;
 use App\Models\Instansi;
+use App\Models\Penugasan;
 
 class Laporan extends Model
 {
@@ -48,6 +49,11 @@ class Laporan extends Model
             Instansi::class,
             'instansi_id'
         );
+    }
+
+    public function penugasan()
+    {
+        return $this->hasMany(Penugasan::class, 'laporan_id');
     }
 
     // User yang melakukan verifikasi

@@ -59,5 +59,3 @@
 </table>
 
 <br>
-
-<a href="{{ route('Laporan.create') }}">Tambah Laporan</a>
