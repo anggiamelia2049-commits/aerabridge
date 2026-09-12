@@ -72,6 +72,10 @@ Route::middleware('auth')->group(function () {
         Route::resource('penugasan', PetugasPenugasanController::class);
         Route::resource('notifikasi', PetugasNotifikasiController::class);
     });
+
+    Route::get('/test-camera', function () {
+    return view('test-camera');
+});
 });
 
 require __DIR__.'/auth.php';
