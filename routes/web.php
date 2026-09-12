@@ -18,8 +18,12 @@ use App\Http\Controllers\SuperAdmin\LaporanController as SuperAdminLaporanContro
 use App\Http\Controllers\Warga\LaporanController as WargaLaporanController;
 use App\Http\Controllers\Warga\PoinKontribusiController as WargaPoinKontribusiController;
 use App\Http\Controllers\Warga\UserEdukasiProgressController as WargaUserEdukasiProgressController;
-use App\Http\Controllers\Warga\NotifikasiController as WargaNotifikasiControlller;
+use App\Http\Controllers\Warga\NotifikasiController as WargaNotifikasiController;
 use App\Http\Controllers\Warga\AeraPayController as WargaAeraPayController;
+
+use App\Http\Controllers\Petugas\LaporanController as PetugasLaporanController;
+use App\Http\Controllers\Petugas\PenugasanController as PetugasPenugasanController;
+use App\Http\Controllers\Petugas\NotifikasiController as PetugasNotifikasiController;
 
 use Illuminate\Support\Facades\Route;
 
@@ -51,27 +55,23 @@ Route::middleware('auth')->group(function () {
         Route::resource('notifikasi', SuperAdminNotifikasiController::class);
         Route::resource('penugasan', SuperAdminPenugasanController::class);
         Route::resource('aeraPay', SuperAdminAeraPayTransaksiController::class);
-        Route::resource('aeraPay', SuperAdminAeraPayTransaksiController::class);
     });
 
     // ==== Khusus Warga ====
-    Route::middleware('role:warga')->group(function () {
+    Route::name('warga.')->prefix('warga')->middleware('role:warga')->group(function () {
         Route::resource('laporan', WargaLaporanController::class);
-        Route::resource('notifikasi', WargaNotifikasiControlller::class);
-        Route::resource('poin', WargaPoinKontribusiController::class);
-        Route::resource('aeraPay', WargaAeraPayController::class);
+        Route::resource('notifikasi', WargaNotifikasiController::class);
+        Route::resource('poin', WargaPoinKontribusiController::class)->only(['index']);
+        Route::resource('aeraPay', WargaAeraPayController::class)->only(['index', 'show', 'create', 'store']);
         Route::resource('user-edukasi', WargaUserEdukasiProgressController::class);
     });
 
-
-Route::middleware('role:petugas')->group(function () {
-        Route::resource('laporan', UserController::class);
+    // ==== Khusus Petugas ====
+    Route::name('petugas.')->prefix('petugas')->middleware('role:petugas')->group(function () {
+        Route::resource('laporan', PetugasLaporanController::class);
         Route::resource('penugasan', PetugasPenugasanController::class);
-        Route::resource('laporan', SuperAdminLaporanController::class);
-        
+        Route::resource('notifikasi', PetugasNotifikasiController::class);
     });
-
-
-
 });
+
 require __DIR__.'/auth.php';
