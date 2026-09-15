@@ -58,7 +58,7 @@
                     </div>
 
                     <div class="mb-4">
-                        <label class="block font-medium mb-1">Foto Kerusakan (Live Camera)</label>
+                        <label class="block font-medium mb-1">Foto Kerusakan (Live Camera) <span class="text-red-500">*Wajib</span></label>
 
                         <div class="border rounded p-3 bg-gray-50">
                             <video id="video" autoplay playsinline class="w-full rounded mb-2" style="display:none;"></video>
@@ -83,6 +83,19 @@
                         </div>
 
                         <input type="hidden" name="foto_base64" id="foto_base64" required>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="block font-medium mb-1">
+                            📎 Lampiran Tambahan <span class="text-gray-400 font-normal">(Opsional)</span>
+                        </label>
+                        <input type="file" name="lampiran" accept="image/*,.pdf"
+                            class="w-full border rounded p-2">
+                        <p class="text-xs text-gray-500 mt-1">
+                            Bisa berupa foto pendukung lain atau dokumen terkait (JPG, PNG, PDF, maks 5MB).
+                        </p>
+                    </div>
+
                     </div>
 
                     <div class="mb-4">

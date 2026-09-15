@@ -1,4 +1,4 @@
-<form action="{{ route('kategori.update', $kategori->id) }}" method="POST">
+<form action="{{ route('super_admin.kategori.update', $kategori->id) }}" method="POST">
 
     @csrf
     @method('PUT')
@@ -93,7 +93,7 @@
         Update
     </button>
 
-    <a href="{{ route('kategori.index') }}">
+    <a href="{{ route('super_admin.kategori.index') }}">
         Back
     </a>
 

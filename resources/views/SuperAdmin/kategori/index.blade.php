@@ -7,7 +7,7 @@
         <th>Warna Marker</th>
         <th>Status</th>
         <th>
-            <a href="{{ route('kategori.create') }}">Tambah Data</a>
+            <a href="{{ route('super_admin.kategori.create') }}">Tambah Data</a>
         </th>
     </tr>
 
@@ -36,16 +36,16 @@
         </td>
 
         <td>
-            <a href="{{ route('kategori.show', $v->id) }}">
+            <a href="{{ route('super_admin.kategori.create', $v->id) }}">
                 Detail
             </a>
 
-            <a href="{{ route('kategori.edit', $v->id) }}">
+            <a href="{{ route('super_admin.kategori.edit', $v->id) }}">
                 Edit
             </a>
 
             <form
-                action="{{ route('kategori.destroy', $v->id) }}"
+                action="{{ route('super_admin.kategori.destroy', $v->id) }}"
                 method="POST"
                 style="display: inline;"
             >

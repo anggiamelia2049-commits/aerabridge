@@ -23,6 +23,27 @@
                 @if ($laporan->foto)
                     <img src="{{ Storage::url($laporan->foto) }}" alt="Foto laporan"
                          class="w-full max-h-96 object-cover rounded mb-4">
+
+                         @if ($laporan->lampiran)
+                    <div class="mb-4">
+                        <span class="text-gray-500 text-sm">Lampiran Tambahan</span>
+                        <div class="mt-1">
+                            @php
+                                $ekstensi = pathinfo($laporan->lampiran, PATHINFO_EXTENSION);
+                            @endphp
+
+                            @if (in_array(strtolower($ekstensi), ['jpg', 'jpeg', 'png']))
+                                <img src="{{ Storage::url($laporan->lampiran) }}" alt="Lampiran"
+                                    class="w-full max-h-64 object-cover rounded">
+                            @else
+                                <a href="{{ Storage::url($laporan->lampiran) }}" target="_blank"
+                                class="text-indigo-600 hover:underline">
+                                    📎 Lihat Lampiran (PDF)
+                                </a>
+                            @endif
+                        </div>
+                    </div>
+                @endif
                 @endif
 
                 <div class="grid grid-cols-2 gap-4 mb-4 text-sm">

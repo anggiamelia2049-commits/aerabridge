@@ -16,11 +16,6 @@
 
             <div class="bg-white shadow rounded-lg p-6">
                 <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-lg font-semibold">Daftar Laporan</h3>
-                    <a href="{{ route('warga.laporan.create') }}"
-                       class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">
-                        + Buat Laporan
-                    </a>
                 </div>
 
                 <table class="w-full text-sm text-left">
@@ -32,7 +27,7 @@
                             <th class="px-4 py-2">Prioritas</th>
                             <th class="px-4 py-2">Status</th>
                             <th class="px-4 py-2">Tanggal</th>
-                            <th class="px-4 py-2">Aksi</th>
+                            <th class="px-4 py-2"><a href="{{ route('warga.laporan.create') }}">Buat Laporan</a></th>
                         </tr>
                     </thead>
                     <tbody>

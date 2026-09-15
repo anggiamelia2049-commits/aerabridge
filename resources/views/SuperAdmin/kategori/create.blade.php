@@ -1,4 +1,4 @@
-<form action="{{ route('kategori.store') }}" method="POST">
+<form action="{{ route('super_admin.kategori.store') }}" method="POST">
 
     @csrf
 
@@ -92,7 +92,7 @@
         Save
     </button>
 
-    <a href="{{ route('kategori.index') }}">
+    <a href="{{ route('super_admin.kategori.index') }}">
         Back
     </a>
 

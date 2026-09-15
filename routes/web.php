@@ -41,7 +41,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // ==== Khusus Super Admin ====
-    Route::middleware('role:super_admin')->group(function () {
+    Route::name('super_admin.')->prefix('super_admin')->middleware('role:super_admin')->group(function () {
         Route::resource('user', SuperAdminUserController::class);
         Route::resource('instansi', SuperAdminInstansiController::class);
         Route::resource('laporan', SuperAdminLaporanController::class);
@@ -72,7 +72,7 @@ Route::middleware('auth')->group(function () {
         Route::resource('penugasan', PetugasPenugasanController::class);
         Route::resource('notifikasi', PetugasNotifikasiController::class);
     });
-    
+
 });
 
 require __DIR__.'/auth.php';
