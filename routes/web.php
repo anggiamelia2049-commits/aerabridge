@@ -25,6 +25,12 @@ use App\Http\Controllers\Petugas\LaporanController as PetugasLaporanController;
 use App\Http\Controllers\Petugas\PenugasanController as PetugasPenugasanController;
 use App\Http\Controllers\Petugas\NotifikasiController as PetugasNotifikasiController;
 
+use App\Http\Controllers\Instansi\LaporanController as InstansiLaporanController;
+use App\Http\Controllers\Instansi\PenugasanController as InstansiPenugasanController;
+use App\Http\Controllers\Instansi\NotifikasiController as InstansiNotifikasiController;
+use App\Http\Controllers\Instansi\DeteksiAiController as InstansiDeteksiAiController;
+use App\Http\Controllers\Instansi\DashboardController as InstansiDashboardController;
+
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -73,6 +79,14 @@ Route::middleware('auth')->group(function () {
         Route::resource('notifikasi', PetugasNotifikasiController::class);
     });
 
+    // ==== Khusus Instansi ====
+    Route::name('instansi.')->prefix('instansi')->middleware('role:instansi')->group(function () {
+        Route::get('/dashboard', [InstansiDashboardController::class, 'index'])->name('dashboard');
+        Route::resource('laporan', InstansiLaporanController::class);
+        Route::resource('penugasan', InstansiPenugasanController::class);
+        Route::resource('notifikasi', InstansiNotifikasiController::class);
+        Route::resource('deteksi-ai', InstansiDeteksiAiController::class);
+    });
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
