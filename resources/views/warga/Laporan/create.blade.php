@@ -28,7 +28,7 @@
                             <option value="">-- Pilih Kategori --</option>
                             @foreach ($kategoris as $kategori)
                                 <option value="{{ $kategori->id }}" {{ old('kategori_id') == $kategori->id ? 'selected' : '' }}>
-                                    {{ $kategori->nama }}
+                                    {{ $kategori->nama_kategori }}
                                 </option>
                             @endforeach
                         </select>
@@ -95,9 +95,7 @@
                             Bisa berupa foto pendukung lain atau dokumen terkait (JPG, PNG, PDF, maks 5MB).
                         </p>
                     </div>
-
-                    </div>
-
+                    
                     <div class="mb-4">
                         <label class="block font-medium mb-1">Alamat / Patokan Lokasi</label>
                         <input type="text" name="alamat" value="{{ old('alamat') }}"

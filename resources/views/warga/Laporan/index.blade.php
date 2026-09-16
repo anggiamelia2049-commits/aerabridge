@@ -34,7 +34,7 @@
                         @forelse ($laporan as $item)
                             <tr class="border-b">
                                 <td class="px-4 py-2">{{ $item->judul }}</td>
-                                <td class="px-4 py-2">{{ $item->kategori->nama ?? '-' }}</td>
+                                <td class="px-4 py-2">{{ $item->kategori->nama_kategori ?? '-' }}</td>
                                 <td class="px-4 py-2">{{ $item->instansi->nama_instansi ?? '-' }}</td>
                                 <td class="px-4 py-2">
                                     <span @class([

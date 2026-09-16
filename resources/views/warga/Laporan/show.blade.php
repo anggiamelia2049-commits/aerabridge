@@ -49,7 +49,7 @@
                 <div class="grid grid-cols-2 gap-4 mb-4 text-sm">
                     <div>
                         <span class="text-gray-500">Kategori</span>
-                        <p class="font-medium">{{ $laporan->kategori->nama ?? '-' }}</p>
+                        <p class="font-medium">{{ $laporan->kategori->nama_kategori ?? '-' }}</p>
                     </div>
                     <div>
                         <span class="text-gray-500">Instansi Tujuan</span>

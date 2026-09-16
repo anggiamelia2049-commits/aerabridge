@@ -47,7 +47,7 @@ class KategoriKerusakanController extends Controller
             'status' => $request->status
         ]);
 
-        return redirect()->route('kategori.index')
+        return redirect()->route('SuperAdmin.kategori.index')
             ->with('success', 'Kategori Kerusakan berhasil ditambahkan.');
     }
 
