@@ -103,7 +103,7 @@ class KontenEdukasiController extends Controller
         ]);
 
         return redirect()
-            ->route('konten-edukasi.index')
+            ->route('super_admin.konten-edukasi.index')
             ->with('success', 'Konten edukasi berhasil diperbarui.');
     }
 
@@ -118,7 +118,7 @@ class KontenEdukasiController extends Controller
         $konten->delete();
 
         return redirect()
-            ->route('konten-edukasi.index')
+            ->route('super_admin.konten-edukasi.index')
             ->with('success', 'Konten edukasi berhasil dihapus.');
     }
 }

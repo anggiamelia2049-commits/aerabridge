@@ -151,7 +151,7 @@ class UserController extends Controller
         $user->update($data);
 
         return redirect()
-            ->route('user.index')
+            ->route('super_admin.user.index')
             ->with('success', 'User berhasil diperbarui.');
     }
 
@@ -169,7 +169,7 @@ class UserController extends Controller
         $user->delete();
 
         return redirect()
-            ->route('user.index')
+            ->route('super_admin.user.index')
             ->with('success', 'User berhasil dihapus.');
     }
 }

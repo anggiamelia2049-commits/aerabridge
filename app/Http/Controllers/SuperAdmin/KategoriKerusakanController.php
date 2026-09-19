@@ -57,7 +57,7 @@ class KategoriKerusakanController extends Controller
             'status' => $request->status
         ]);
 
-        return redirect()->route('SuperAdmin.kategori.index')
+        return redirect()->route('super_admin.kategori.index')
             ->with('success', 'Kategori Kerusakan berhasil ditambahkan.');
     }
 
@@ -93,7 +93,7 @@ class KategoriKerusakanController extends Controller
             'status' => $request->status
         ]);
 
-        return redirect()->route('SuperAdmin.kategori.index')
+        return redirect()->route('super_admin.kategori.index')
             ->with('success', 'Kategori Kerusakan berhasil diperbarui.');
     }
 
@@ -105,7 +105,7 @@ class KategoriKerusakanController extends Controller
         $kategori = KategoriKerusakan::findOrFail($id);
         $kategori->delete();
 
-        return redirect()->route('SuperAdmin.kategori.index')
+        return redirect()->route('super_admin.kategori.index')
             ->with('success', 'Kategori Kerusakan berhasil dihapus.');
     }
 }

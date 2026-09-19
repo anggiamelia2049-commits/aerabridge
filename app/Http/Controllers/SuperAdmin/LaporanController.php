@@ -166,7 +166,7 @@ class LaporanController extends Controller
         ]);
 
         return redirect()
-            ->route('laporan.index')
+            ->route('super_admin.laporan.index')
             ->with('success', 'Laporan berhasil diperbarui');
     }
 
@@ -184,7 +184,7 @@ class LaporanController extends Controller
         $laporan->delete();
 
         return redirect()
-            ->route('laporan.index')
+            ->route('super_admin.laporan.index')
             ->with('success', 'Laporan berhasil dihapus');
     }
 
@@ -205,7 +205,7 @@ class LaporanController extends Controller
         ]);
 
         return redirect()
-            ->route('laporan.index')
+            ->route('super_admin.laporan.index')
             ->with('success', 'Status laporan berhasil diperbarui');
     }
 }
