@@ -68,15 +68,15 @@
                             <div class="flex gap-2">
                                 <button type="button" onclick="nyalakanKamera()" id="btnNyalakan"
                                         class="bg-gray-700 text-white px-4 py-2 rounded">
-                                    🎥 Nyalakan Kamera
+                                    Nyalakan Kamera
                                 </button>
                                 <button type="button" onclick="ambilFoto()" id="btnAmbil"
                                         class="bg-indigo-600 text-white px-4 py-2 rounded" style="display:none;">
-                                    📸 Ambil Foto
+                                    Ambil Foto
                                 </button>
                                 <button type="button" onclick="ulangiFoto()" id="btnUlangi"
                                         class="bg-gray-400 text-white px-4 py-2 rounded" style="display:none;">
-                                    🔄 Ulangi
+                                    Ulangi
                                 </button>
                             </div>
                             <p id="statusKamera" class="text-xs text-gray-500 mt-2"></p>
@@ -87,7 +87,7 @@
 
                     <div class="mb-4">
                         <label class="block font-medium mb-1">
-                            📎 Lampiran Tambahan <span class="text-gray-400 font-normal">(Opsional)</span>
+                            Lampiran Tambahan <span class="text-gray-400 font-normal">(Opsional)</span>
                         </label>
                         <input type="file" name="lampiran" accept="image/*,.pdf"
                             class="w-full border rounded p-2">
