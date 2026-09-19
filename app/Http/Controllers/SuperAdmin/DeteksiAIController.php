@@ -53,7 +53,7 @@ class DeteksiAiController extends Controller
             'response_llm' => $request->response_llm,
         ]);
 
-        return redirect()->route('deteksi-ai.index')->with('success', 'Data deteksi AI berhasil ditambahkan.');
+        return redirect()->route('super-admin.deteksi-ai.index')->with('success', 'Data deteksi AI berhasil ditambahkan.');
     }
 
     /**
@@ -102,7 +102,7 @@ class DeteksiAiController extends Controller
             'response_llm' => $request->response_llm,
         ]);
 
-        return redirect()->route('deteksi-ai.index')->with('success', 'Data deteksi AI berhasil diperbarui.');
+        return redirect()->route('super_admin.deteksi-ai.index')->with('success', 'Data deteksi AI berhasil diperbarui.');
     }
 
     /**
@@ -112,6 +112,6 @@ class DeteksiAiController extends Controller
     {
         $deteksiAi = DeteksiAi::findOrFail($id);
         $deteksiAi->delete();
-        return redirect()->route('deteksi-ai.index')->with('success', 'Data deteksi AI berhasil dihapus.');
+        return redirect()->route('super_admin.deteksi-ai.index')->with('success', 'Data deteksi AI berhasil dihapus.');
     }
 }

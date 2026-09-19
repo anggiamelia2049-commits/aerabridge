@@ -115,7 +115,7 @@ class TimSatgasController extends Controller
         ]);
 
         return redirect()
-            ->route('tim-satgas.index')
+            ->route('super_admin.tim-satgas.index')
             ->with('success', 'Tim Satgas berhasil diperbarui.');
     }
 
@@ -127,7 +127,7 @@ class TimSatgasController extends Controller
         $timSatgas->delete();
 
         return redirect()
-            ->route('tim-satgas.index')
+            ->route('super_admin.tim-satgas.index')
             ->with('success', 'Tim Satgas berhasil dihapus.');
     }
 }

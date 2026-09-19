@@ -62,7 +62,7 @@ class PenugasanController extends Controller
         ]);
 
         return redirect()
-            ->route('penugasan.index')
+            ->route('super_admin.penugasan.index')
             ->with('success', 'Penugasan berhasil ditambahkan.');
     }
 
@@ -116,7 +116,7 @@ class PenugasanController extends Controller
         ]);
 
         return redirect()
-            ->route('penugasan.index')
+            ->route('super_admin.penugasan.index')
             ->with('success', 'Penugasan berhasil diperbarui.');
     }
 
@@ -125,7 +125,7 @@ class PenugasanController extends Controller
         $penugasan->delete();
 
         return redirect()
-            ->route('penugasan.index')
+            ->route('super_admin.penugasan.index')
             ->with('success', 'Penugasan berhasil dihapus.');
     }
 }

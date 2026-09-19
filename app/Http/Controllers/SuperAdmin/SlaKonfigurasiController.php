@@ -39,7 +39,7 @@ class SlaKonfigurasiController extends Controller
         ]);
 
         return redirect()
-            ->route('sla-konfigurasi.index')
+            ->route('super_admin.sla-konfigurasi.index')
             ->with('success', 'Konfigurasi SLA berhasil ditambahkan.');
     }
 
@@ -80,7 +80,7 @@ class SlaKonfigurasiController extends Controller
         ]);
 
         return redirect()
-            ->route('sla-konfigurasi.index')
+            ->route('super_admin.sla-konfigurasi.index')
             ->with('success', 'Konfigurasi SLA berhasil diperbarui.');
     }
 
@@ -88,7 +88,7 @@ class SlaKonfigurasiController extends Controller
     {
         $slaKonfigurasi->delete();
         return redirect()
-            ->route('sla-konfigurasi.index')
+            ->route('super_admin.sla-konfigurasi.index')
             ->with('success', 'Konfigurasi SLA berhasil dihapus.');
     }
 
