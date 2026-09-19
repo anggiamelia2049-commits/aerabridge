@@ -51,7 +51,7 @@ class TemplatePesanController extends Controller
         ]);
 
         return redirect()
-            ->route('template-pesan.index')
+            ->route('super_admin.template-pesan.index')
             ->with('success', 'Template pesan berhasil ditambahkan.');
     }
 
@@ -99,7 +99,7 @@ class TemplatePesanController extends Controller
         ]);
 
         return redirect()
-            ->route('template-pesan.index')
+            ->route('super_admin.template-pesan.index')
             ->with('success', 'Template pesan berhasil diperbarui.');
     }
 
@@ -111,7 +111,7 @@ class TemplatePesanController extends Controller
         $templatePesan->delete();
 
         return redirect()
-            ->route('template-pesan.index')
+            ->route('super_admin.template-pesan.index')
             ->with('success', 'Template pesan berhasil dihapus.');
     }
 }

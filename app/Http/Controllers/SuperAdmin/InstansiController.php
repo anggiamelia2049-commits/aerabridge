@@ -65,7 +65,7 @@ class InstansiController extends Controller
         Instansi::create($data);
 
         return redirect()
-            ->route('instansi.index')
+            ->route('super_admin.instansi.index')
             ->with('success', 'Instansi berhasil ditambahkan.');
     }
 
@@ -139,7 +139,7 @@ class InstansiController extends Controller
         $instansi->update($data);
 
         return redirect()
-            ->route('instansi.index')
+            ->route('super_admin.instansi.index')
             ->with('success', 'Instansi berhasil diperbarui.');
     }
 
@@ -158,7 +158,7 @@ class InstansiController extends Controller
         $instansi->delete();
 
         return redirect()
-            ->route('instansi.index')
+            ->route('super_admin.instansi.index')
             ->with('success', 'Instansi berhasil dihapus.');
     }
 }

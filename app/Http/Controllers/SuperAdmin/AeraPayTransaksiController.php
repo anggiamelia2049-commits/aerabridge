@@ -54,7 +54,7 @@ class AeraPayTransaksiController extends Controller
             'status' => $request->status,
         ]);
 
-       return redirect()->route('aeraPay.index')->with('success', 'Transaksi berhasil ditambahkan.');
+       return redirect()->route('super_admin.aeraPay.index')->with('success', 'Transaksi berhasil ditambahkan.');
     }
 
     /**
@@ -109,7 +109,7 @@ class AeraPayTransaksiController extends Controller
             'status' => $request->status,
         ]);
 
-        return redirect()->route('aeraPay.index')->with('success', 'Transaksi berhasil diperbarui.');
+        return redirect()->route('super_admin.aeraPay.index')->with('success', 'Transaksi berhasil diperbarui.');
     }
 
     /**
@@ -119,6 +119,6 @@ class AeraPayTransaksiController extends Controller
     {
         $aeraPayTransaksi = AeraPayTransaksi::findOrFail($id);
         $aeraPayTransaksi->delete();
-        return redirect()->route('aeraPay.index')->with('success', 'Transaksi berhasil dihapus.');
+        return redirect()->route('super_admin.aeraPay.index')->with('success', 'Transaksi berhasil dihapus.');
     }
 }

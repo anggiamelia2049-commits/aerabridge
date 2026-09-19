@@ -56,7 +56,7 @@ class HadiahController extends Controller
         Hadiah::create($data);
 
         return redirect()
-            ->route('hadiah.index')
+            ->route('super_admin.hadiah.index')
             ->with('success', 'Hadiah berhasil ditambahkan.');
     }
 
@@ -65,7 +65,8 @@ class HadiahController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $hadiah = Hadiah::findOrFail($id);
+         return view('SuperAdmin.hadiah.show', compact('hadiah'));
     }
 
     /**
@@ -116,7 +117,7 @@ class HadiahController extends Controller
         $hadiah->update($data);
 
         return redirect()
-            ->route('hadiah.index')
+            ->route('super_admin.hadiah.index')
             ->with('success', 'Hadiah berhasil diperbarui.');
     }
 
@@ -135,7 +136,7 @@ class HadiahController extends Controller
         $hadiah->delete();
 
         return redirect()
-            ->route('hadiah.index')
+            ->route('super_admin.hadiah.index')
             ->with('success', 'Hadiah berhasil dihapus.');
     }
 }
