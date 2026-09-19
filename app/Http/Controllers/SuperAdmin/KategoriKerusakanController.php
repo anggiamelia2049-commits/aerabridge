@@ -26,6 +26,16 @@ class KategoriKerusakanController extends Controller
         return view('SuperAdmin.kategori.create');
     }
 
+     /**
+     * Display the specified resource.
+     */
+    public function show(string $id)
+    {
+        $kategori = KategoriKerusakan::findOrFail($id);
+
+        return view('SuperAdmin.kategori.show', compact('kategori'));
+    }
+
     /**
      * Store a newly created resource in storage.
      */
@@ -83,7 +93,7 @@ class KategoriKerusakanController extends Controller
             'status' => $request->status
         ]);
 
-        return redirect()->route('kategori.index')
+        return redirect()->route('SuperAdmin.kategori.index')
             ->with('success', 'Kategori Kerusakan berhasil diperbarui.');
     }
 
@@ -95,7 +105,7 @@ class KategoriKerusakanController extends Controller
         $kategori = KategoriKerusakan::findOrFail($id);
         $kategori->delete();
 
-        return redirect()->route('kategori.index')
+        return redirect()->route('SuperAdmin.kategori.index')
             ->with('success', 'Kategori Kerusakan berhasil dihapus.');
     }
 }

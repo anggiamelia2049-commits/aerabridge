@@ -25,7 +25,7 @@
                 <th>Kategori</th>
                 <th>Penulis</th>
                 <th>Status</th>
-                <th><a href="{{ route('konten-edukasi.create') }}">Tambah Konten</a></th>
+                <th><a href="{{ route('super_admin.konten-edukasi.create') }}">Tambah Konten</a></th>
             </tr>
         </thead>
 
@@ -69,20 +69,20 @@
                     </td>
 
                     <td>
-                        <a href="{{ route('konten-edukasi.show', $v->id) }}">
+                        <a href="{{ route('super_admin.konten-edukasi.show', $v->id) }}">
                             Detail
                         </a>
 
                         |
 
-                        <a href="{{ route('konten-edukasi.edit', $v->id) }}">
+                        <a href="{{ route('super_admin.konten-edukasi.edit', $v->id) }}">
                             Edit
                         </a>
 
                         |
 
                         <form
-                            action="{{ route('konten-edukasi.destroy', $v->id) }}"
+                            action="{{ route('super_admin.konten-edukasi.destroy', $v->id) }}"
                             method="POST"
                             style="display: inline;"
                         >

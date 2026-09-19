@@ -73,9 +73,9 @@
 
 <br>
 
-<a href="{{ route('user.index') }}">Kembali</a>
+<a href="{{ route('super_admin.user.index') }}">Kembali</a>
 
-<a href="{{ route('user.edit', $user->id) }}">Edit</a>
+<a href="{{ route('super_admin.user.edit', $user->id) }}">Edit</a>
 
 </body>
 </html>

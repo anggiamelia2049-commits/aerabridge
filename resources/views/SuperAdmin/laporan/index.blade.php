@@ -63,16 +63,16 @@
             </td>
 
             <td>
-                <a href="{{ route('laporan.show', $v->id) }}">
+                <a href="{{ route('super_admin.laporan.show', $v->id) }}">
                     Show
                 </a>
 
-                <a href="{{ route('laporan.edit', $v->id) }}">
+                <a href="{{ route('super_admin.laporan.edit', $v->id) }}">
                     Edit
                 </a>
 
                 <form
-                    action="{{ route('laporan.destroy', $v->id) }}"
+                    action="{{ route('super_admin.laporan.destroy', $v->id) }}"
                     method="POST"
                     style="display: inline;"
                 >

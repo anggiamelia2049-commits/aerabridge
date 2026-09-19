@@ -1,5 +1,5 @@
 <form
-    action="{{ route('laporan.store') }}"
+    action="{{ route('super_admin.laporan.store') }}"
     method="POST"
     enctype="multipart/form-data"
 >
@@ -155,7 +155,7 @@
         Simpan Laporan
     </button>
 
-    <a href="{{ route('laporan.index') }}">
+    <a href="{{ route('super_admin.laporan.index') }}">
         Kembali
     </a>
 </form>

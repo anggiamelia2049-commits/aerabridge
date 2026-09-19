@@ -16,7 +16,7 @@
     </ul>
 @endif
 
-<form action="{{ route('user.store') }}" method="POST" enctype="multipart/form-data">
+<form action="{{ route('super_admin.user.store') }}" method="POST" enctype="multipart/form-data">
     @csrf
 
     <label>NIK</label><br>
@@ -94,7 +94,7 @@
     <br><br>
 
     <button type="submit">Simpan</button>
-    <a href="{{ route('user.index') }}">Kembali</a>
+    <a href="{{ route('super_admin.user.index') }}">Kembali</a>
 
 </form>
 

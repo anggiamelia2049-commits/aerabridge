@@ -22,7 +22,7 @@
     @endif
 
     <form
-        action="{{ route('konten-edukasi.store') }}"
+        action="{{ route('super_admin.konten-edukasi.store') }}"
         method="POST"
         enctype="multipart/form-data"
     >
@@ -124,7 +124,7 @@
             Simpan
         </button>
 
-        <a href="{{ route('konten-edukasi.index') }}">
+        <a href="{{ route('super_admin.konten-edukasi.index') }}">
             Kembali
         </a>
 

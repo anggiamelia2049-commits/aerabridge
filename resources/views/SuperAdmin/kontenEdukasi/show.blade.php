@@ -85,13 +85,13 @@
 
     <br>
 
-    <a href="{{ route('konten-edukasi.index') }}">
+    <a href="{{ route('super_admin.konten-edukasi.index') }}">
         Kembali
     </a>
 
     |
 
-    <a href="{{ route('konten-edukasi.edit', $konten->id) }}">
+    <a href="{{ route('super_admin.konten-edukasi.edit', $konten->id) }}">
         Edit
     </a>
 

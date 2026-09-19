@@ -7,7 +7,7 @@
         <th>Warna Marker</th>
         <th>Status</th>
         <th>
-            <a href="{{ route('super_admin.kategori.create') }}">Tambah Data</a>
+            <a href="{{ route('SuperAdmin.kategori.create') }}">Tambah Data</a>
         </th>
     </tr>
 
@@ -36,7 +36,7 @@
         </td>
 
         <td>
-            <a href="{{ route('super_admin.kategori.create', $v->id) }}">
+            <a href="{{ route('super_admin.kategori.show', $v->id) }}">
                 Detail
             </a>
 

@@ -16,7 +16,7 @@
     </ul>
 @endif
 
-<form action="{{ route('user.update', $dataedituser->id) }}"
+<form action="{{ route('super_admin.user.update', $dataedituser->id) }}"
       method="POST"
       enctype="multipart/form-data">
 
@@ -142,7 +142,7 @@
     <br><br>
 
     <button type="submit">Update</button>
-    <a href="{{ route('user.index') }}">Kembali</a>
+    <a href="{{ route('super_admin.user.index') }}">Kembali</a>
 
 </form>
 

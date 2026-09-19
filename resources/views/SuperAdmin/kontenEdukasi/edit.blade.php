@@ -22,7 +22,7 @@
     @endif
 
     <form
-        action="{{ route('konten-edukasi.update', $konten->id) }}"
+        action="{{ route('super_admin.konten-edukasi.update', $konten->id) }}"
         method="POST"
         enctype="multipart/form-data"
     >
@@ -150,7 +150,7 @@
             Update
         </button>
 
-        <a href="{{ route('konten-edukasi.index') }}">
+        <a href="{{ route('super_admin.konten-edukasi.index') }}">
             Kembali
         </a>
 

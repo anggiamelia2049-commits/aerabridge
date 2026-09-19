@@ -1,5 +1,5 @@
 <form
-    action="{{ route('laporan.update', $laporan->id) }}"
+    action="{{ route('super_admin.laporan.update', $laporan->id) }}"
     method="POST"
     enctype="multipart/form-data"
 >
@@ -203,7 +203,7 @@
         Update Laporan
     </button>
 
-    <a href="{{ route('laporan.index') }}">
+    <a href="{{ route('super_admin.laporan.index') }}">
         Kembali
     </a>
 </form>
