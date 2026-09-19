@@ -12,9 +12,6 @@ use Illuminate\Support\Facades\Storage;
 
 class LaporanController extends Controller
 {
-    /**
-     * Menampilkan semua laporan milik warga yang sedang login.
-     */
     public function index()
     {
         $laporan = Laporan::with(['kategori', 'instansi'])
@@ -25,88 +22,65 @@ class LaporanController extends Controller
         return view('warga.laporan.index', compact('laporan'));
     }
 
-    /**
-     * Menampilkan form untuk membuat laporan baru.
-     */
     public function create()
     {
         $kategoris = KategoriKerusakan::where('status', 'Aktif')->get();
-
         $instansis = Instansi::where('status', 'Aktif')->get();
 
-        return view('warga.laporan.create', compact(
-            'kategoris',
-            'instansis'
-        ));
+        return view('warga.laporan.create', compact('kategoris', 'instansis'));
     }
 
-    /**
-     * Menyimpan laporan baru dari warga.
-     */
     public function store(Request $request)
     {
         $request->validate([
             'kategori_id' => 'required|exists:kategori_kerusakan,id',
-
             'instansi_id' => 'required|exists:instansi,id',
-
             'judul' => 'required|string|max:255',
-
             'deskripsi' => 'required|string',
-
-            'foto' => 'required|image|mimes:jpg,jpeg,png|max:5120',
-
+            'foto_base64' => 'nullable|string',
+            'lampiran' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
             'latitude' => 'required|numeric|between:-90,90',
-
             'longitude' => 'required|numeric|between:-180,180',
-
             'alamat' => 'nullable|string',
         ]);
 
-        /*
-        |--------------------------------------------------------------------------
-        | Upload foto laporan
-        |--------------------------------------------------------------------------
-        */
-
-        $foto = null;
-
-        if ($request->hasFile('foto')) {
-            $foto = $request->file('foto')
-                ->store('laporan', 'public');
+        if (!$request->filled('foto_base64') && !$request->hasFile('lampiran')) {
+            return back()
+                ->withInput()
+                ->withErrors(['foto_base64' => 'Wajib mengisi foto dari kamera ATAU lampiran file.']);
         }
 
-        /*
-        |--------------------------------------------------------------------------
-        | Simpan laporan
-        |--------------------------------------------------------------------------
-        */
+        $foto = null;
+        $lampiran = null;
+
+        if ($request->filled('foto_base64')) {
+            $fotoBase64 = $request->foto_base64;
+            $fotoBase64 = str_replace('data:image/jpeg;base64,', '', $fotoBase64);
+            $fotoBase64 = str_replace(' ', '+', $fotoBase64);
+
+            $namaFile = 'laporan/' . uniqid() . '.jpg';
+            Storage::disk('public')->put($namaFile, base64_decode($fotoBase64));
+
+            $foto = $namaFile;
+        }
+
+        if ($request->hasFile('lampiran')) {
+            $lampiran = $request->file('lampiran')->store('laporan/lampiran', 'public');
+        }
 
         Laporan::create([
             'user_id' => Auth::id(),
-
             'kategori_id' => $request->kategori_id,
-
             'instansi_id' => $request->instansi_id,
-
             'judul' => $request->judul,
-
             'deskripsi' => $request->deskripsi,
-
             'foto' => $foto,
-
+            'lampiran' => $lampiran,
             'latitude' => $request->latitude,
-
             'longitude' => $request->longitude,
-
             'alamat' => $request->alamat,
-
-            // Laporan baru selalu masuk sebagai Menunggu
             'tingkat_prioritas' => 'Sedang',
-
             'status' => 'Menunggu',
-
-            // Belum diverifikasi
             'diverifikasi_oleh' => null,
         ]);
 
@@ -115,9 +89,6 @@ class LaporanController extends Controller
             ->with('success', 'Laporan berhasil dikirim dan sedang menunggu verifikasi.');
     }
 
-    /**
-     * Menampilkan detail laporan milik warga.
-     */
     public function show(string $id)
     {
         $laporan = Laporan::with([
@@ -131,25 +102,16 @@ class LaporanController extends Controller
         return view('warga.laporan.show', compact('laporan'));
     }
 
-    /**
-     * Warga tidak perlu mengedit laporan.
-     */
     public function edit(string $id)
     {
         abort(403, 'Warga tidak dapat mengedit laporan.');
     }
 
-    /**
-     * Warga tidak perlu mengupdate laporan.
-     */
     public function update(Request $request, string $id)
     {
         abort(403, 'Warga tidak dapat mengubah laporan.');
     }
 
-    /**
-     * Warga tidak dapat menghapus laporan.
-     */
     public function destroy(string $id)
     {
         abort(403, 'Warga tidak dapat menghapus laporan.');

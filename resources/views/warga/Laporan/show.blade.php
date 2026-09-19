@@ -23,8 +23,9 @@
                 @if ($laporan->foto)
                     <img src="{{ Storage::url($laporan->foto) }}" alt="Foto laporan"
                          class="w-full max-h-96 object-cover rounded mb-4">
+                @endif
 
-                         @if ($laporan->lampiran)
+                @if ($laporan->lampiran)
                     <div class="mb-4">
                         <span class="text-gray-500 text-sm">Lampiran Tambahan</span>
                         <div class="mt-1">
@@ -43,7 +44,6 @@
                             @endif
                         </div>
                     </div>
-                @endif
                 @endif
 
                 <div class="grid grid-cols-2 gap-4 mb-4 text-sm">
