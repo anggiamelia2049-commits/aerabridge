@@ -1,7 +1,7 @@
 <table border="1">
     <tr>
         <th>User</th>
-        <td>{{ $laporan->user->name ?? '-' }}</td>
+        <td>{{ $laporan->user->nama ?? '-' }}</td>
     </tr>
 
     <tr>
@@ -29,6 +29,8 @@
         <td>
             @if ($laporan->foto)
                 <img src="{{ asset('storage/' . $laporan->foto) }}" width="200">
+            @elseif ($laporan->lampiran)
+                <img src="{{ asset('storage/' . $laporan->lampiran) }}" width="200">
             @else
                 Tidak ada foto
             @endif
@@ -62,7 +64,7 @@
 
     <tr>
         <th>Diverifikasi Oleh</th>
-        <td>{{ $laporan->diverifikasiOleh->name ?? '-' }}</td>
+        <td>{{ $laporan->diverifikasiOleh->nama ?? '-' }}</td>
     </tr>
 </table>
 

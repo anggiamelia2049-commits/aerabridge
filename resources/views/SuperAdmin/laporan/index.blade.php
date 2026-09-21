@@ -21,7 +21,7 @@
             <td>{{ $loop->iteration }}</td>
 
             <td>
-                {{ optional($v->user)->name ?? '-' }}
+                {{ optional($v->user)->nama ?? '-' }}
             </td>
 
             <td>
@@ -43,6 +43,12 @@
                         width="100"
                         alt="Foto laporan"
                     >
+                @elseif ($v->lampiran)
+                    <img
+                        src="{{ asset('storage/' . $v->lampiran) }}"
+                        width="100"
+                        alt="Lampiran laporan"
+                    >
                 @else
                     Tidak ada foto
                 @endif
@@ -59,7 +65,7 @@
             <td>{{ $v->status }}</td>
 
             <td>
-                {{ optional($v->diverifikasiOleh)->name ?? '-' }}
+                {{ optional($v->diverifikasiOleh)->nama ?? '-' }}
             </td>
 
             <td>

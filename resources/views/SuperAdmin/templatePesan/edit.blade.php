@@ -1,4 +1,4 @@
-<form action="{{ route('template-pesan.update', $templatePesan->id) }}" method="POST">
+<form action="{{ route('super_admin.template-pesan.update', $templatePesan->id) }}" method="POST">
     {{ csrf_field() }}
     @method('PUT')
 
@@ -53,5 +53,5 @@
     <br>
 
     <button type="submit">Update</button>
-    <a href="{{ route('template-pesan.index') }}">Back</a>
+    <a href="{{ route('super_admin.template-pesan.index') }}">Back</a>
 </form>

@@ -84,7 +84,7 @@ class LaporanController extends Controller
         ]);
 
         return redirect()
-            ->route('laporan.index')
+            ->route('super_admin.laporan.index')
             ->with('success', 'Laporan berhasil dibuat');
     }
 
@@ -123,7 +123,7 @@ class LaporanController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+   public function update(Request $request, string $id)
     {
         $laporan = Laporan::findOrFail($id);
 
@@ -143,13 +143,21 @@ class LaporanController extends Controller
         $foto = $laporan->foto;
 
         if ($request->hasFile('foto')) {
-
             if ($laporan->foto) {
                 Storage::disk('public')->delete($laporan->foto);
             }
+            $foto = $request->file('foto')->store('laporan', 'public');
+        }
 
-            $foto = $request->file('foto')
-                ->store('laporan', 'public');
+        // Tentukan siapa yang verifikasi: kalau status berubah jadi salah satu status
+        // "sudah ditinjau admin", catat siapa adminnya. Kalau balik ke Menunggu, kosongkan lagi.
+        $diverifikasiOleh = $laporan->diverifikasi_oleh;
+        $statusBaru = $request->status ?? 'Menunggu';
+
+        if (in_array($statusBaru, ['Diverifikasi', 'Diproses', 'Selesai', 'Ditolak'])) {
+            $diverifikasiOleh = Auth::id();
+        } elseif ($statusBaru === 'Menunggu') {
+            $diverifikasiOleh = null;
         }
 
         $laporan->update([
@@ -162,7 +170,8 @@ class LaporanController extends Controller
             'longitude' => $request->longitude,
             'alamat' => $request->alamat,
             'tingkat_prioritas' => $request->tingkat_prioritas ?? 'Sedang',
-            'status' => $request->status ?? 'Menunggu',
+            'status' => $statusBaru,
+            'diverifikasi_oleh' => $diverifikasiOleh,
         ]);
 
         return redirect()

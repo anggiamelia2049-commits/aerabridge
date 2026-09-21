@@ -7,7 +7,7 @@
         <th>Kategori</th>
         <th>Status</th>
         <th>
-            <a href="{{ route('template-pesan.create') }}">Tambah</a>
+            <a href="{{ route('super_admin.template-pesan.create') }}">Tambah</a>
         </th>
     </tr>
 
@@ -20,9 +20,9 @@
         <td>{{ $v->kategori }}</td>
         <td>{{ $v->status }}</td>
         <td>
-            <a href="{{ route('template-pesan.edit', $v->id) }}">Edit</a>
-            <a href="{{ route('template-pesan.show', $v->id) }}">Detail</a>
-            <form action="{{ route('template-pesan.destroy', $v->id) }}" method="POST" style="display:inline">
+            <a href="{{ route('super_admin.template-pesan.edit', $v->id) }}">Edit</a>
+            <a href="{{ route('super_admin.template-pesan.show', $v->id) }}">Detail</a>
+            <form action="{{ route('super_admin.template-pesan.destroy', $v->id) }}" method="POST" style="display:inline">
                 @csrf
                 @method('DELETE')
                 <button type="submit" onclick="return confirm('Are you sure you want to delete this?')">

@@ -1,4 +1,4 @@
-<form action="{{ route('template-pesan.store') }}" method="POST">
+<form action="{{ route('super_admin.template-pesan.store') }}" method="POST">
     {{ csrf_field() }}
 
     Kode Template :
@@ -52,5 +52,5 @@
     <br>
 
     <button type="submit">Save</button>
-    <a href="{{ route('template-pesan.index') }}">Back</a>
+    <a href="{{ route('super_admin.template-pesan.index') }}">Back</a>
 </form>

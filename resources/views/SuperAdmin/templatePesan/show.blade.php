@@ -40,6 +40,6 @@
 
 <br>
 
-<a href="{{ route('template-pesan.edit', $templatePesan->id) }}">Edit</a>
-<a href="{{ route('template-pesan.index') }}">Kembali</a>
+<a href="{{ route('super_admin.template-pesan.edit', $templatePesan->id) }}">Edit</a>
+<a href="{{ route('super_admin.template-pesan.index') }}">Kembali</a>
 
