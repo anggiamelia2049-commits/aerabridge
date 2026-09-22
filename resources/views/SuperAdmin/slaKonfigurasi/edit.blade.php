@@ -1,4 +1,4 @@
-<form action="{{ route('sla-konfigurasi.update', $slaKonfigurasi->id) }}" method="POST">
+<form action="{{ route('super_admin.sla-konfigurasi.update', $slaKonfigurasi->id) }}" method="POST">
     {{ csrf_field() }}
     @method('PUT')
 
@@ -51,5 +51,5 @@
     <br>
 
     <button type="submit">Update</button>
-    <a href="{{ route('sla-konfigurasi.index') }}">Back</a>
+    <a href="{{ route('super_admin.sla-konfigurasi.index') }}">Back</a>
 </form>

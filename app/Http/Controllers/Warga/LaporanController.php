@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Instansi;
 use App\Models\KategoriKerusakan;
 use App\Models\Laporan;
+use App\Services\AiDetectionService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -68,7 +69,7 @@ class LaporanController extends Controller
             $lampiran = $request->file('lampiran')->store('laporan/lampiran', 'public');
         }
 
-        Laporan::create([
+        $laporan = Laporan::create([
             'user_id' => Auth::id(),
             'kategori_id' => $request->kategori_id,
             'instansi_id' => $request->instansi_id,
@@ -82,7 +83,19 @@ class LaporanController extends Controller
             'tingkat_prioritas' => 'Sedang',
             'status' => 'Menunggu',
             'diverifikasi_oleh' => null,
-        ]);
+]);
+
+    // Jalankan AI detection kalau ada foto (bukan hanya lampiran PDF)
+        if ($foto) {
+        try {
+            $aiService = new AiDetectionService();
+            $aiService->detectAndSave($laporan->id, storage_path('app/public/' . $foto));
+            } catch (\Exception $e) {
+        // Kalau AI service gagal/mati, laporan tetap tersimpan.
+        // Cuma AI detection-nya yang gak jalan, dicatat di log saja.
+        \Log::error('AI Detection gagal untuk laporan #' . $laporan->id . ': ' . $e->getMessage());
+        }
+    }
 
         return redirect()
             ->route('warga.laporan.index')

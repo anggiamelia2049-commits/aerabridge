@@ -1,4 +1,4 @@
-<form action="{{ route('tim-satgas.store') }}" method="POST">
+<form action="{{ route('super_admin.tim-satgas.store') }}" method="POST">
     {{ csrf_field() }}
 
     Instansi :
@@ -60,5 +60,5 @@
     <br>
 
     <button type="submit">Save</button>
-    <a href="{{ route('tim-satgas.index') }}">Back</a>
+    <a href="{{ route('super_admin.tim-satgas.index') }}">Back</a>
 </form>

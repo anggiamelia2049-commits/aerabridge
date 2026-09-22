@@ -1,4 +1,4 @@
-<form action="{{ route('tim-satgas.update', $timSatgas->id) }}" method="POST">
+<form action="{{ route('super_admin.tim-satgas.update', $timSatgas->id) }}" method="POST">
     {{ csrf_field() }}
     @method('PUT')
 
@@ -61,5 +61,5 @@
     <br>
 
     <button type="submit">Update</button>
-    <a href="{{ route('tim-satgas.index') }}">Back</a>
+    <a href="{{ route('super_admin.tim-satgas.index') }}">Back</a>
 </form>

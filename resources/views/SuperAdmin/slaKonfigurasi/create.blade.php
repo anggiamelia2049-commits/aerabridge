@@ -1,4 +1,4 @@
-<form action="{{ route('sla-konfigurasi.store') }}" method="POST">
+<form action="{{ route('super_admin.sla-konfigurasi.store') }}" method="POST">
     {{ csrf_field() }}
 
     Prioritas :
@@ -50,5 +50,5 @@
     <br>
 
     <button type="submit">Save</button>
-    <a href="{{ route('sla-konfigurasi.index') }}">Back</a>
+    <a href="{{ route('super_admin.sla-konfigurasi.index') }}">Back</a>
 </form>
