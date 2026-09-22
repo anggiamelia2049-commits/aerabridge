@@ -4,118 +4,81 @@ namespace App\Http\Controllers\Instansi;
 
 use App\Http\Controllers\Controller;
 use App\Models\Laporan;
-use App\Models\Penugasan;
-use App\Models\TimSatgas;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class DashboardController extends Controller
+class LaporanController extends Controller
 {
     /**
-     * Smart Dashboard Pemda.
-     *
-     * Menampilkan peta heatmap laporan, ringkasan statistik,
-     * dan indikator overdue SLA untuk penugasan yang sedang berjalan.
+     * Menampilkan semua laporan yang masuk ke instansi ini.
      */
     public function index(Request $request)
     {
         $instansiId = $this->instansiId();
 
-        // ==== Filter peta heatmap ====
-        $prioritas = $request->get('prioritas');   // Krisis | Sedang | Rendah
-        $status = $request->get('status');         // Menunggu | Diverifikasi | ...
+        $status = $request->get('status');
+        $prioritas = $request->get('prioritas');
 
-        $peta = Laporan::with(['kategori', 'user'])
-            ->where('instansi_id', $instansiId)
-            ->whereNotIn('status', ['Ditolak']);
+        $query = Laporan::with(['kategori', 'user'])
+            ->where('instansi_id', $instansiId);
+
+        if (in_array($status, ['Menunggu', 'Diverifikasi', 'Diproses', 'Selesai', 'Ditolak'], true)) {
+            $query->where('status', $status);
+        }
 
         if (in_array($prioritas, ['Krisis', 'Sedang', 'Rendah'], true)) {
-            $peta->where('tingkat_prioritas', $prioritas);
+            $query->where('tingkat_prioritas', $prioritas);
         }
 
-        if (in_array($status, ['Menunggu', 'Diverifikasi', 'Diproses', 'Selesai'], true)) {
-            $peta->where('status', $status);
-        }
+        $laporan = $query->latest()->get();
 
-        $titikPeta = $peta->latest()->get();
-
-        // ==== Ringkasan statistik laporan ====
-        $statistik = [
-            'menunggu' => $this->hitungLaporan($instansiId, 'Menunggu'),
-            'diverifikasi' => $this->hitungLaporan($instansiId, 'Diverifikasi'),
-            'diproses' => $this->hitungLaporan($instansiId, 'Diproses'),
-            'selesai' => $this->hitungLaporan($instansiId, 'Selesai'),
-            'ditolak' => $this->hitungLaporan($instansiId, 'Ditolak'),
-            'krisis' => Laporan::where('instansi_id', $instansiId)
-                ->where('tingkat_prioritas', 'Krisis')
-                ->whereIn('status', ['Menunggu', 'Diverifikasi', 'Diproses'])
-                ->count(),
-        ];
-
-        // ==== Antrian kerja instansi ====
-
-        // Laporan baru yang menunggu verifikasi, prioritas kritis didahulukan
-        $perluVerifikasi = Laporan::with(['kategori', 'user'])
-            ->where('instansi_id', $instansiId)
-            ->where('status', 'Menunggu')
-            ->orderByRaw("FIELD(tingkat_prioritas, 'Krisis', 'Sedang', 'Rendah')")
-            ->latest()
-            ->limit(10)
-            ->get();
-
-        // Laporan sudah diverifikasi tapi belum didisposisikan ke tim satgas
-        $belumDidisposisi = Laporan::with('kategori')
-            ->where('instansi_id', $instansiId)
-            ->where('status', 'Diverifikasi')
-            ->whereDoesntHave('penugasan', function ($q) {
-                $q->whereIn('status', ['ditugaskan', 'dalam_proses', 'selesai']);
-            })
-            ->latest()
-            ->get();
-
-        // Closing report petugas yang menunggu validasi instansi
-        $menungguValidasi = Penugasan::with(['laporan', 'petugas', 'timSatgas'])
-            ->where('status', 'selesai')
-            ->whereHas('laporan', function ($q) use ($instansiId) {
-                $q->where('instansi_id', $instansiId)
-                    ->where('status', 'Diproses');
-            })
-            ->latest('tanggal_selesai')
-            ->get();
-
-        // ==== Monitoring progres lapangan & indikator overdue ====
-        $penugasanAktif = Penugasan::with(['laporan', 'petugas', 'timSatgas'])
-            ->aktif()
-            ->whereHas('laporan', function ($q) use ($instansiId) {
-                $q->where('instansi_id', $instansiId);
-            })
-            ->latest('tanggal_penugasan')
-            ->get();
-
-        $jumlahOverdue = $penugasanAktif
-            ->filter(fn ($item) => $item->isOverdue())
-            ->count();
-
-        $timSatgas = TimSatgas::where('instansi_id', $instansiId)
-            ->where('status', 'aktif')
-            ->withCount(['penugasan' => function ($q) {
-                $q->whereIn('status', ['ditugaskan', 'dalam_proses']);
-            }])
-            ->get();
-
-        return view('instansi.dashboard.index', compact(
-            'titikPeta',
-            'statistik',
-            'perluVerifikasi',
-            'belumDidisposisi',
-            'menungguValidasi',
-            'penugasanAktif',
-            'jumlahOverdue',
-            'timSatgas',
-            'prioritas',
-            'status'
-        ));
+        return view('instansi.laporan.index', compact('laporan', 'status', 'prioritas'));
     }
+
+    /**
+     * Menampilkan detail laporan untuk ditinjau instansi.
+     */
+    public function show(string $id)
+    {
+        $laporan = Laporan::with(['kategori', 'user', 'diverifikasiOleh'])
+            ->where('instansi_id', $this->instansiId())
+            ->findOrFail($id);
+
+        return view('instansi.laporan.show', compact('laporan'));
+    }
+
+    /**
+     * Verifikasi laporan: tandai valid (lanjut diproses) atau ditolak.
+     * Sesuai flowchart 6.C: "Apakah Laporan Dinyatakan Valid?"
+     */
+    public function verify(Request $request, string $id)
+    {
+        $laporan = Laporan::where('instansi_id', $this->instansiId())
+            ->findOrFail($id);
+
+        $request->validate([
+            'status' => 'required|in:Diverifikasi,Ditolak',
+            'tingkat_prioritas' => 'nullable|in:Krisis,Sedang,Rendah',
+        ]);
+
+        $laporan->update([
+            'status' => $request->status,
+            'tingkat_prioritas' => $request->tingkat_prioritas ?? $laporan->tingkat_prioritas,
+            'diverifikasi_oleh' => Auth::id(),
+        ]);
+
+        $pesan = $request->status === 'Diverifikasi'
+            ? 'Laporan berhasil diverifikasi, siap didisposisikan ke tim satgas.'
+            : 'Laporan ditolak.';
+
+        return redirect()
+            ->route('instansi.laporan.index')
+            ->with('success', $pesan);
+    }
+
+    // create(), store(), edit(), update(), destroy() TIDAK RELEVAN.
+    // Instansi tidak membuat/mengedit/menghapus laporan — laporan datang dari warga,
+    // instansi hanya meninjau dan mengubah status verifikasi lewat method verify().
 
     public function create()
     {
@@ -123,11 +86,6 @@ class DashboardController extends Controller
     }
 
     public function store(Request $request)
-    {
-        abort(404);
-    }
-
-    public function show(string $id)
     {
         abort(404);
     }
@@ -145,13 +103,6 @@ class DashboardController extends Controller
     public function destroy(string $id)
     {
         abort(404);
-    }
-
-    private function hitungLaporan(int $instansiId, string $status): int
-    {
-        return Laporan::where('instansi_id', $instansiId)
-            ->where('status', $status)
-            ->count();
     }
 
     /**

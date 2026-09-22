@@ -50,7 +50,9 @@ Route::middleware('auth')->group(function () {
     Route::name('super_admin.')->prefix('super_admin')->middleware('role:super_admin')->group(function () {
         Route::resource('user', SuperAdminUserController::class);
         Route::resource('instansi', SuperAdminInstansiController::class);
-        Route::resource('laporan', SuperAdminLaporanController::class);
+        Route::resource('laporan', SuperAdminLaporanController::class)->except(['create', 'store']);
+        Route::put('laporan/{id}/verify', [SuperAdminLaporanController::class, 'verify'])
+            ->name('laporan.verify');
         Route::resource('kategori', SuperAdminKategoriKerusakanController::class);
         Route::resource('tim-satgas', SuperAdminTimSatgasController::class);
         Route::resource('sla-konfigurasi', SuperAdminSlaKonfigurasiController::class);

@@ -73,7 +73,7 @@ class UserController extends Controller
         ]);
 
         return redirect()
-            ->route('user.index')
+            ->route('super_admin.user.index')
             ->with('success', 'User berhasil ditambahkan.');
     }
 

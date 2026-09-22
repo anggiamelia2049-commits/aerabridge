@@ -31,7 +31,9 @@
                     <th class="px-4 py-3">Pekerjaan</th>
                     <th class="px-4 py-3">Role</th>
                     <th class="px-4 py-3">Status</th>
-                    <th class="px-4 py-3">Aksi</th>
+                    <th>
+                        <a href="{{ route('super_admin.user.create') }}">Tambah</a>
+                    </th>
                 </tr>
             </thead>
 
