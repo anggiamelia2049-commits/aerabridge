@@ -1,12 +1,6 @@
 @extends('template.layout')
 
-@section('title', 'Data User')
-
 @section('content')
-
-    <h2 class="text-2xl font-bold mb-4">
-        Data User
-    </h2>
 
     @if(session('success'))
         <p class="mb-4 text-green-600">

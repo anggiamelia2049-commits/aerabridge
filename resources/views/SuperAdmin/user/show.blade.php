@@ -1,3 +1,8 @@
+@extends('template.layout')
+
+@section('title', 'Detail User')
+
+@section('content')
 <!DOCTYPE html>
 <html>
 <head>
@@ -79,3 +84,4 @@
 
 </body>
 </html>
+@endsection
