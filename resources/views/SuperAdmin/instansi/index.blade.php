@@ -9,7 +9,7 @@
         <th>Logo</th>
         <th>Status</th>
         <th>
-            <a href="{{ route('instansi.create') }}">Tambah Data</a>
+            <a href="{{ route('super_admin.instansi.create') }}">Tambah Data</a>
         </th>
     </tr>
 

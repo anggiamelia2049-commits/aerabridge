@@ -61,4 +61,3 @@
 
     <button type="submit">Save</button>
     <a href="{{ route('super_admin.tim-satgas.index') }}">Back</a>
-</form>

@@ -73,12 +73,6 @@
 
                 <ul x-show="kelolaLaporan" x-collapse class="mt-1 space-y-1 pl-11 text-cyan-muda">
                     <li>
-                        <a href="{{ route('super_admin.laporan.index') }}"
-                           class="block rounded-lg px-3 py-2 transition {{ request()->routeIs('super_admin.laporan.index') && !request('status') ? 'bg-white/10 text-white' : 'hover:bg-white/5 hover:text-white' }}">
-                            Semua Laporan
-                        </a>
-                    </li>
-                    <li>
                         <a href="{{ route('super_admin.laporan.index', ['status' => 'menunggu_verifikasi']) }}"
                            class="block rounded-lg px-3 py-2 transition {{ request('status') === 'menunggu_verifikasi' ? 'bg-white/10 text-white' : 'hover:bg-white/5 hover:text-white' }}">
                             Verifikasi
@@ -111,30 +105,6 @@
                 </ul>
             </li>
 
-            {{-- Penugasan → super_admin.penugasan.* --}}
-            <li>
-                <a href="{{ route('super_admin.penugasan.index') }}"
-                   class="flex items-center gap-3 rounded-lg px-3 py-2.5 font-medium transition
-                          {{ request()->routeIs('super_admin.penugasan.*') ? 'bg-white/10 text-white' : 'text-cyan-muda hover:bg-white/5 hover:text-white' }}">
-                    <svg class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
-                    </svg>
-                    Penugasan
-                </a>
-            </li>
-
-            {{-- Tim Satgas → super_admin.tim-satgas.* --}}
-            <li>
-                <a href="{{ route('super_admin.tim-satgas.index') }}"
-                   class="flex items-center gap-3 rounded-lg px-3 py-2.5 font-medium transition
-                          {{ request()->routeIs('super_admin.tim-satgas.*') ? 'bg-white/10 text-white' : 'text-cyan-muda hover:bg-white/5 hover:text-white' }}">
-                    <svg class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
-                    </svg>
-                    Tim Satgas
-                </a>
-            </li>
-
             {{-- Konfigurasi (dropdown) → kategori, sla-konfigurasi, template-pesan, hadiah, konten-edukasi --}}
             <li>
                 <button
@@ -157,70 +127,34 @@
                     <li>
                         <a href="{{ route('super_admin.kategori.index') }}"
                            class="block rounded-lg px-3 py-2 transition {{ request()->routeIs('super_admin.kategori.*') ? 'bg-white/10 text-white' : 'hover:bg-white/5 hover:text-white' }}">
-                            Kategori Kerusakan
+                            Kategori Laporan
                         </a>
                     </li>
                     <li>
                         <a href="{{ route('super_admin.sla-konfigurasi.index') }}"
                            class="block rounded-lg px-3 py-2 transition {{ request()->routeIs('super_admin.sla-konfigurasi.*') ? 'bg-white/10 text-white' : 'hover:bg-white/5 hover:text-white' }}">
-                            SLA / Tenggat Perbaikan
+                            Manajemen Tanggapan
                         </a>
                     </li>
                     <li>
                         <a href="{{ route('super_admin.template-pesan.index') }}"
                            class="block rounded-lg px-3 py-2 transition {{ request()->routeIs('super_admin.template-pesan.*') ? 'bg-white/10 text-white' : 'hover:bg-white/5 hover:text-white' }}">
-                            Template Pesan
+                            Pesan Konfirmasi
                         </a>
                     </li>
                     <li>
                         <a href="{{ route('super_admin.hadiah.index') }}"
                            class="block rounded-lg px-3 py-2 transition {{ request()->routeIs('super_admin.hadiah.*') ? 'bg-white/10 text-white' : 'hover:bg-white/5 hover:text-white' }}">
-                            Hadiah
+                            Tenggat Perbaikan
                         </a>
                     </li>
                     <li>
                         <a href="{{ route('super_admin.konten-edukasi.index') }}"
                            class="block rounded-lg px-3 py-2 transition {{ request()->routeIs('super_admin.konten-edukasi.*') ? 'bg-white/10 text-white' : 'hover:bg-white/5 hover:text-white' }}">
-                            Konten Edukasi
+                            Visibilitas
                         </a>
                     </li>
                 </ul>
-            </li>
-
-            {{-- Deteksi AI → super_admin.deteksi-ai.* --}}
-            <li>
-                <a href="{{ route('super_admin.deteksi-ai.index') }}"
-                   class="flex items-center gap-3 rounded-lg px-3 py-2.5 font-medium transition
-                          {{ request()->routeIs('super_admin.deteksi-ai.*') ? 'bg-white/10 text-white' : 'text-cyan-muda hover:bg-white/5 hover:text-white' }}">
-                    <svg class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456z" />
-                    </svg>
-                    Deteksi AI
-                </a>
-            </li>
-
-            {{-- Notifikasi → super_admin.notifikasi.* --}}
-            <li>
-                <a href="{{ route('super_admin.notifikasi.index') }}"
-                   class="flex items-center gap-3 rounded-lg px-3 py-2.5 font-medium transition
-                          {{ request()->routeIs('super_admin.notifikasi.*') ? 'bg-white/10 text-white' : 'text-cyan-muda hover:bg-white/5 hover:text-white' }}">
-                    <svg class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
-                    </svg>
-                    Notifikasi
-                </a>
-            </li>
-
-            {{-- AERA Pay → super_admin.aeraPay.* --}}
-            <li>
-                <a href="{{ route('super_admin.aeraPay.index') }}"
-                   class="flex items-center gap-3 rounded-lg px-3 py-2.5 font-medium transition
-                          {{ request()->routeIs('super_admin.aeraPay.*') ? 'bg-white/10 text-white' : 'text-cyan-muda hover:bg-white/5 hover:text-white' }}">
-                    <svg class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 12a2.25 2.25 0 00-2.25-2.25H15a3 3 0 11-6 0H5.25A2.25 2.25 0 003 12m18 0v6a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 18v-6m18 0V9M3 12V9m18 0a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 9m18 0V6a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 6v3" />
-                    </svg>
-                    AERA Pay
-                </a>
             </li>
         </ul>
     </nav>

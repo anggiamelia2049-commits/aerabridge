@@ -16,7 +16,7 @@
 </head>
 <body class="font-sans antialiased bg-abu-muda text-abu-tua">
 
-    <div class="flex min-h-screen">
+    <div class="flex min-h-screen"  x-data="{ mobileSidebarOpen: false }">
 
         {{-- ==================== SIDEBAR ====================
              Nilai $role mengikuti middleware role:... di routes/web.php, yaitu:
