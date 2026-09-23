@@ -8,7 +8,7 @@
         <th>Kontak</th>
         <th>Status</th>
         <th>
-            <a href="{{ route('tim-satgas.create') }}">Tambah</a>
+            <a href="{{ route('super_admin.tim-satgas.create') }}">Tambah</a>
         </th>
     </tr>
 
@@ -22,9 +22,9 @@
         <td>{{ $v->kontak }}</td>
         <td>{{ $v->status }}</td>
         <td>
-            <a href="{{ route('tim-satgas.edit', $v->id) }}">Edit</a>
+            <a href="{{ route('super_admin.tim-satgas.edit', $v->id) }}">Edit</a>
 
-            <form action="{{ route('tim-satgas.destroy', $v->id) }}" method="POST" style="display:inline">
+            <form action="{{ route('super_admin.tim-satgas.destroy', $v->id) }}" method="POST" style="display:inline">
                 @csrf
                 @method('DELETE')
                 <button type="submit" onclick="return confirm('Are you sure you want to delete this?')">

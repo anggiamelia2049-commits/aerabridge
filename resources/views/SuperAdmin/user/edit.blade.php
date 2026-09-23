@@ -1,4 +1,8 @@
+@extends('template.layout')
 
+@section('title', 'Edit User')
+
+@section('content')
 <!DOCTYPE html>
 <html>
 <head>
@@ -148,4 +152,4 @@
 
 </body>
 </html>
-
+@endsection

@@ -1,4 +1,4 @@
-<form action="{{ route('deteksi-ai.store') }}" method="POST">
+<form action="{{ route('super_admin.deteksi-ai.store') }}" method="POST">
     {{ csrf_field() }}
 
     Laporan :
@@ -113,5 +113,5 @@
     <br>
 
     <button type="submit">Save</button>
-    <a href="{{ route('deteksi-ai.index') }}">Back</a>
+    <a href="{{ route('super_admin.deteksi-ai.index') }}">Back</a>
 </form>

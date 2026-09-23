@@ -7,7 +7,7 @@
         <th>Deskripsi</th>
         <th>Status</th>
         <th>
-            <a href="{{ route('sla-konfigurasi.create') }}">Tambah</a>
+            <a href="{{ route('super_admin.sla-konfigurasi.create') }}">Tambah</a>
         </th>
     </tr>
 
@@ -20,9 +20,9 @@
         <td>{{ $v->deskripsi }}</td>
         <td>{{ $v->status }}</td>
         <td>
-            <a href="{{ route('sla-konfigurasi.edit', $v->id) }}">Edit</a>
+            <a href="{{ route('super_admin.sla-konfigurasi.edit', $v->id) }}">Edit</a>
 
-            <form action="{{ route('sla-konfigurasi.destroy', $v->id) }}" method="POST" style="display:inline">
+            <form action="{{ route('super_admin.sla-konfigurasi.destroy', $v->id) }}" method="POST" style="display:inline">
                 @csrf
                 @method('DELETE')
                 <button type="submit" onclick="return confirm('Are you sure you want to delete this?')">

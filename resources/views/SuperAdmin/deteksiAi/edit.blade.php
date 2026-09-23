@@ -1,4 +1,4 @@
-<form action="{{ route('deteksi-ai.update', $deteksiAI->id) }}" method="POST">
+<form action="{{ route('super_admin.deteksi-ai.update', $deteksiAI->id) }}" method="POST">
     {{ csrf_field() }}
     {{ method_field('PUT') }}
 
@@ -114,5 +114,5 @@
     <br>
 
     <button type="submit">Save</button>
-    <a href="{{ route('deteksi-ai.index') }}">Back</a>
+    <a href="{{ route('super_admin.deteksi-ai.index') }}">Back</a>
 </form>
