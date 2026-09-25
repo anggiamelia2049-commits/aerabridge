@@ -51,4 +51,4 @@
 
     <button type="submit">Save</button>
     <a href="{{ route('super_admin.sla-konfigurasi.index') }}">Back</a>
-</form>
+

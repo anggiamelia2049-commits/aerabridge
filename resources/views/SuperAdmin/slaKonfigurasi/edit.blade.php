@@ -52,4 +52,4 @@
 
     <button type="submit">Update</button>
     <a href="{{ route('super_admin.sla-konfigurasi.index') }}">Back</a>
-</form>
+
