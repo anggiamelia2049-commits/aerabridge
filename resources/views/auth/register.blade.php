@@ -9,27 +9,29 @@
                 </div>
 
                 <div class="max-w-[380px]">
-                    <p class="text-xs uppercase tracking-[1px] text-[#A9D6DD] font-semibold mb-5">Laman Layanan Publik</p>
+                    <p class="text-xs uppercase tracking-[1px] text-[#A9D6DD] font-semibold mb-4">Laman Layanan Publik</p>
                     <h1 class="text-[24px] font-bold leading-[1] mb-5">Satu akun untuk semua layanan anda</h1>
                     <p class="text-[15px] leading-relaxed text-[#D9D9D9]">
                         Lengkapi data diri sekali saja untuk mengakses seluruh layanan terintegrasi dengan aman dan cepat.
                     </p>
 
-                    <div class="w-full h-px bg-white/25 my-9"></div>
+                    <div class="w-full h-px bg-white/20 my-5"></div>
 
                     <div class="space-y-4 text-sm text-[#D9D9D9]">
-                        <p class="flex gap-3"><span class="text-white font-semibold">1.</span><span>Isi data kependudukan &amp; kontak</span></p>
-                        <p class="flex gap-3"><span class="text-white font-semibold">2.</span><span>Buat nama pengguna dan kata sandi</span></p>
-                        <p class="flex gap-3"><span class="text-white font-semibold">3.</span><span>Konfirmasi email untuk mulai</span></p>
+                        <p class="flex gap-2"><span class="text-white font-semibold">1.</span><span>Isi data kependudukan &amp; kontak</span></p>
+                        <p class="flex gap-2"><span class="text-white font-semibold">2.</span><span>Buat nama pengguna dan kata sandi</span></p>
+                        <p class="flex gap-2"><span class="text-white font-semibold">3.</span><span>Konfirmasi email untuk mulai</span></p>
                     </div>
                 </div>
             </div>
 
             {{-- DEKORASI LINGKARAN --}}
-            <div class="absolute -bottom-24 -left-12 w-56 h-56 rounded-full border border-[#76A5AF]/50"></div>
-            <div class="absolute -bottom-16 left-4 w-44 h-44 rounded-full border border-[#A9D6DD]/60"></div>
-            <div class="absolute -bottom-10 -left-6 w-32 h-32 rounded-full bg-[#76A5AF]"></div>
-            <div class="absolute -bottom-8 -left-2 w-24 h-24 rounded-full bg-[#45818E]"></div>
+            <div class="absolute -bottom-10 -left-16 w-48 h-48 rounded-full border border-[#76A5AF]/50"></div>
+
+            <div class="absolute -bottom-8 left-10 w-40 h-40 rounded-full border border-[#76A5AF]/50"></div>
+
+            <div class="absolute -bottom-14 -left-4 w-40 h-40 rounded-full bg-[#76A5AF]"></div>
+            <div class="absolute -bottom-12 -left-2 w-32 h-32 rounded-full bg-[#45818E]"></div>
         </div>
 
         {{-- BAGIAN KANAN --}}
