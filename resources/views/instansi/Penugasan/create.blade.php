@@ -1,4 +1,4 @@
-<form action="{{ route('penugasan.store') }}" method="POST">
+<form action="{{ route('instansi.penugasan.store') }}" method="POST">
     {{ csrf_field() }}
 
     Laporan :
@@ -84,5 +84,5 @@
     <br>
 
     <button type="submit">Save</button>
-    <a href="{{ route('penugasan.index') }}">Back</a>
+    <a href="{{ route('instansi.penugasan.index') }}">Back</a>
 </form>

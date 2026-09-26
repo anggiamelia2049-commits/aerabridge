@@ -63,6 +63,6 @@
 
 <br>
 
-<a href="{{ route('instansi.index') }}">
+<a href="{{ route('super_admin.instansi.index') }}">
     Kembali
 </a>

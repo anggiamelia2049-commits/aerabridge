@@ -9,7 +9,7 @@
         <th>Tanggal Selesai</th>
         <th>Catatan</th>
         <th>
-            <a href="{{ route('penugasan.create') }}">Tambah Penugasan</a>
+            <a href="{{ route('instansi.penugasan.create') }}">Tambah Penugasan</a>
         </th>
     </tr>
 
@@ -24,9 +24,9 @@
         <td>{{ $v->tanggal_selesai }}</td>
         <td>{{ $v->catatan }}</td>
         <td>
-            <a href="{{ route('penugasan.edit', $v->id) }}">Edit</a>
+            <a href="{{ route('instansi.penugasan.edit', $v->id) }}">Edit</a>
 
-            <form action="{{ route('penugasan.destroy', $v->id) }}" method="POST" style="display:inline">
+            <form action="{{ route('instansi.penugasan.destroy', $v->id) }}" method="POST" style="display:inline">
                 @csrf
                 @method('DELETE')
                 <button type="submit" onclick="return confirm('Are you sure you want to delete this penugasan?')">

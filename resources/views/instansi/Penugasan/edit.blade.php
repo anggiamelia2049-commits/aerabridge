@@ -1,4 +1,4 @@
-<form action="{{ route('penugasan.update', $penugasan->id) }}" method="POST">
+<form action="{{ route('instansi.penugasan.update', $penugasan->id) }}" method="POST">
     {{ csrf_field() }}
     @method('PUT')
 
@@ -85,5 +85,5 @@
     <br>
 
     <button type="submit">Update</button>
-    <a href="{{ route('penugasan.index') }}">Back</a>
+    <a href="{{ route('instansi.penugasan.index') }}">Back</a>
 </form>

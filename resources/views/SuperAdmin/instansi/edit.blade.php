@@ -1,4 +1,4 @@
-<form action="{{ route('instansi.update', $instansi->id) }}"
+<form action="{{ route('super_admin.instansi.update', $instansi->id) }}"
       method="POST"
       enctype="multipart/form-data">
 
@@ -125,6 +125,6 @@
 
     <button type="submit">Update</button>
 
-    <a href="{{ route('instansi.index') }}">Back</a>
+    <a href="{{ route('super_admin.instansi.index') }}">Back</a>
 
 </form>

@@ -1,4 +1,4 @@
-<form action="{{ route('instansi.store') }}"
+<form action="{{ route('super_admin.instansi.store') }}"
       method="POST"
       enctype="multipart/form-data">
 
@@ -103,6 +103,6 @@
 
     <button type="submit">Save</button>
 
-    <a href="{{ route('instansi.index') }}">Back</a>
+    <a href="{{ route('super_admin.instansi.index') }}">Back</a>
 
 </form>

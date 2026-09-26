@@ -41,6 +41,7 @@ class PenugasanController extends Controller
 
             'dibatalkan' => $query->where('status', 'dibatalkan'),
 
+            // scopeAktif() didefinisikan di Model\Penugasan
             default => $query->aktif(),
         };
 
@@ -53,7 +54,7 @@ class PenugasanController extends Controller
             );
         }
 
-        return view('instansi.Penugasan.index', compact('penugasan', 'filter'));
+        return view('instansi.penugasan.index', compact('penugasan', 'filter'));
     }
 
     /**
@@ -70,7 +71,8 @@ class PenugasanController extends Controller
             ->whereDoesntHave('penugasan', function ($q) {
                 $q->whereIn('status', ['ditugaskan', 'dalam_proses', 'selesai']);
             })
-            ->orderByRaw("FIELD(tingkat_prioritas, 'Krisis', 'Sedang', 'Rendah')")
+            // Diperbaiki: proposal konsisten pakai "Kritis", bukan "Krisis"
+            ->orderByRaw("FIELD(tingkat_prioritas, 'Kritis', 'Sedang', 'Rendah')")
             ->get();
 
         $laporanTerpilih = $request->get('laporan_id');
@@ -87,7 +89,7 @@ class PenugasanController extends Controller
             ->where('status', 'Aktif')
             ->get();
 
-        return view('instansi.Penugasan.create', compact(
+        return view('instansi.penugasan.create', compact(
             'laporan',
             'laporanTerpilih',
             'timSatgas',
@@ -189,7 +191,7 @@ class PenugasanController extends Controller
         $sisaMenit = $penugasan->sisaWaktuSla();
         $overdue = $penugasan->isOverdue();
 
-        return view('instansi.Penugasan.show', compact(
+        return view('instansi.penugasan.show', compact(
             'penugasan',
             'batasSla',
             'sisaMenit',
@@ -217,7 +219,7 @@ class PenugasanController extends Controller
             ->where('status', 'Aktif')
             ->get();
 
-        return view('instansi.Penugasan.edit', compact(
+        return view('instansi.penugasan.edit', compact(
             'penugasan',
             'timSatgas',
             'petugas'

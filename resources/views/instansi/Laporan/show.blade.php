@@ -1,7 +1,7 @@
 <table border="1">
     <tr>
         <th>User</th>
-        <td>{{ $laporan->user->name ?? '-' }}</td>
+        <td>{{ $laporan->user->nama ?? '-' }}</td>
     </tr>
 
     <tr>
@@ -28,7 +28,9 @@
         <th>Foto</th>
         <td>
             @if ($laporan->foto)
-                <img src="{{ asset('storage/' . $laporan->foto) }}" width="200">
+                <img src="{{ asset('storage/' . $laporan->foto) }}" width="200" alt="Foto laporan">
+            @elseif ($laporan->lampiran)
+                <img src="{{ asset('storage/' . $laporan->lampiran) }}" width="200" alt="Lampiran laporan">
             @else
                 Tidak ada foto
             @endif
@@ -62,12 +64,28 @@
 
     <tr>
         <th>Diverifikasi Oleh</th>
-        <td>{{ $laporan->diverifikasiOleh->name ?? '-' }}</td>
+        <td>{{ $laporan->diverifikasiOleh->nama ?? '-' }}</td>
     </tr>
 </table>
 
 <br>
 
-<a href="{{ route('Laporan.index') }}">Back</a>
+@if ($laporan->status === 'Menunggu')
+    <form action="{{ route('instansi.laporan.verify', $laporan->id) }}" method="POST" style="display:inline;">
+        {{ csrf_field() }}
+        @method('PUT')
+        <input type="hidden" name="status" value="Diverifikasi">
+        <button type="submit">✅ Verifikasi (Valid)</button>
+    </form>
 
-<a href="{{ route('Laporan.edit', $laporan->id) }}">Edit</a>
+    <form action="{{ route('instansi.laporan.verify', $laporan->id) }}" method="POST" style="display:inline;">
+        {{ csrf_field() }}
+        @method('PUT')
+        <input type="hidden" name="status" value="Ditolak">
+        <button type="submit" onclick="return confirm('Yakin ingin menolak laporan ini?')">❌ Tolak</button>
+    </form>
+
+    <br><br>
+@endif
+
+<a href="{{ route('instansi.laporan.index') }}">Back</a>

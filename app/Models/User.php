@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -28,6 +27,7 @@ class User extends Authenticatable
         'penyandang_disabilitas',
         'foto',
         'role',
+        'instansi_id',
         'status'
     ];
 
@@ -47,5 +47,10 @@ class User extends Authenticatable
     public function poinKontribusi()
     {
         return $this->hasMany(PoinKontribusiLog::class, 'user_id');
+    }
+
+    public function instansi()
+    {
+        return $this->belongsTo(Instansi::class, 'instansi_id');
     }
 }

@@ -44,16 +44,16 @@
             <td>{{ $v->status }}</td>
 
             <td>
-                <a href="{{ route('instansi.show', $v->id) }}">
+                <a href="{{ route('super_admin.instansi.show', $v->id) }}">
                     Detail
                 </a>
 
-                <a href="{{ route('instansi.edit', $v->id) }}">
+                <a href="{{ route('super_admin.instansi.edit', $v->id) }}">
                     Edit
                 </a>
 
                 <form
-                    action="{{ route('instansi.destroy', $v->id) }}"
+                    action="{{ route('super_admin.instansi.destroy', $v->id) }}"
                     method="POST"
                     style="display: inline;"
                 >

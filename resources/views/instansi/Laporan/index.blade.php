@@ -19,7 +19,7 @@
     @foreach ($laporan as $v)
     <tr>
         <td>{{ $loop->iteration }}</td>
-        <td>{{ $v->user->name ?? '-' }}</td>
+        <td>{{ $v->user->nama ?? '-' }}</td>
         <td>{{ $v->kategori->nama_kategori ?? '-' }}</td>
         <td>{{ $v->instansi->nama_instansi ?? '-' }}</td>
         <td>{{ $v->judul }}</td>
@@ -27,7 +27,9 @@
 
         <td>
             @if ($v->foto)
-                <img src="{{ asset('storage/' . $v->foto) }}" width="100">
+                <img src="{{ asset('storage/' . $v->foto) }}" width="100" alt="Foto laporan">
+            @elseif ($v->lampiran)
+                <img src="{{ asset('storage/' . $v->lampiran) }}" width="100" alt="Lampiran laporan">
             @else
                 Tidak ada foto
             @endif
@@ -38,26 +40,11 @@
         <td>{{ $v->alamat }}</td>
         <td>{{ $v->tingkat_prioritas }}</td>
         <td>{{ $v->status }}</td>
-        <td>{{ $v->diverifikasiOleh->name ?? '-' }}</td>
+        <td>{{ $v->diverifikasiOleh->nama ?? '-' }}</td>
 
         <td>
-            <a href="{{ route('Laporan.show', $v->id) }}">Show</a>
-
-            <a href="{{ route('Laporan.edit', $v->id) }}">Edit</a>
-
-            <form action="{{ route('Laporan.destroy', $v->id) }}" method="POST">
-                {{ csrf_field() }}
-                @method('DELETE')
-
-                <button type="submit" onclick="return confirm('Are you sure you want to delete this report?')">
-                    Delete
-                </button>
-            </form>
+            <a href="{{ route('instansi.laporan.show', $v->id) }}">Tinjau</a>
         </td>
     </tr>
     @endforeach
 </table>
-
-<br>
-
-<a href="{{ route('Laporan.create') }}">Tambah Laporan</a>
