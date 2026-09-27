@@ -4,11 +4,13 @@
     Instansi :
     <select name="instansi_id">
         <option value="">-- Pilih Instansi --</option>
-        @foreach ($instansi as $item)
+        @forelse ($instansi as $item)
         <option value="{{ $item->id }}" {{ old('instansi_id') == $item->id ? 'selected' : '' }}>
-            {{ $item->nama }}
+            {{ $item->nama_instansi }}
         </option>
-        @endforeach
+        @empty
+        <option value="" disabled>Belum ada data instansi</option>
+        @endforelse
     </select>
     @if ($errors->has('instansi_id'))
     <span>{{ $errors->first('instansi_id') }}</span>
@@ -61,3 +63,4 @@
 
     <button type="submit">Save</button>
     <a href="{{ route('super_admin.tim-satgas.index') }}">Back</a>
+</form>

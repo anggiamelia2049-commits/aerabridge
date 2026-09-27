@@ -36,41 +36,12 @@
         <option value="">-- Pilih Petugas --</option>
         @foreach ($petugas as $item)
         <option value="{{ $item->id }}" {{ old('petugas_id') == $item->id ? 'selected' : '' }}>
-            {{ $item->name }}
+            {{ $item->nama }}
         </option>
         @endforeach
     </select>
     @if ($errors->has('petugas_id'))
     <span>{{ $errors->first('petugas_id') }}</span>
-    @endif
-
-    <br>
-
-    Status :
-    <select name="status">
-        <option value="ditugaskan" {{ old('status') == 'ditugaskan' ? 'selected' : '' }}>Ditugaskan</option>
-        <option value="dalam_proses" {{ old('status') == 'dalam_proses' ? 'selected' : '' }}>Dalam Proses</option>
-        <option value="selesai" {{ old('status') == 'selesai' ? 'selected' : '' }}>Selesai</option>
-        <option value="dibatalkan" {{ old('status') == 'dibatalkan' ? 'selected' : '' }}>Dibatalkan</option>
-    </select>
-    @if ($errors->has('status'))
-    <span>{{ $errors->first('status') }}</span>
-    @endif
-
-    <br>
-
-    Tanggal Penugasan :
-    <input type="date" name="tanggal_penugasan" value="{{ old('tanggal_penugasan') }}">
-    @if ($errors->has('tanggal_penugasan'))
-    <span>{{ $errors->first('tanggal_penugasan') }}</span>
-    @endif
-
-    <br>
-
-    Tanggal Selesai :
-    <input type="date" name="tanggal_selesai" value="{{ old('tanggal_selesai') }}">
-    @if ($errors->has('tanggal_selesai'))
-    <span>{{ $errors->first('tanggal_selesai') }}</span>
     @endif
 
     <br>
@@ -83,6 +54,6 @@
 
     <br>
 
-    <button type="submit">Save</button>
+    <button type="submit">Disposisikan Tugas</button>
     <a href="{{ route('instansi.penugasan.index') }}">Back</a>
 </form>

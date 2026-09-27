@@ -61,16 +61,22 @@ class TimSatgasController extends Controller
         ]);
 
         return redirect()
-            ->route('tim-satgas.index')
+            ->route('super_admin.tim-satgas.index')
             ->with('success', 'Tim Satgas berhasil ditambahkan.');
     }
 
     /**
      * Display the specified resource.
+     *
+     * FIX: sebelumnya pakai implicit route model binding (TimSatgas $timSatgas),
+     * tapi nama parameter route yang dihasilkan Laravel dari 'tim-satgas' adalah
+     * {tim_satgas} (garis bawah), bukan {timSatgas} (camelCase) — jadi binding
+     * gagal diam-diam dan menghasilkan model kosong, bukan error. Diganti pakai
+     * pencarian manual supaya tidak bergantung pada kecocokan nama parameter.
      */
-    public function show(TimSatgas $timSatgas)
+    public function show(string $id)
     {
-        $timSatgas->load('instansi');
+        $timSatgas = TimSatgas::with('instansi')->findOrFail($id);
 
         return view(
             'SuperAdmin.timSatgas.show',
@@ -81,8 +87,9 @@ class TimSatgasController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(TimSatgas $timSatgas)
+    public function edit(string $id)
     {
+        $timSatgas = TimSatgas::findOrFail($id);
         $instansi = Instansi::all();
 
         return view(
@@ -94,8 +101,10 @@ class TimSatgasController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, TimSatgas $timSatgas)
+    public function update(Request $request, string $id)
     {
+        $timSatgas = TimSatgas::findOrFail($id);
+
         $request->validate([
             'instansi_id' => 'required|exists:instansi,id',
             'nama_tim' => 'required|string|max:255',
@@ -122,8 +131,9 @@ class TimSatgasController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(TimSatgas $timSatgas)
+    public function destroy(string $id)
     {
+        $timSatgas = TimSatgas::findOrFail($id);
         $timSatgas->delete();
 
         return redirect()

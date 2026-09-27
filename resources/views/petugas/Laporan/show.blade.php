@@ -1,7 +1,7 @@
 <table border="1">
     <tr>
         <th>User</th>
-        <td>{{ $laporan->user->name ?? '-' }}</td>
+        <td>{{ $laporan->user->nama ?? '-' }}</td>
     </tr>
 
     <tr>
@@ -62,12 +62,10 @@
 
     <tr>
         <th>Diverifikasi Oleh</th>
-        <td>{{ $laporan->diverifikasiOleh->name ?? '-' }}</td>
+        <td>{{ $laporan->diverifikasiOleh->nama ?? '-' }}</td>
     </tr>
 </table>
 
 <br>
 
-<a href="{{ route('Laporan.index') }}">Back</a>
-
-<a href="{{ route('Laporan.edit', $laporan->id) }}">Edit</a>
+<a href="{{ route('petugas.laporan.index') }}">Back</a>

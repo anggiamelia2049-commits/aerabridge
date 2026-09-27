@@ -11,6 +11,9 @@
     <label>Foto Hasil Perbaikan</label>
     <input type="file" name="foto_hasil">
 
+    <label>Catatan Penyelesaian</label>
+    <textarea name="catatan_penyelesaian" required></textarea>
+
     <br><br>
 
     <button type="submit">Kirim Closing Report</button>

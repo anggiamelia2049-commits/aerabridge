@@ -29,7 +29,7 @@
 
 <p>
     Batas SLA:
-    {{ $slaDeadline }}
+    {{ $batasSla }}
 </p>
 
 @if($penugasan->catatan)

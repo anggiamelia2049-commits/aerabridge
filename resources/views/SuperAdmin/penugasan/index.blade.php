@@ -8,9 +8,7 @@
         <th>Tanggal Penugasan</th>
         <th>Tanggal Selesai</th>
         <th>Catatan</th>
-        <th>
-            <a href="{{ route('super_admin.penugasan.create') }}">Tambah Penugasan</a>
-        </th>
+        <th>Aksi</th>
     </tr>
 
     @forelse ($penugasan as $v)
@@ -18,21 +16,13 @@
         <td>{{ $loop->iteration }}</td>
         <td>{{ $v->laporan->judul ?? '-' }}</td>
         <td>{{ $v->timSatgas->nama_tim ?? '-' }}</td>
-        <td>{{ $v->petugas->name ?? '-' }}</td>
+        <td>{{ $v->petugas->nama ?? '-' }}</td>
         <td>{{ $v->status }}</td>
         <td>{{ $v->tanggal_penugasan }}</td>
         <td>{{ $v->tanggal_selesai }}</td>
         <td>{{ $v->catatan }}</td>
         <td>
-            <a href="{{ route('super_admin.penugasan.edit', $v->id) }}">Edit</a>
-
-            <form action="{{ route('super_admin.penugasan.destroy', $v->id) }}" method="POST" style="display:inline">
-                @csrf
-                @method('DELETE')
-                <button type="submit" onclick="return confirm('Are you sure you want to delete this penugasan?')">
-                    Delete
-                </button>
-            </form>
+            <a href="{{ route('super_admin.penugasan.show', $v->id) }}">Detail</a>
         </td>
     </tr>
     @empty

@@ -25,7 +25,7 @@
 
     <p>Tanggal: {{ $item->tanggal_penugasan }}</p>
 
-    <a href="{{ route('petugas.penugasans.show', $item->id) }}">
+    <a href="{{ route('petugas.penugasan.show', $item->id) }}">
         Lihat Detail
     </a>
 

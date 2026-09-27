@@ -15,7 +15,7 @@
     @forelse ($timSatgas as $v)
     <tr>
         <td>{{ $loop->iteration }}</td>
-        <td>{{ $v->instansi_id->nama_instansi ?? '-' }}</td>
+        <td>{{ $v->instansi->nama_instansi ?? '-' }}</td>
         <td>{{ $v->nama_tim }}</td>
         <td>{{ $v->ketua }}</td>
         <td>{{ $v->jumlah_anggota }}</td>
@@ -35,7 +35,7 @@
     </tr>
     @empty
     <tr>
-        <td colspan="9">Belum ada data.</td>
+        <td colspan="8">Belum ada data.</td>
     </tr>
     @endforelse
 </table>

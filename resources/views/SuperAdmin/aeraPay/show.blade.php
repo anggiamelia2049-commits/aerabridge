@@ -9,7 +9,7 @@
     <tr>
         <td>User</td>
         <td>
-            {{ $aeraPayTransaksi->user->name ?? $aeraPayTransaksi->user_id }}
+            {{ $aeraPayTransaksi->user->nama ?? $aeraPayTransaksi->user_id }}
         </td>
     </tr>
 

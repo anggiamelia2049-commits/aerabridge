@@ -50,19 +50,29 @@ Route::middleware('auth')->group(function () {
     Route::name('super_admin.')->prefix('super_admin')->middleware('role:super_admin')->group(function () {
         Route::resource('user', SuperAdminUserController::class);
         Route::resource('instansi', SuperAdminInstansiController::class);
+
         Route::resource('laporan', SuperAdminLaporanController::class)->except(['create', 'store']);
         Route::put('laporan/{id}/verify', [SuperAdminLaporanController::class, 'verify'])
             ->name('laporan.verify');
+
         Route::resource('kategori', SuperAdminKategoriKerusakanController::class);
         Route::resource('tim-satgas', SuperAdminTimSatgasController::class);
         Route::resource('sla-konfigurasi', SuperAdminSlaKonfigurasiController::class);
         Route::resource('template-pesan', SuperAdminTemplatePesanController::class);
         Route::resource('hadiah', SuperAdminHadiahController::class);
         Route::resource('konten-edukasi', SuperAdminKontenEdukasiController::class);
-        Route::resource('deteksi-ai', SuperAdminDeteksiAiController::class);
         Route::resource('notifikasi', SuperAdminNotifikasiController::class);
-        Route::resource('penugasan', SuperAdminPenugasanController::class);
-        Route::resource('aeraPay', SuperAdminAeraPayTransaksiController::class);
+
+        // Monitoring-only: hanya index & show, controller tidak punya
+        // method create/store/edit/update/destroy.
+        Route::resource('deteksi-ai', SuperAdminDeteksiAiController::class)
+            ->only(['index', 'show']);
+
+        Route::resource('penugasan', SuperAdminPenugasanController::class)
+            ->only(['index', 'show']);
+
+        Route::resource('aeraPay', SuperAdminAeraPayTransaksiController::class)
+            ->only(['index', 'show']);
     });
 
     // ==== Khusus Warga ====
@@ -76,18 +86,38 @@ Route::middleware('auth')->group(function () {
 
     // ==== Khusus Petugas ====
     Route::name('petugas.')->prefix('petugas')->middleware('role:petugas')->group(function () {
-        Route::resource('laporan', PetugasLaporanController::class);
-        Route::resource('penugasan', PetugasPenugasanController::class);
+        // Laporan: read-only, controller meng-abort(403) pada create/store/edit/update/destroy.
+        Route::resource('laporan', PetugasLaporanController::class)
+            ->only(['index', 'show']);
+
+        // Penugasan: bukan resource penuh — method custom (mulai tugas,
+        // closing report), bukan create/store/destroy standar.
+        Route::get('penugasan', [PetugasPenugasanController::class, 'index'])
+            ->name('penugasan.index');
+        Route::get('penugasan/{id}', [PetugasPenugasanController::class, 'show'])
+            ->name('penugasan.show');
+        Route::get('penugasan/{id}/edit', [PetugasPenugasanController::class, 'edit'])
+            ->name('penugasan.edit');
+        Route::put('penugasan/{id}', [PetugasPenugasanController::class, 'update'])
+            ->name('penugasan.update');
+
         Route::resource('notifikasi', PetugasNotifikasiController::class);
     });
 
     // ==== Khusus Instansi ====
     Route::name('instansi.')->prefix('instansi')->middleware('role:instansi')->group(function () {
         Route::get('/dashboard', [InstansiDashboardController::class, 'index'])->name('dashboard');
-        Route::resource('laporan', InstansiLaporanController::class);
+
+        Route::resource('laporan', InstansiLaporanController::class)->only(['index', 'show']);
+        Route::put('laporan/{id}/verify', [InstansiLaporanController::class, 'verify'])
+            ->name('laporan.verify');
+
         Route::resource('penugasan', InstansiPenugasanController::class);
         Route::resource('notifikasi', InstansiNotifikasiController::class);
-        Route::resource('deteksi-ai', InstansiDeteksiAiController::class);
+
+        // Deteksi AI: read-only, controller meng-abort(403) pada aksi tulis.
+        Route::resource('deteksi-ai', InstansiDeteksiAiController::class)
+            ->only(['index', 'show']);
     });
 });
 

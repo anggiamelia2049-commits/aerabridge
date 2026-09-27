@@ -4,128 +4,53 @@ namespace App\Http\Controllers\SuperAdmin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Penugasan;
-use App\Models\Laporan;
-use App\Models\TimSatgas;
-use App\Models\User;
+use App\Models\Instansi;
 use Illuminate\Http\Request;
 
 class PenugasanController extends Controller
 {
-    public function index()
+  
+    public function index(Request $request)
     {
-        $penugasan = Penugasan::with([
-            'laporan',
-            'timSatgas',
-            'petugas'
-        ])
-            ->latest()
-            ->get();
+        $query = Penugasan::with(['laporan', 'timSatgas', 'petugas.instansi']);
 
-        return view('SuperAdmin.penugasan.index', compact('penugasan'));
-    }
+        if ($request->filled('instansi_id')) {
+            $query->whereHas('petugas', function ($q) use ($request) {
+                $q->where('instansi_id', $request->instansi_id);
+            });
+        }
 
-    public function create()
-    {
-        $laporan = Laporan::all();
-        $timSatgas = TimSatgas::where('status', 'aktif')->get();
-        $petugas = User::where('role', 'petugas')
-            ->where('status', 'Aktif')
-            ->get();
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
 
-        return view('SuperAdmin.penugasan.create', compact(
-            'laporan',
-            'timSatgas',
-            'petugas'
-        ));
-    }
+        $penugasan = $query->latest('tanggal_penugasan')
+            ->paginate(15)
+            ->withQueryString();
 
-    public function store(Request $request)
-    {
-        $request->validate([
-            'laporan_id' => 'required|exists:laporan,id',
-            'tim_satgas_id' => 'required|exists:tim_satgas,id',
-            'petugas_id' => 'nullable|exists:users,id',
-            'status' => 'required|in:ditugaskan,dalam_proses,selesai,dibatalkan',
-            'tanggal_penugasan' => 'required|date',
-            'tanggal_selesai' => 'nullable|date|after_or_equal:tanggal_penugasan',
-            'catatan' => 'nullable|string',
-        ]);
+        $penugasan->getCollection()->transform(function ($item) {
+            $item->overdue = $item->isOverdue();
+            return $item;
+        });
 
-        Penugasan::create([
-            'laporan_id' => $request->laporan_id,
-            'tim_satgas_id' => $request->tim_satgas_id,
-            'petugas_id' => $request->petugas_id,
-            'status' => $request->status,
-            'tanggal_penugasan' => $request->tanggal_penugasan,
-            'tanggal_selesai' => $request->tanggal_selesai,
-            'catatan' => $request->catatan,
-        ]);
+        $instansi = Instansi::orderBy('nama_instansi')->get();
 
-        return redirect()
-            ->route('super_admin.penugasan.index')
-            ->with('success', 'Penugasan berhasil ditambahkan.');
+        return view('SuperAdmin.penugasan.index', compact('penugasan', 'instansi'));
     }
 
     public function show(Penugasan $penugasan)
     {
-        $penugasan->load([
-            'laporan',
-            'timSatgas',
-            'petugas'
-        ]);
+        $penugasan->load(['laporan', 'timSatgas', 'petugas.instansi']);
 
-        return view('SuperAdmin.penugasan.show', compact('penugasan'));
-    }
+        $batasSla = $penugasan->batasWaktuSla();
+        $sisaMenit = $penugasan->sisaWaktuSla();
+        $overdue = $penugasan->isOverdue();
 
-    public function edit(Penugasan $penugasan)
-    {
-        $laporan = Laporan::all();
-        $timSatgas = TimSatgas::where('status', 'aktif')->get();
-        $petugas = User::where('role', 'petugas')
-            ->where('status', 'Aktif')
-            ->get();
-
-        return view('SuperAdmin.penugasan.edit', compact(
+        return view('SuperAdmin.penugasan.show', compact(
             'penugasan',
-            'laporan',
-            'timSatgas',
-            'petugas'
+            'batasSla',
+            'sisaMenit',
+            'overdue'
         ));
-    }
-
-    public function update(Request $request, Penugasan $penugasan)
-    {
-        $request->validate([
-            'laporan_id' => 'required|exists:laporan,id',
-            'tim_satgas_id' => 'required|exists:tim_satgas,id',
-            'petugas_id' => 'nullable|exists:users,id',
-            'status' => 'required|in:ditugaskan,dalam_proses,selesai,dibatalkan',
-            'tanggal_penugasan' => 'required|date',
-            'tanggal_selesai' => 'nullable|date|after_or_equal:tanggal_penugasan',
-            'catatan' => 'nullable|string',
-        ]);
-
-        $penugasan->update([
-            'laporan_id' => $request->laporan_id,
-            'tim_satgas_id' => $request->tim_satgas_id,
-            'petugas_id' => $request->petugas_id,
-            'status' => $request->status,
-            'tanggal_penugasan' => $request->tanggal_penugasan,
-            'tanggal_selesai' => $request->tanggal_selesai,
-            'catatan' => $request->catatan,
-        ]);
-
-        return redirect()
-            ->route('super_admin.penugasan.index')
-            ->with('success', 'Penugasan berhasil diperbarui.');
-    }
-
-    public function destroy(Penugasan $penugasan)
-    {
-        $penugasan->delete();
-
-        return redirect()
-            ->route('super_admin.penugasan.index')
-            ->with('success', 'Penugasan berhasil dihapus.');
     }
 }

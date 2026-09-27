@@ -8,32 +8,21 @@
         <th>Saldo Sebelum</th>
         <th>Saldo Sesudah</th>
         <th>Status</th>
-        <th>
-            <a href="{{ route('super_admin.aeraPay.create') }}">Tambah Data</a>
-        </th>
+        <th>Aksi</th>
     </tr>
 
     @foreach ($transaksis as $v)
         <tr>
             <td>{{ $loop->iteration }}</td>
-            <td>{{ $v->user_id }}</td>
-            <td>{{ $v->laporan_id }}</td>
+            <td>{{ $v->user->nama ?? '-' }}</td>
+            <td>{{ $v->laporan->judul ?? '-' }}</td>
             <td>{{ $v->jenis_transaksi }}</td>
             <td>{{ $v->nominal }}</td>
             <td>{{ $v->saldo_sebelum }}</td>
             <td>{{ $v->saldo_sesudah }}</td>
             <td>{{ $v->status }}</td>
             <td>
-                <form action="{{ route('super_admin.aeraPay.destroy', $v->id) }}" method="POST">
-                    {{ csrf_field() }}
-                    @method('DELETE')
-
                     <a href="{{ route('super_admin.aeraPay.show', $v->id) }}">Detail</a>
-                    <a href="{{ route('super_admin.aeraPay.edit', $v->id) }}">Edit</a>
-
-                    <button type="submit"
-                        onclick="return confirm('Are you sure you want to delete this category?')">Delete</button>
-                </form>
             </td>
         </tr>
     @endforeach

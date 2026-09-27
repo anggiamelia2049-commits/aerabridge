@@ -12,9 +12,7 @@ class KontenEdukasiController extends Controller
 {
     public function index()
     {
-        $konten = KontenEdukasi::with('penulis')
-            ->latest()
-            ->get();
+        $konten = KontenEdukasi::with('penulisUser')->latest()->get();
 
         return view('SuperAdmin.kontenEdukasi.index', compact('konten'));
     }
@@ -51,14 +49,13 @@ class KontenEdukasiController extends Controller
         ]);
 
         return redirect()
-            ->route('konten-edukasi.index')
+            ->route('super_admin.konten-edukasi.index')
             ->with('success', 'Konten edukasi berhasil dibuat.');
     }
 
     public function show(string $id)
     {
-        $konten = KontenEdukasi::with('penulis')
-            ->findOrFail($id);
+        $konten = KontenEdukasi::with('penulisUser')->findOrFail($id);
 
         return view('SuperAdmin.kontenEdukasi.show', compact('konten'));
     }

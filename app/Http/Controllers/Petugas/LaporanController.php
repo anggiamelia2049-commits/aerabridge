@@ -34,7 +34,7 @@ class LaporanController extends Controller
 
         $laporan = $query->latest()->get();
 
-        return view('Petugas.laporan.index', compact('laporan', 'tab'));
+        return view('petugas.laporan.index', compact('laporan', 'tab'));
     }
 
     public function create()
@@ -55,7 +55,7 @@ class LaporanController extends Controller
 
         $this->authorizeLaporan($laporan);
 
-        return view('Petugas.laporan.show', compact('laporan'));
+        return view('petugas.laporan.show', compact('laporan'));
     }
 
     public function edit(string $id)

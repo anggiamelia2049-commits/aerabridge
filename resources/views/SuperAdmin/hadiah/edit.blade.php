@@ -1,4 +1,4 @@
-<form action="{{ route('hadiah.update', $hadiah->id) }}" method="POST" enctype="multipart/form-data">
+<form action="{{ route('super_admin.hadiah.update', $hadiah->id) }}" method="POST" enctype="multipart/form-data">
     {{ csrf_field() }}
     {{ method_field('PUT') }}
 
@@ -81,5 +81,5 @@
     <br>
 
     <button type="submit">Update</button>
-    <a href="{{ route('hadiah.index') }}">Back</a>
+    <a href="{{ route('super_admin.hadiah.index') }}">Back</a>
 </form>

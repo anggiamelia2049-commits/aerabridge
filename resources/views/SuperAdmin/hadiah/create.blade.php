@@ -1,4 +1,4 @@
-<form action="{{ route('hadiah.store') }}" method="POST" enctype="multipart/form-data">
+<form action="{{ route('super_admin.hadiah.store') }}" method="POST" enctype="multipart/form-data">
     {{ csrf_field() }}
 
     Nama Hadiah :
@@ -67,5 +67,5 @@
     <br>
 
     <button type="submit">Save</button>
-    <a href="{{ route('hadiah.index') }}">Back</a>
+    <a href="{{ route('super_admin.hadiah.index') }}">Back</a>
 </form>

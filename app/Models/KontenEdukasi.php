@@ -18,8 +18,7 @@ class KontenEdukasi extends Model
         'status',
     ];
 
-    // Relasi ke user sebagai penulis
-    public function penulis()
+    public function penulisUser()
     {
         return $this->belongsTo(User::class, 'penulis');
     }

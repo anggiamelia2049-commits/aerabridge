@@ -56,7 +56,7 @@
         <tr>
             <th>Penulis</th>
             <td>
-                {{ $konten->penulis->name ?? '-' }}
+                {{ $konten->penulisUser->nama }}
             </td>
         </tr>
 

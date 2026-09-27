@@ -8,7 +8,7 @@
         <th>Gambar</th>
         <th>status</th>
         <th>
-            <a href="{{ route('hadiah.create') }}">Tambah Data</a>
+            <a href="{{ route('super_admin.hadiah.create') }}">Tambah Data</a>
         </th>
     </tr>
 
@@ -28,11 +28,12 @@
         </td>
         <td>{{ $v->status }}</td>
         <td>
-            <form action="{{ route('hadiah.destroy', $v->id) }}" method="POST">
+            <form action="{{ route('super_admin.hadiah.destroy', $v->id) }}" method="POST">
                 {{ csrf_field() }}
                 @method('DELETE')
 
-                <a href="{{ route('hadiah.edit', $v->id) }}">Edit</a>
+                <a href="{{ route('super_admin.hadiah.edit', $v->id) }}">Edit</a>
+                <a href="{{ route('super_admin.hadiah.show', $v->id) }}">Detail</a>
 
                 <button type="submit" onclick="return confirm('Are you sure you want to delete this category?')">Delete</button>
             </form>

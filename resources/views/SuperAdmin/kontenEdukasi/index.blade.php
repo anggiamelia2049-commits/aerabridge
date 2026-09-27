@@ -61,7 +61,7 @@
                     </td>
 
                     <td>
-                        {{ $v->penulis->name ?? '-' }}
+                        {{ $v->penulisUser->nama ?? '-' }}
                     </td>
 
                     <td>
