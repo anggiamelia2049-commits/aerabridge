@@ -24,7 +24,7 @@ class AeraPayController extends Controller
         $totalPoin = $this->getTotalPoin($user->id);
         $saldoSaatIni = $this->getSaldoTerakhir($user->id);
 
-        return view('warga.aera-pay.index', compact('transaksis', 'totalPoin', 'saldoSaatIni'));
+        return view('warga.aeraPay.index', compact('transaksis', 'totalPoin', 'saldoSaatIni'));
     }
 
     /**
@@ -34,7 +34,7 @@ class AeraPayController extends Controller
     public function create()
     {
         $totalPoin = $this->getTotalPoin(auth()->id());
-        return view('warga.aera-pay.create', compact('totalPoin'));
+        return view('warga.aeraPay.create', compact('totalPoin'));
     }
 
     /**
@@ -47,8 +47,13 @@ class AeraPayController extends Controller
             'jumlah_poin' => 'required|integer|min:1000',
         ]);
 
-        $user = auth()->user();
         $jumlahPoin = $request->jumlah_poin;
+
+        if ($jumlahPoin % 1000 !== 0) {
+            return back()->with('error', 'Jumlah poin harus kelipatan 1000.');
+        }
+
+        $user = auth()->user();
         $totalPoin = $this->getTotalPoin($user->id);
 
         if ($totalPoin < $jumlahPoin) {
@@ -90,7 +95,7 @@ class AeraPayController extends Controller
         $transaksi = AeraPayTransaksi::where('user_id', auth()->id())
             ->findOrFail($id);
 
-        return view('warga.aera-pay.show', compact('transaksi'));
+        return view('warga.aeraPay.show', compact('transaksi'));
     }
 
     /**

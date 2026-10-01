@@ -31,7 +31,7 @@ class NotifikasiController extends Controller
             ->where('dibaca', false)
             ->count();
 
-        return view('instansi.Notifikasi.index', compact(
+        return view('instansi.notifikasi.index', compact(
             'notifikasi',
             'jumlahBelumDibaca'
         ));
@@ -60,7 +60,7 @@ class NotifikasiController extends Controller
             $notifikasi->update(['dibaca' => true]);
         }
 
-        return view('instansi.Notifikasi.show', compact('notifikasi'));
+        return view('instansi.notifikasi.show', compact('notifikasi'));
     }
 
     public function edit(string $id)

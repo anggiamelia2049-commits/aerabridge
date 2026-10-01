@@ -23,7 +23,7 @@ class UserEdukasiProgressController extends Controller
             $query->where('user_id', $user->id);
         }])->get();
 
-        return view('warga.user-edukasi.index', compact('kontenList'));
+        return view('warga.userEdukasi.index', compact('kontenList'));
     }
 
     /**
@@ -38,7 +38,7 @@ class UserEdukasiProgressController extends Controller
             ['status' => 'belum_dibaca', 'progress' => 0]
         );
 
-        return view('warga.user-edukasi.show', compact('konten', 'progress'));
+        return view('warga.userEdukasi.show', compact('konten', 'progress'));
     }
 
     /**

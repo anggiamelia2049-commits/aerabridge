@@ -1,40 +1,46 @@
-<table border="1">
-    <tr>
-        <th>No</th>
-        <th>User</th>
-        <th>Laporan</th>
-        <th>Jenis Transaksi</th>
-        <th>Nominal</th>
-        <th>Saldo Sebelum</th>
-        <th>Saldo Sesudah</th>
-        <th>Status</th>
-        <th>
-            <a href="{{ route('super_admin.aeraPay.create') }}">Tambah Data</a>
-        </th>
-    </tr>
+<h2>AERA Pay</h2>
 
-    @foreach ($transaksis as $v)
+@if (session('success'))
+    <p>{{ session('success') }}</p>
+@endif
+
+@if (session('error'))
+    <p>{{ session('error') }}</p>
+@endif
+
+<p>Total Poin Saya: <strong>{{ $totalPoin }}</strong> Poin</p>
+<p>Saldo AERA Pay (Simulasi): <strong>Rp{{ number_format($saldoSaatIni) }}</strong></p>
+
+<a href="{{ route('warga.aeraPay.create') }}">Tukar Poin ke Saldo</a>
+
+<hr>
+
+<h3>Riwayat Transaksi</h3>
+
+@if ($transaksis->isEmpty())
+    <p>Belum ada riwayat transaksi AERA Pay.</p>
+@else
+    <table border="1" cellpadding="8">
         <tr>
-            <td>{{ $loop->iteration }}</td>
-            <td>{{ $v->user_id }}</td>
-            <td>{{ $v->laporan_id }}</td>
-            <td>{{ $v->jenis_transaksi }}</td>
-            <td>{{ $v->nominal }}</td>
-            <td>{{ $v->saldo_sebelum }}</td>
-            <td>{{ $v->saldo_sesudah }}</td>
-            <td>{{ $v->status }}</td>
-            <td>
-                <form action="{{ route('super_admin.aeraPay.destroy', $v->id) }}" method="POST">
-                    {{ csrf_field() }}
-                    @method('DELETE')
-
-                    <a href="{{ route('super_admin.aeraPay.show', $v->id) }}">Detail</a>
-                    <a href="{{ route('super_admin.aeraPay.edit', $v->id) }}">Edit</a>
-
-                    <button type="submit"
-                        onclick="return confirm('Are you sure you want to delete this category?')">Delete</button>
-                </form>
-            </td>
+            <th>Tanggal</th>
+            <th>Jenis</th>
+            <th>Nominal</th>
+            <th>Saldo Sesudah</th>
+            <th>Status</th>
+            <th>Detail</th>
         </tr>
-    @endforeach
-</table>
+
+        @foreach ($transaksis as $v)
+            <tr>
+                <td>{{ $v->created_at->format('d-m-Y H:i') }}</td>
+                <td>{{ $v->jenis_transaksi }}</td>
+                <td>Rp{{ number_format($v->nominal) }}</td>
+                <td>Rp{{ number_format($v->saldo_sesudah) }}</td>
+                <td>{{ $v->status }}</td>
+                <td>
+                    <a href="{{ route('warga.aeraPay.show', $v->id) }}">Lihat</a>
+                </td>
+            </tr>
+        @endforeach
+    </table>
+@endif

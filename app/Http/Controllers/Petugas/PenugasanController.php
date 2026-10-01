@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Petugas;
 
 use App\Http\Controllers\Controller;
+use App\Models\Notifikasi;
 use App\Models\Penugasan;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -134,6 +136,24 @@ class PenugasanController extends Controller
             'status' => 'selesai',
             'tanggal_selesai' => now(),
         ]);
+
+        // Kirim notifikasi ke semua user instansi terkait, supaya mereka tahu
+        // ada closing report baru yang menunggu validasi.
+        $penugasan->load('laporan');
+        $instansiUserIds = User::where('role', 'instansi')
+            ->where('instansi_id', $penugasan->laporan->instansi_id)
+            ->pluck('id');
+
+        foreach ($instansiUserIds as $userId) {
+            Notifikasi::create([
+                'user_id' => $userId,
+                'laporan_id' => $penugasan->laporan_id,
+                'judul' => 'Closing Report Menunggu Validasi',
+                'isi' => "Petugas telah mengirim closing report untuk laporan \"{$penugasan->laporan->judul}\". Mohon segera divalidasi.",
+                'tipe' => 'informasi',
+                'dibaca' => false,
+            ]);
+        }
 
         return redirect()
             ->route('petugas.penugasan.index')

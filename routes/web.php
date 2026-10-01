@@ -81,7 +81,11 @@ Route::middleware('auth')->group(function () {
         Route::resource('notifikasi', WargaNotifikasiController::class);
         Route::resource('poin', WargaPoinKontribusiController::class)->only(['index']);
         Route::resource('aeraPay', WargaAeraPayController::class)->only(['index', 'show', 'create', 'store']);
-        Route::resource('user-edukasi', WargaUserEdukasiProgressController::class);
+        Route::resource('user-edukasi', WargaUserEdukasiProgressController::class)
+            ->only(['index', 'show']);
+
+        Route::put('user-edukasi/{kontenId}/selesai', [WargaUserEdukasiProgressController::class, 'tandaiSelesai'])
+            ->name('user-edukasi.selesai');
     });
 
     // ==== Khusus Petugas ====

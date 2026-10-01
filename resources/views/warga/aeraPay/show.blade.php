@@ -1,56 +1,44 @@
-<h2>Detail Transaksi Aera Pay</h2>
+<h2>Detail Transaksi AERA Pay</h2>
 
 <table border="1" cellpadding="10">
     <tr>
-        <td>ID</td>
-        <td>{{ $aeraPayTransaksi->id }}</td>
-    </tr>
-
-    <tr>
-        <td>User</td>
-        <td>
-            {{ $aeraPayTransaksi->user->name ?? $aeraPayTransaksi->user_id }}
-        </td>
-    </tr>
-
-    <tr>
-        <td>Laporan</td>
-        <td>
-            {{ $aeraPayTransaksi->laporan->judul ?? $aeraPayTransaksi->laporan_id }}
-        </td>
+        <td>Tanggal</td>
+        <td>{{ $transaksi->created_at->format('d-m-Y H:i') }}</td>
     </tr>
 
     <tr>
         <td>Jenis Transaksi</td>
-        <td>{{ $aeraPayTransaksi->jenis_transaksi }}</td>
+        <td>{{ $transaksi->jenis_transaksi }}</td>
     </tr>
 
     <tr>
         <td>Nominal</td>
-        <td>{{ $aeraPayTransaksi->nominal }}</td>
+        <td>Rp{{ number_format($transaksi->nominal) }}</td>
     </tr>
 
     <tr>
         <td>Saldo Sebelum</td>
-        <td>{{ $aeraPayTransaksi->saldo_sebelum }}</td>
+        <td>Rp{{ number_format($transaksi->saldo_sebelum) }}</td>
     </tr>
 
     <tr>
         <td>Saldo Sesudah</td>
-        <td>{{ $aeraPayTransaksi->saldo_sesudah }}</td>
+        <td>Rp{{ number_format($transaksi->saldo_sesudah) }}</td>
     </tr>
 
     <tr>
         <td>Status</td>
-        <td>{{ $aeraPayTransaksi->status }}</td>
+        <td>{{ $transaksi->status }}</td>
     </tr>
 
-    <tr>
-        <td>Dibuat Pada</td>
-        <td>{{ $aeraPayTransaksi->created_at }}</td>
-    </tr>
+    @if ($transaksi->laporan)
+        <tr>
+            <td>Laporan Terkait</td>
+            <td>{{ $transaksi->laporan->judul }}</td>
+        </tr>
+    @endif
 </table>
 
 <br>
 
-<a href="{{ route('super_admin.aeraPay.index') }}">Kembali</a>
+<a href="{{ route('warga.aeraPay.index') }}">Kembali</a>
