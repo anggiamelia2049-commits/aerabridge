@@ -3,8 +3,26 @@
     x-data="{ profileOpen: false, notifOpen: false }"
     class="sticky top-0 z-30 flex items-center justify-between gap-4 border-b border-abu-muda bg-white px-4 py-3 sm:px-6 lg:px-8"
 >
-    {{-- Search bar --}}
-    <div class="flex flex-1 items-center">
+    {{-- Kiri: hamburger + search bar --}}
+    <div class="flex flex-1 items-center gap-6">
+
+        {{-- Tombol garis tiga (toggle sidebar, state dari layout.blade.php) --}}
+        <button
+            type="button"
+            @click="toggleSidebar()"
+            class="group flex h-[42px] w-[42px] shrink-0 items-center justify-center self-center rounded-lg text-abu-tua transition hover:bg-abu-muda focus:outline-none focus:ring-2 focus:ring-cyan-4/30"
+            aria-label="Buka atau tutup sidebar"
+        >
+            <svg class="block h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <line x1="4" y1="6" x2="20" y2="6" />
+                <line x1="4" y1="12" x2="20" y2="12"
+                      class="origin-left transition-transform duration-300 [transform-box:fill-box] group-hover:scale-x-100"
+                      :class="sidebarOpen ? 'scale-x-100' : 'scale-x-[0.65]'" />
+                <line x1="4" y1="18" x2="20" y2="18" />
+            </svg>
+        </button>
+
+        {{-- Search bar --}}
         <label for="global-search" class="sr-only">Cari laporan, lokasi, atau kata kunci</label>
         <div class="relative w-full max-w-md">
             <span class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
@@ -23,7 +41,7 @@
     </div>
 
     {{-- Kanan: notifikasi + profil --}}
-    <div class="flex items-center gap-4 pl-12 lg:pl-0">
+    <div class="flex items-center gap-4">
 
         {{-- Notifikasi --}}
         <div class="relative">
@@ -73,9 +91,21 @@
                 @click.outside="profileOpen = false"
                 class="flex items-center gap-2"
             >
-                <span class="flex h-9 w-9 items-center justify-center rounded-full bg-cyan-3 text-sm font-semibold text-white">
-                    {{ auth()->check() ? Str::of(auth()->user()->name)->explode(' ')->map(fn($n) => Str::substr($n, 0, 1))->take(2)->implode('') : 'AB' }}
-                </span>
+                @php
+                    // Ganti 'foto_profil' sesuai nama kolom foto di tabel users kamu
+                    $fotoProfil = auth()->check() ? (auth()->user()->foto_profil ?? null) : null;
+                @endphp
+
+                @if ($fotoProfil)
+                    <img src="{{ asset('storage/' . $fotoProfil) }}"
+                         alt="Foto {{ auth()->user()->name }}"
+                         class="h-10 w-10 rounded-full object-cover">
+                @else
+                    {{-- Avatar default: ikon user dalam lingkaran --}}
+                    <svg class="h-10 w-10 shrink-0 text-abu-tua" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                @endif
                 <span class="hidden text-left sm:block">
                     <span class="block text-sm font-semibold text-abu-tua">{{ auth()->user()->name ?? 'Pengguna' }}</span>
                     <span class="block text-xs text-abu-tua/60">{{ Str::title(str_replace('_', ' ', $role ?? 'super_admin')) }}</span>

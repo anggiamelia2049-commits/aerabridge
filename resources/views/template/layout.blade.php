@@ -12,11 +12,31 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
+    {{-- Mencegah elemen x-cloak berkedip sebelum Alpine siap --}}
+    <style>[x-cloak] { display: none !important; }</style>
+
     @stack('styles')
 </head>
 <body class="font-sans antialiased bg-abu-muda text-abu-tua">
 
-    <div class="flex min-h-screen"  x-data="{ mobileSidebarOpen: false }">
+    <div class="flex min-h-screen"
+         x-data="{
+            sidebarOpen: true,
+            mobileSidebarOpen: false,
+            init() {
+                try { this.sidebarOpen = localStorage.getItem('sidebarOpen') !== 'false'; } catch (e) {}
+                this.$watch('sidebarOpen', v => { try { localStorage.setItem('sidebarOpen', v); } catch (e) {} });
+            },
+            toggleSidebar() {
+                if (window.matchMedia('(min-width: 1024px)').matches) {
+                    this.sidebarOpen = !this.sidebarOpen;
+                } else {
+                    this.mobileSidebarOpen = !this.mobileSidebarOpen;
+                }
+            }
+         }"
+         @keydown.escape.window="mobileSidebarOpen = false"
+         @resize.window="if (window.innerWidth >= 1024) mobileSidebarOpen = false">
 
         {{-- ==================== SIDEBAR ====================
              Nilai $role mengikuti middleware role:... di routes/web.php, yaitu:
@@ -27,58 +47,54 @@
             $role = $role ?? (auth()->check() ? auth()->user()->role : 'super_admin');
         @endphp
 
-        <aside class="hidden lg:flex lg:flex-shrink-0" x-data="{ sidebarOpen: true }">
-            @switch($role)
-                @case('warga')
-                    @include('template.sidebar-warga')
-                    @break
+        {{-- ===== SIDEBAR DESKTOP: lebar 16rem <-> 0, smooth ===== --}}
+        <aside
+            class="hidden overflow-hidden transition-[width,visibility] duration-300 ease-in-out lg:block lg:shrink-0"
+            :class="sidebarOpen ? 'lg:w-64' : 'lg:w-0 lg:invisible'"
+            :aria-hidden="(!sidebarOpen).toString()"
+        >
+            {{-- wrapper w-64 supaya isi sidebar tidak ikut "gepeng" saat aside menyempit --}}
+            <div class="h-full w-64">
+                @switch($role)
+                    @case('warga')
+                        @include('template.sidebar-warga')
+                        @break
 
-                @case('petugas')
-                    @include('template.sidebar-petugas')
-                    @break
+                    @case('petugas')
+                        @include('template.sidebar-petugas')
+                        @break
 
-                @case('instansi')
-                    {{-- TODO: belum ada grup route 'instansi.*' di web.php --}}
-                    @include('template.sidebar-instansi')
-                    @break
+                    @case('instansi')
+                        {{-- TODO: belum ada grup route 'instansi.*' di web.php --}}
+                        @include('template.sidebar-instansi')
+                        @break
 
-                @default
-                    @include('template.sidebar-superadmin')
-            @endswitch
+                    @default
+                        @include('template.sidebar-superadmin')
+                @endswitch
+            </div>
         </aside>
 
-        {{-- Sidebar versi mobile (slide-over) --}}
-        <div
-            x-data="{ mobileSidebarOpen: false }"
-            x-cloak
-            class="lg:hidden"
-        >
-            <button
-                @click="mobileSidebarOpen = true"
-                class="fixed top-4 left-4 z-40 inline-flex items-center justify-center rounded-md bg-cyan-6 p-2 text-white shadow-md"
-                aria-label="Buka menu"
-            >
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-            </button>
-
+        {{-- ===== SIDEBAR MOBILE (slide-over) ===== --}}
+        <div x-cloak class="lg:hidden">
+            {{-- Overlay --}}
             <div
                 x-show="mobileSidebarOpen"
-                class="fixed inset-0 z-50 bg-black/40"
+                x-transition.opacity.duration.300ms
                 @click="mobileSidebarOpen = false"
-                x-transition.opacity
+                class="fixed inset-0 z-40 bg-black/40"
             ></div>
 
+            {{-- Panel sidebar --}}
             <div
                 x-show="mobileSidebarOpen"
-                class="fixed inset-y-0 left-0 z-50 w-72 overflow-y-auto"
-                x-transition:enter="transition ease-out duration-200"
+                x-transition:enter="transition ease-out duration-300"
                 x-transition:enter-start="-translate-x-full"
                 x-transition:enter-end="translate-x-0"
-                x-transition:leave="transition ease-in duration-150"
+                x-transition:leave="transition ease-in duration-200"
                 x-transition:leave-start="translate-x-0"
                 x-transition:leave-end="-translate-x-full"
+                class="fixed inset-y-0 left-0 z-50 w-64 overflow-y-auto shadow-xl"
             >
                 @switch($role)
                     @case('warga')
