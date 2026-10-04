@@ -83,19 +83,30 @@ class LaporanController extends Controller
             'tingkat_prioritas' => 'Sedang',
             'status' => 'Menunggu',
             'diverifikasi_oleh' => null,
-]);
+        ]);
 
-    // Jalankan AI detection kalau ada foto (bukan hanya lampiran PDF)
+        // Jalankan AI detection kalau ada gambar — baik dari kamera (foto)
+        // maupun dari upload file (lampiran), asalkan lampiran berformat
+        // gambar (bukan PDF, karena YOLO butuh gambar).
+        $ekstensiGambar = ['jpg', 'jpeg', 'png'];
+        $pathUntukAi = null;
+
         if ($foto) {
-        try {
-            $aiService = new AiDetectionService();
-            $aiService->detectAndSave($laporan->id, storage_path('app/public/' . $foto));
-            } catch (\Exception $e) {
-        // Kalau AI service gagal/mati, laporan tetap tersimpan.
-        // Cuma AI detection-nya yang gak jalan, dicatat di log saja.
-        \Log::error('AI Detection gagal untuk laporan #' . $laporan->id . ': ' . $e->getMessage());
+            $pathUntukAi = $foto;
+        } elseif ($lampiran && in_array(strtolower(pathinfo($lampiran, PATHINFO_EXTENSION)), $ekstensiGambar)) {
+            $pathUntukAi = $lampiran;
         }
-    }
+
+        if ($pathUntukAi) {
+            try {
+                $aiService = new AiDetectionService();
+                $aiService->detectAndSave($laporan->id, storage_path('app/public/' . $pathUntukAi));
+            } catch (\Exception $e) {
+                // Kalau AI service gagal/mati, laporan tetap tersimpan.
+                // Cuma AI detection-nya yang gak jalan, dicatat di log saja.
+                \Log::error('AI Detection gagal untuk laporan #' . $laporan->id . ': ' . $e->getMessage());
+            }
+        }
 
         return redirect()
             ->route('warga.laporan.index')

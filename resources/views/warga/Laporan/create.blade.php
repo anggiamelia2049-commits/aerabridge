@@ -1,17 +1,11 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Buat Laporan Baru
-        </h2>
-    </x-slot>
-
     <div class="py-6">
         <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white shadow rounded-lg p-6">
+            <div class="bg-white shadow rounded-xl p-6 sm:p-8">
 
                 @if ($errors->any())
-                    <div class="mb-4 p-4 bg-red-100 text-red-700 rounded">
-                        <ul class="list-disc list-inside">
+                    <div class="mb-6 p-4 bg-merah/10 border border-merah text-merah rounded-lg text-sm">
+                        <ul class="list-disc list-inside space-y-1">
                             @foreach ($errors->all() as $error)
                                 <li>{{ $error }}</li>
                             @endforeach
@@ -22,9 +16,11 @@
                 <form action="{{ route('warga.laporan.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
 
-                    <div class="mb-4">
-                        <label class="block font-medium mb-1">Kategori Kerusakan</label>
-                        <select name="kategori_id" class="w-full border rounded p-2" required>
+                    <div class="mb-5">
+                        <label class="block text-sm font-medium text-abu-tua mb-1">Kategori Kerusakan</label>
+                        <select name="kategori_id"
+                                class="w-full border border-abu-muda rounded-lg p-2.5 text-sm text-abu-tua focus:outline-none focus:ring-2 focus:ring-cyan-4 focus:border-cyan-4"
+                                required>
                             <option value="">-- Pilih Kategori --</option>
                             @foreach ($kategoris as $kategori)
                                 <option value="{{ $kategori->id }}" {{ old('kategori_id') == $kategori->id ? 'selected' : '' }}>
@@ -34,9 +30,11 @@
                         </select>
                     </div>
 
-                    <div class="mb-4">
-                        <label class="block font-medium mb-1">Instansi Tujuan</label>
-                        <select name="instansi_id" class="w-full border rounded p-2" required>
+                    <div class="mb-5">
+                        <label class="block text-sm font-medium text-abu-tua mb-1">Instansi Tujuan</label>
+                        <select name="instansi_id"
+                                class="w-full border border-abu-muda rounded-lg p-2.5 text-sm text-abu-tua focus:outline-none focus:ring-2 focus:ring-cyan-4 focus:border-cyan-4"
+                                required>
                             <option value="">-- Pilih Instansi --</option>
                             @foreach ($instansis as $instansi)
                                 <option value="{{ $instansi->id }}" {{ old('instansi_id') == $instansi->id ? 'selected' : '' }}>
@@ -46,88 +44,98 @@
                         </select>
                     </div>
 
-                    <div class="mb-4">
-                        <label class="block font-medium mb-1">Judul Laporan</label>
+                    <div class="mb-5">
+                        <label class="block text-sm font-medium text-abu-tua mb-1">Judul Laporan</label>
                         <input type="text" name="judul" value="{{ old('judul') }}"
-                               class="w-full border rounded p-2" required>
+                               class="w-full border border-abu-muda rounded-lg p-2.5 text-sm text-abu-tua focus:outline-none focus:ring-2 focus:ring-cyan-4 focus:border-cyan-4"
+                               required>
                     </div>
 
-                    <div class="mb-4">
-                        <label class="block font-medium mb-1">Deskripsi</label>
-                        <textarea name="deskripsi" rows="4" class="w-full border rounded p-2" required>{{ old('deskripsi') }}</textarea>
+                    <div class="mb-5">
+                        <label class="block text-sm font-medium text-abu-tua mb-1">Deskripsi</label>
+                        <textarea name="deskripsi" rows="4"
+                                  class="w-full border border-abu-muda rounded-lg p-2.5 text-sm text-abu-tua focus:outline-none focus:ring-2 focus:ring-cyan-4 focus:border-cyan-4"
+                                  required>{{ old('deskripsi') }}</textarea>
                     </div>
 
-                    <div class="mb-4">
-                        <label class="block font-medium mb-1">Foto Kerusakan (Live Camera) <span class="text-gray-400 font-normal">— gunakan jika kamera tersedia</span></label>
+                    <div class="mb-5">
+                        <label class="block text-sm font-medium text-abu-tua mb-1">
+                            Foto Kerusakan (Live Camera)
+                            <span class="text-abu-tua/60 font-normal">— gunakan jika kamera tersedia</span>
+                        </label>
 
-                        <div class="border rounded p-3 bg-gray-50">
-                            <video id="video" autoplay playsinline class="w-full rounded mb-2" style="display:none;"></video>
+                        <div class="border border-abu-muda rounded-lg p-4 bg-cyan-muda/10">
+                            <video id="video" autoplay playsinline class="w-full rounded-lg mb-3" style="display:none;"></video>
                             <canvas id="canvas" style="display:none;"></canvas>
-                            <img id="hasilFoto" class="w-full rounded mb-2" style="display:none;">
+                            <img id="hasilFoto" class="w-full rounded-lg mb-3" style="display:none;">
 
-                            <div class="flex gap-2">
+                            <div class="flex flex-wrap gap-2">
                                 <button type="button" onclick="nyalakanKamera()" id="btnNyalakan"
-                                        class="bg-gray-700 text-white px-4 py-2 rounded">
+                                        class="bg-cyan-6 hover:bg-cyan-6/90 text-white text-sm font-medium px-4 py-2 rounded-lg transition">
                                     Nyalakan Kamera
                                 </button>
                                 <button type="button" onclick="ambilFoto()" id="btnAmbil"
-                                        class="bg-indigo-600 text-white px-4 py-2 rounded" style="display:none;">
+                                        class="bg-cyan-4 hover:bg-cyan-6 text-white text-sm font-medium px-4 py-2 rounded-lg transition" style="display:none;">
                                     Ambil Foto
                                 </button>
                                 <button type="button" onclick="ulangiFoto()" id="btnUlangi"
-                                        class="bg-gray-400 text-white px-4 py-2 rounded" style="display:none;">
+                                        class="bg-abu-muda hover:bg-abu-muda/80 text-abu-tua text-sm font-medium px-4 py-2 rounded-lg transition" style="display:none;">
                                     Ulangi
                                 </button>
                             </div>
-                            <p id="statusKamera" class="text-xs text-gray-500 mt-2"></p>
+                            <p id="statusKamera" class="text-xs text-abu-tua/70 mt-2"></p>
                         </div>
 
                         <input type="hidden" name="foto_base64" id="foto_base64">
                     </div>
 
-                    <div class="mb-4">
-                        <label class="block font-medium mb-1">
-                            Upload Foto/Lampiran <span class="text-red-500">*Wajib jika kamera tidak tersedia</span>
+                    <div class="mb-5">
+                        <label class="block text-sm font-medium text-abu-tua mb-1">
+                            Upload Foto/Lampiran
+                            <span class="text-merah">*Wajib jika kamera tidak tersedia</span>
                         </label>
                         <input type="file" name="lampiran" accept="image/*,.pdf"
-                            class="w-full border rounded p-2">
-                        <p class="text-xs text-gray-500 mt-1">
+                               class="w-full border border-abu-muda rounded-lg p-2.5 text-sm text-abu-tua file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:bg-cyan-3/20 file:text-cyan-6 file:text-sm focus:outline-none focus:ring-2 focus:ring-cyan-4">
+                        <p class="text-xs text-abu-tua/70 mt-1">
                             Bisa berupa foto pendukung lain atau dokumen terkait (JPG, PNG, PDF, maks 5MB).
                         </p>
                     </div>
-                    
-                    <div class="mb-4">
-                        <label class="block font-medium mb-1">Alamat / Patokan Lokasi</label>
+
+                    <div class="mb-5">
+                        <label class="block text-sm font-medium text-abu-tua mb-1">Alamat / Patokan Lokasi</label>
                         <input type="text" name="alamat" value="{{ old('alamat') }}"
-                               class="w-full border rounded p-2" placeholder="Contoh: Depan Indomaret, Jl. Merdeka">
+                               class="w-full border border-abu-muda rounded-lg p-2.5 text-sm text-abu-tua focus:outline-none focus:ring-2 focus:ring-cyan-4 focus:border-cyan-4"
+                               placeholder="Contoh: Depan Indomaret, Jl. Merdeka">
                     </div>
 
-                    <div class="mb-4 grid grid-cols-2 gap-4">
+                    <div class="mb-5 grid grid-cols-2 gap-4">
                         <div>
-                            <label class="block font-medium mb-1">Latitude</label>
+                            <label class="block text-sm font-medium text-abu-tua mb-1">Latitude</label>
                             <input type="text" name="latitude" id="latitude" value="{{ old('latitude') }}"
-                                   class="w-full border rounded p-2 bg-gray-100" readonly required>
+                                   class="w-full border border-abu-muda rounded-lg p-2.5 text-sm text-abu-tua bg-abu-muda/30" readonly required>
                         </div>
                         <div>
-                            <label class="block font-medium mb-1">Longitude</label>
+                            <label class="block text-sm font-medium text-abu-tua mb-1">Longitude</label>
                             <input type="text" name="longitude" id="longitude" value="{{ old('longitude') }}"
-                                   class="w-full border rounded p-2 bg-gray-100" readonly required>
+                                   class="w-full border border-abu-muda rounded-lg p-2.5 text-sm text-abu-tua bg-abu-muda/30" readonly required>
                         </div>
                     </div>
 
-                    <div class="mb-6">
+                    <div class="mb-8">
                         <button type="button" onclick="ambilLokasi()"
-                                class="bg-gray-200 text-gray-800 px-4 py-2 rounded hover:bg-gray-300">
+                                class="inline-flex items-center gap-1 bg-abu-muda hover:bg-abu-muda/80 text-abu-tua text-sm font-medium px-4 py-2 rounded-lg transition">
                             📍 Ambil Lokasi Saat Ini
                         </button>
-                        <span id="statusLokasi" class="text-sm text-gray-500 ml-2"></span>
+                        <span id="statusLokasi" class="text-sm text-abu-tua/70 ml-2"></span>
                     </div>
 
                     <div class="flex justify-end gap-2">
                         <a href="{{ route('warga.laporan.index') }}"
-                           class="px-4 py-2 rounded border">Batal</a>
+                           class="px-4 py-2 rounded-lg border border-abu-muda text-abu-tua text-sm font-medium hover:bg-abu-muda/20 transition">
+                            Batal
+                        </a>
                         <button type="submit"
-                                class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">
+                                class="bg-cyan-4 hover:bg-cyan-6 text-white text-sm font-medium px-5 py-2 rounded-lg transition">
                             Kirim Laporan
                         </button>
                     </div>
