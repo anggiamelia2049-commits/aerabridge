@@ -1,3 +1,7 @@
+@extends('template.layout')
+
+ @section('content')
+
 <table border="1">
     <tr>
         <th>User</th>
@@ -68,4 +72,5 @@
 
 <br>
 
-<a href="{{ route('petugas.laporan.index') }}">Back</a>
+<a href="{{ route('petugas.laporan.index') }}">Kembali</a>
+@endsection

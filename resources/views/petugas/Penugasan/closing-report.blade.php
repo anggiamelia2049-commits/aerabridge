@@ -1,3 +1,7 @@
+@extends('template.layout')
+
+ @section('content')
+
 <h1>Closing Report</h1>
 
 <p>{{ $penugasan->laporan->judul }}</p>
@@ -22,3 +26,4 @@
 <a href="{{ route('petugas.penugasan.show', $penugasan->id) }}">
     Kembali
 </a>
+@endsection

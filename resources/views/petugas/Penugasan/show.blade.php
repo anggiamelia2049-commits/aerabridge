@@ -1,3 +1,7 @@
+@extends('template.layout')
+
+ @section('content')
+
 <h1>Detail Penugasan</h1>
 
 <h3>{{ $penugasan->laporan->judul }}</h3>
@@ -65,3 +69,4 @@
 <a href="{{ route('petugas.penugasan.index') }}">
     Kembali
 </a>
+@endsection

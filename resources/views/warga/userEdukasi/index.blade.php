@@ -1,39 +1,45 @@
-<table border="1">
-    <tr>
-        <th>No</th>
-        <th>User</th>
-        <th>Konten</th>
-        <th>Status</th>
-        <th>Progress</th>
-        <th>Selesai Pada</th>
-        <th>
-            <a href="{{ route('user-edukasi-progress.create') }}">Tambah</a>
-        </th>
-    </tr>
+<h2>Edukasi Perawatan Fasilitas Publik</h2>
 
-    @forelse ($progress as $v)
-    <tr>
-        <td>{{ $loop->iteration }}</td>
-        <td>{{ $v->user_id->name ?? '-' }}</td>
-        <td>{{ $v->konten_id->judul ?? '-' }}</td>
-        <td>{{ $v->status }}</td>
-        <td>{{ $v->progress }}%</td>
-        <td>{{ $v->selesai_pada ?? '-' }}</td>
-        <td>
-            <a href="{{ route('user-edukasi-progress.edit', $v->id) }}">Edit</a>
+@if (session('success'))
+    <p>{{ session('success') }}</p>
+@endif
 
-            <form action="{{ route('user-edukasi-progress.destroy', $v->id) }}" method="POST" style="display:inline">
-                @csrf
-                @method('DELETE')
-                <button type="submit" onclick="return confirm('Are you sure you want to delete this?')">
-                    Delete
-                </button>
-            </form>
-        </td>
-    </tr>
-    @empty
-    <tr>
-        <td colspan="7">Belum ada data.</td>
-    </tr>
-    @endforelse
-</table>
+@if ($kontenList->isEmpty())
+    <p>Belum ada konten edukasi.</p>
+@else
+    <table border="1" cellpadding="8">
+        <tr>
+            <th>No</th>
+            <th>Judul</th>
+            <th>Kategori</th>
+            <th>Status</th>
+            <th>Aksi</th>
+        </tr>
+
+        @foreach ($kontenList as $i => $konten)
+            @php
+                $progress = $konten->progress->first();
+                $status = $progress->status ?? 'belum_dibaca';
+            @endphp
+            <tr>
+                <td>{{ $i + 1 }}</td>
+                <td>{{ $konten->judul }}</td>
+                <td>{{ $konten->kategori }}</td>
+                <td>
+                    @if ($status === 'selesai')
+                        Selesai ✅
+                    @elseif ($status === 'sedang')
+                        Sedang Dibaca
+                    @else
+                        Belum Dibaca
+                    @endif
+                </td>
+                <td>
+                    <a href="{{ route('warga.user-edukasi.show', $konten->id) }}">
+                        {{ $status === 'selesai' ? 'Baca Lagi' : 'Baca Sekarang' }}
+                    </a>
+                </td>
+            </tr>
+        @endforeach
+    </table>
+@endif

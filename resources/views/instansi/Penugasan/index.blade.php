@@ -1,3 +1,9 @@
+<p>
+    <a href="{{ route('instansi.penugasan.index') }}">Aktif</a> |
+    <a href="{{ route('instansi.penugasan.index', ['filter' => 'validasi']) }}">Menunggu Validasi</a> |
+    <a href="{{ route('instansi.penugasan.index', ['filter' => 'selesai']) }}">Selesai</a> |
+    <a href="{{ route('instansi.penugasan.index', ['filter' => 'dibatalkan']) }}">Dibatalkan</a>
+</p>
 <table border="1">
     <tr>
         <th>No</th>

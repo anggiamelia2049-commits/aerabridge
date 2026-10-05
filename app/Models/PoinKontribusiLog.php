@@ -25,4 +25,25 @@ class PoinKontribusiLog extends Model
     {
         return $this->belongsTo(Laporan::class, 'laporan_id');
     }
+
+    public static function tambahPoin(
+        int $userId,
+        int $poin,
+        string $jenisAktivitas,
+        ?int $laporanId = null,
+        ?string $keterangan = null
+    ): self {
+        return self::create([
+            'user_id' => $userId,
+            'laporan_id' => $laporanId,
+            'jenis_aktivitas' => $jenisAktivitas,
+            'poin' => $poin,
+            'keterangan' => $keterangan,
+        ]);
+    }
+
+        public static function totalPoin(int $userId): int
+    {
+        return (int) self::where('user_id', $userId)->sum('poin');
+    }
 }
