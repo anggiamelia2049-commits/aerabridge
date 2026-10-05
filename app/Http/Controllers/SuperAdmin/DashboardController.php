@@ -1,65 +1,50 @@
 <?php
 
-namespace App\Http\Controllers\super_admin;
+namespace App\Http\Controllers\SuperAdmin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Models\Laporan;
+use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
-    }
+        $bulanIni = now()->startOfMonth();
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
+        // ===== Kartu statistik =====
+        $stats = [
+            'total'          => Laporan::count(),
+            'bulan_ini'      => Laporan::where('created_at', '>=', $bulanIni)->count(),
+            'belum_direspon' => Laporan::where('status', 'Menunggu')->count(),
+            'direspon'       => Laporan::where('status', '!=', 'Menunggu')->count(),
+            'dalam_progress' => Laporan::where('status', 'Diproses')->count(),
+            'selesai'        => Laporan::where('status', 'Selesai')->count(),
+        ];
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+        // ===== Grafik: jumlah aduan bulan ini per tingkat prioritas =====
+        $perPrioritas = Laporan::where('created_at', '>=', $bulanIni)
+            ->select('tingkat_prioritas', DB::raw('COUNT(*) as total'))
+            ->groupBy('tingkat_prioritas')
+            ->pluck('total', 'tingkat_prioritas');
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
+        $chart = [
+            'labels' => ['Krisis', 'Sedang', 'Rendah'],
+            'data'   => [
+                (int) ($perPrioritas['Krisis'] ?? 0),
+                (int) ($perPrioritas['Sedang'] ?? 0),
+                (int) ($perPrioritas['Rendah'] ?? 0),
+            ],
+        ];
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
+        // ===== Daftar laporan terbaru (berdasarkan prioritas) =====
+        // Di MySQL, ORDER BY kolom ENUM mengikuti urutan definisi: Krisis, Sedang, Rendah
+        $laporanTerbaru = Laporan::whereNotIn('status', ['Selesai', 'Ditolak'])
+            ->orderBy('tingkat_prioritas')
+            ->latest()
+            ->limit(10)
+            ->get();
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        return view('SuperAdmin.dashboard', compact('stats', 'chart', 'laporanTerbaru'));
     }
 }

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SuperAdmin\UserController as SuperAdminUserController;
+use App\Http\Controllers\SuperAdmin\DashboardController as SuperAdminDashboardController;
 use App\Http\Controllers\SuperAdmin\AeraPayTransaksiController as SuperAdminAeraPayTransaksiController;
 use App\Http\Controllers\SuperAdmin\DeteksiAiController as SuperAdminDeteksiAiController;
 use App\Http\Controllers\SuperAdmin\HadiahController as SuperAdminHadiahController;
@@ -38,6 +39,10 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function () {
+    if (auth()->user()->role === 'super_admin') {
+        return redirect()->route('super_admin.dashboard');
+    }
+
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
@@ -48,6 +53,7 @@ Route::middleware('auth')->group(function () {
 
     // ==== Khusus Super Admin ====
     Route::name('super_admin.')->prefix('super_admin')->middleware('role:super_admin')->group(function () {
+        Route::get('/dashboard', [SuperAdminDashboardController::class, 'index'])->name('dashboard');
         Route::resource('user', SuperAdminUserController::class);
         Route::resource('instansi', SuperAdminInstansiController::class);
 

@@ -3,27 +3,44 @@
 
         {{-- BAGIAN KIRI --}}
         <div class="hidden lg:flex lg:w-[42%] h-full bg-[#0C343D] text-white relative overflow-hidden flex-col justify-between">
-            <div class="relative z-10 px-12 pt-12">
-                <div class="mb-20">
-                    <img src="{{ asset('images/logo-aera-bridge.png') }}" alt="Aera Bridge" class="h-4 w-auto">
-                </div>
+    <div class="relative z-10 px-11 pt-11">
+        <div class="mb-16">
+            <img src="{{ asset('images/logo-aera-bridge.png') }}" alt="Aera Bridge" class="h-3.5 w-auto">
+        </div>
 
-                <div class="max-w-[380px]">
-                    <p class="text-xs uppercase tracking-[1px] text-[#A9D6DD] font-semibold mb-4">Laman Layanan Publik</p>
-                    <h1 class="text-[24px] font-bold leading-[1] mb-5">Satu akun untuk semua layanan anda</h1>
-                    <p class="text-[15px] leading-relaxed text-[#D9D9D9]">
-                        Lengkapi data diri sekali saja untuk mengakses seluruh layanan terintegrasi dengan aman dan cepat.
-                    </p>
+        <div class="max-w-[350px]">
+            <p class="text-[11px] uppercase tracking-[1px] text-[#A9D6DD] font-semibold mb-3.5">
+                Laman Layanan Publik
+            </p>
 
-                    <div class="w-full h-px bg-white/20 my-5"></div>
+            <h1 class="text-[22px] font-bold leading-[1.05] mb-4.5">
+                Satu akun untuk semua layanan anda
+            </h1>
 
-                    <div class="space-y-4 text-sm text-[#D9D9D9]">
-                        <p class="flex gap-2"><span class="text-white font-semibold">1.</span><span>Isi data kependudukan &amp; kontak</span></p>
-                        <p class="flex gap-2"><span class="text-white font-semibold">2.</span><span>Buat nama pengguna dan kata sandi</span></p>
-                        <p class="flex gap-2"><span class="text-white font-semibold">3.</span><span>Konfirmasi email untuk mulai</span></p>
-                    </div>
-                </div>
+            <p class="text-[14px] leading-relaxed text-[#D9D9D9]">
+                Lengkapi data diri sekali saja untuk mengakses seluruh layanan terintegrasi dengan aman dan cepat.
+            </p>
+
+            <div class="w-full h-px bg-white/20 my-5"></div>
+
+            <div class="space-y-2 text-[13px] text-[#D9D9D9]">
+                <p class="flex gap-2">
+                    <span class="text-white font-semibold">1.</span>
+                    <span>Isi data kependudukan &amp; kontak</span>
+                </p>
+
+                <p class="flex gap-2">
+                    <span class="text-white font-semibold">2.</span>
+                    <span>Buat nama pengguna dan kata sandi</span>
+                </p>
+
+                <p class="flex gap-2">
+                    <span class="text-white font-semibold">3.</span>
+                    <span>Konfirmasi email untuk mulai</span>
+                </p>
             </div>
+        </div>
+    </div>
 
             {{-- DEKORASI LINGKARAN --}}
             <div class="absolute -bottom-10 -left-16 w-48 h-48 rounded-full border border-[#76A5AF]/50"></div>
