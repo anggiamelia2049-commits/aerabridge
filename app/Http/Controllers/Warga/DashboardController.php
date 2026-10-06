@@ -5,24 +5,18 @@ namespace App\Http\Controllers\Warga;
 use App\Http\Controllers\Controller;
 use App\Models\AeraPayTransaksi;
 use App\Models\PoinKontribusiLog;
+use App\Models\Laporan;
 use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
-    /**
-     * Halaman Profil & Poin Kontribusi (AERA Pay) — sesuai proposal 7.4.D:
-     * "Menampilkan riwayat kontribusi pengguna, total poin, dan fitur
-     * konversi poin ke saldo simulasi AERA Pay sebagai bentuk apresiasi
-     * gamifikasi" + 7.2.C.3: "Statistik dan lencana (badge) sebagai
-     * apresiasi partisipasi aktif."
-     *
-     * Controller ini TERPISAH dari ProfileController bawaan Breeze
-     * (yang menangani ganti nama/email/password) — ini murni untuk
-     * ringkasan gamifikasi, bukan pengaturan akun.
-     */
     public function index()
     {
         $user = Auth::user();
+
+        // =========================
+        // KONTRIBUSI & AERA PAY
+        // =========================
 
         $totalPoin = PoinKontribusiLog::totalPoin($user->id);
 
@@ -37,25 +31,60 @@ class DashboardController extends Controller
 
         $badge = $this->tentukanBadge($totalPoin);
 
+
+        // =========================
+        // DATA LAPORAN WARGA
+        // =========================
+
+        $laporanWarga = Laporan::where('user_id', $user->id);
+
+        $totalLaporan = (clone $laporanWarga)->count();
+
+        $laporanDiproses = (clone $laporanWarga)
+            ->whereIn('status', ['diproses', 'proses'])
+            ->count();
+
+        $laporanSelesai = (clone $laporanWarga)
+            ->whereIn('status', ['selesai', 'ditangani'])
+            ->count();
+
+        $laporanTerbaru = Laporan::where('user_id', $user->id)
+            ->latest()
+            ->take(5)
+            ->get();
+
+
         return view('warga.dashboard', compact(
             'user',
             'totalPoin',
             'saldoSaatIni',
             'riwayatPoinTerbaru',
-            'badge'
+            'badge',
+            'totalLaporan',
+            'laporanDiproses',
+            'laporanSelesai',
+            'laporanTerbaru'
         ));
     }
 
-    /**
-     * Badge sederhana berdasarkan akumulasi total poin kontribusi.
-     * Ambang batas ini bisa disesuaikan sesuai kebutuhan proyek.
-     */
+
     private function tentukanBadge(int $totalPoin): array
     {
         return match (true) {
-            $totalPoin >= 500 => ['label' => 'Pahlawan Kota', 'warna' => 'merah'],
-            $totalPoin >= 100 => ['label' => 'Warga Aktif', 'warna' => 'oranye'],
-            default => ['label' => 'Warga Pemula', 'warna' => 'cyan-4'],
+            $totalPoin >= 500 => [
+                'label' => 'Pahlawan Kota',
+                'warna' => 'merah'
+            ],
+
+            $totalPoin >= 100 => [
+                'label' => 'Warga Aktif',
+                'warna' => 'oranye'
+            ],
+
+            default => [
+                'label' => 'Warga Pemula',
+                'warna' => 'cyan-4'
+            ],
         };
     }
 }

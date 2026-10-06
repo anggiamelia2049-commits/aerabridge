@@ -1,99 +1,153 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-cyan-6 leading-tight">
-            Profil & Kontribusi Saya
-        </h2>
-    </x-slot>
+@extends('template.layout')
 
-    <div class="py-6">
-        <div class="max-w-5xl mx-auto sm:px-6 lg:px-8 space-y-6">
+@section('title', 'Dashboard Warga')
 
-            {{-- Kartu Profil --}}
-            <div class="bg-white shadow rounded-xl p-6 flex flex-col sm:flex-row sm:items-center gap-4">
-                <div class="w-16 h-16 rounded-full bg-cyan-6 text-white flex items-center justify-center text-2xl font-semibold shrink-0">
-                    {{ strtoupper(substr($user->nama ?? '?', 0, 1)) }}
+@section('content')
+@php
+    $cards = [
+        [
+            'label' => 'Total Laporan',
+            'value' => $totalLaporan,
+            'note'  => 'Semua laporan yang kamu buat',
+            'icon'  => '<path d="M9 12h6m-6 4h6m2 5H7a2.25 2.25 0 01-2.25-2.25V6.75A2.25 2.25 0 017 4.5h2.25M15 5.25h1.5a2.25 2.25 0 012.25 2.25v12A2.25 2.25 0 0116.5 21.75H7.5m0-18h3.75a1.5 1.5 0 011.5 1.5v.75a1.5 1.5 0 01-1.5 1.5H7.5a1.5 1.5 0 01-1.5-1.5v-.75a1.5 1.5 0 011.5-1.5z"/>',
+        ],
+        [
+            'label' => 'Sedang Diproses',
+            'value' => $laporanDiproses,
+            'note'  => 'Laporan yang sedang ditangani',
+            'icon'  => '<path d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"/>',
+        ],
+        [
+            'label' => 'Laporan Selesai',
+            'value' => $laporanSelesai,
+            'note'  => 'Laporan yang telah diselesaikan',
+            'icon'  => '<path d="M4.5 12.75l6 6 9-13.5"/>',
+        ],
+    ];
+
+    $statusBadge = [
+        'selesai'   => ['Selesai', 'bg-hijau/10 text-hijau'],
+        'ditangani' => ['Selesai', 'bg-hijau/10 text-hijau'],
+        'diproses'  => ['Diproses', 'bg-oranye/10 text-oranye'],
+        'proses'    => ['Diproses', 'bg-oranye/10 text-oranye'],
+    ];
+@endphp
+
+{{-- ===== Sapaan ===== --}}
+<p class="text-sm text-gray-500 mb-4">
+    Selamat datang, <span class="font-medium text-gray-700">{{ $user->nama }}</span>
+</p>
+
+{{-- ===== Kartu Statistik ===== --}}
+<section class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+    @foreach ($cards as $c)
+        <div class="bg-white rounded-xl shadow-sm px-6 py-6 flex items-center gap-4">
+            <span class="w-14 h-14 shrink-0 rounded-full bg-gray-100 flex items-center justify-center text-gray-700">
+                <svg fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" style="width:26px;height:26px;">
+                    {!! $c['icon'] !!}
+                </svg>
+            </span>
+
+            <div class="flex flex-col leading-tight min-w-0">
+                <div class="text-xs font-bold text-gray-500 uppercase tracking-wide truncate">{{ $c['label'] }}</div>
+                <div class="text-3xl font-extrabold text-gray-800 leading-none mt-1.5">
+                    {{ number_format($c['value'], 0, ',', '.') }}
                 </div>
-
-                <div class="flex-1">
-                    <p class="text-lg font-semibold text-abu-tua">{{ $user->nama }}</p>
-                    <p class="text-sm text-abu-tua/70">{{ $user->email }}</p>
-
-                    <span @class([
-                        'inline-block mt-2 px-3 py-1 rounded-full text-xs font-semibold',
-                        'bg-merah/10 text-merah' => $badge['label'] === 'Pahlawan Kota',
-                        'bg-oranye/10 text-oranye' => $badge['label'] === 'Warga Aktif',
-                        'bg-cyan-4/10 text-cyan-6' => $badge['label'] === 'Warga Pemula',
-                    ])>
-                        🏅 {{ $badge['label'] }}
-                    </span>
-                </div>
-
-                <a href="{{ route('profile.edit') }}"
-                   class="self-start sm:self-center px-4 py-2 rounded-lg border border-abu-muda text-abu-tua text-sm font-medium hover:bg-abu-muda/20 transition">
-                    Edit Profil / Ganti Password
-                </a>
-                <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <button type="submit"
-                        class="px-4 py-2 rounded-lg border border-merah/30 text-merah text-sm font-medium hover:bg-merah/10 transition">
-                    Keluar
-                </button>
-            </form>
+                <div class="text-xs text-gray-400 mt-1.5 truncate">{{ $c['note'] }}</div>
             </div>
+        </div>
+    @endforeach
+</section>
 
-            {{-- Kartu Statistik --}}
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div class="bg-white shadow rounded-xl p-6">
-                    <p class="text-sm text-abu-tua/70">Total Poin Kontribusi</p>
-                    <p class="text-3xl font-bold text-cyan-6 mt-1">{{ number_format($totalPoin) }} <span class="text-base font-normal text-abu-tua">Poin</span></p>
-                    <a href="{{ route('warga.poin.index') }}"
-                       class="inline-block mt-3 text-sm text-cyan-4 hover:text-cyan-6 hover:underline">
-                        Lihat Riwayat Lengkap →
-                    </a>
-                </div>
+{{-- ===== Laporan Terbaru ===== --}}
+<section class="bg-white rounded-xl shadow-sm p-6 mb-6">
+    <div class="flex items-center justify-between mb-4">
+        <h2 class="text-base font-bold text-gray-800">Laporan Terbaru</h2>
+        <a href="{{ url('/warga/laporan') }}" class="text-sm text-cyan-4 hover:text-cyan-6 hover:underline">
+            Lihat Semua
+        </a>
+    </div>
 
-                <div class="bg-white shadow rounded-xl p-6">
-                    <p class="text-sm text-abu-tua/70">Saldo AERA Pay (Simulasi)</p>
-                    <p class="text-3xl font-bold text-cyan-6 mt-1">Rp{{ number_format($saldoSaatIni) }}</p>
-                    <div class="flex gap-4 mt-3 text-sm">
-                        <a href="{{ route('warga.aeraPay.index') }}"
-                           class="text-cyan-4 hover:text-cyan-6 hover:underline">
-                            Lihat Riwayat
-                        </a>
-                        <a href="{{ route('warga.aeraPay.create') }}"
-                           class="text-cyan-4 hover:text-cyan-6 hover:underline font-medium">
-                            Tukar Poin ke Saldo →
-                        </a>
-                    </div>
-                </div>
-            </div>
+    <div class="overflow-x-auto max-h-[320px] overflow-y-auto">
+        <table class="w-full text-sm text-left">
+            <thead class="sticky top-0 bg-cyan-4/25 text-cyan-6 text-xs uppercase tracking-wider">
+                <tr>
+                    <th class="px-4 py-3 rounded-l-md">Judul Laporan</th>
+                    <th class="px-4 py-3">Tanggal</th>
+                    <th class="px-4 py-3 rounded-r-md text-center">Status</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+                @forelse ($laporanTerbaru as $laporan)
+                    @php
+                        $statusKey = strtolower($laporan->status ?? '');
+                        [$teks, $kelas] = $statusBadge[$statusKey] ?? ['Menunggu', 'bg-cyan-4/10 text-cyan-6'];
+                    @endphp
+                    <tr class="hover:bg-gray-100 transition-colors">
+                        <td class="px-4 py-3 font-medium text-gray-800">{{ $laporan->judul }}</td>
+                        <td class="px-4 py-3 text-gray-600">{{ $laporan->created_at->translatedFormat('d M Y') }}</td>
+                        <td class="px-4 py-3 text-center">
+                            <span class="inline-block min-w-[64px] rounded-md px-3 py-1 text-xs font-semibold {{ $kelas }}">
+                                {{ $teks }}
+                            </span>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="3" class="px-4 py-8 text-center text-gray-400">
+                            Belum ada laporan yang kamu buat.
+                        </td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+</section>
 
-            {{-- Aktivitas Terbaru --}}
-            <div class="bg-white shadow rounded-xl p-6">
-                <h3 class="font-semibold text-abu-tua mb-4">Aktivitas Terbaru</h3>
+{{-- ===== Kontribusi Saya ===== --}}
+<section class="bg-white rounded-xl shadow-sm p-6">
+    <h2 class="text-base font-bold text-gray-800 mb-4">Kontribusi Saya</h2>
 
-                @if ($riwayatPoinTerbaru->isEmpty())
-                    <p class="text-sm text-abu-tua/70">Belum ada aktivitas poin.</p>
-                @else
-                    <ul class="divide-y divide-abu-muda">
-                        @foreach ($riwayatPoinTerbaru as $v)
-                            <li class="py-3 flex items-center justify-between text-sm">
-                                <div>
-                                    <p class="text-abu-tua font-medium capitalize">{{ str_replace('_', ' ', $v->jenis_aktivitas) }}</p>
-                                    <p class="text-abu-tua/60 text-xs">{{ $v->created_at->format('d M Y') }}</p>
-                                </div>
-                                <span @class([
-                                    'font-semibold',
-                                    'text-hijau' => $v->poin > 0,
-                                    'text-merah' => $v->poin < 0,
-                                ])>
-                                    {{ $v->poin > 0 ? '+' . $v->poin : $v->poin }} poin
-                                </span>
-                            </li>
-                        @endforeach
-                    </ul>
-                @endif
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="bg-gray-100 rounded-lg p-4">
+            <p class="text-xs text-gray-500 uppercase tracking-wide font-bold">Total Poin Kontribusi</p>
+            <p class="text-2xl font-extrabold text-gray-800 mt-1">
+                {{ number_format($totalPoin) }}
+                <span class="text-sm font-normal text-gray-500">Poin</span>
+            </p>
+            <a href="{{ route('warga.poin.index') }}" class="inline-block mt-2 text-sm text-cyan-4 hover:text-cyan-6 hover:underline">
+                Lihat Kontribusi
+            </a>
+        </div>
+
+        <div class="bg-gray-100 rounded-lg p-4">
+            <p class="text-xs text-gray-500 uppercase tracking-wide font-bold">Saldo AERA Pay</p>
+            <p class="text-2xl font-extrabold text-gray-800 mt-1">
+                Rp{{ number_format($saldoSaatIni) }}
+            </p>
+            <div class="flex gap-4 mt-2 text-sm">
+                <a href="{{ route('warga.aeraPay.index') }}" class="text-cyan-4 hover:text-cyan-6 hover:underline">Riwayat</a>
+                <a href="{{ route('warga.aeraPay.create') }}" class="text-cyan-4 hover:text-cyan-6 hover:underline">Tukar Poin</a>
             </div>
         </div>
     </div>
-</x-app-layout>
+</section>
+@push('styles')
+<style>
+    body > div.flex.min-h-screen {
+        height: 100vh;
+        overflow: hidden;
+    }
+
+    body > div.flex.min-h-screen > aside,
+    body > div.flex.min-h-screen > aside > div {
+        height: 100vh;
+    }
+
+    body > div.flex.min-h-screen main {
+        height: 100vh;
+        overflow-y: auto;
+    }
+</style>
+@endpush
+@endsection
