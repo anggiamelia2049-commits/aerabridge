@@ -33,6 +33,8 @@ use App\Http\Controllers\Instansi\NotifikasiController as InstansiNotifikasiCont
 use App\Http\Controllers\Instansi\DeteksiAiController as InstansiDeteksiAiController;
 use App\Http\Controllers\Instansi\DashboardController as InstansiDashboardController;
 
+use App\Http\Controllers\LaporanPublikController;
+
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -132,5 +134,13 @@ Route::middleware('auth')->group(function () {
             ->only(['index', 'show']);
     });
 });
+
+Route::get('/', [LaporanPublikController::class, 'create'])->name('home');
+    Route::post('/laporan', [LaporanPublikController::class, 'store'])
+        ->middleware(['guest', 'throttle:5,1'])->name('laporan.publik.store');
+    Route::get('/laporan/sukses', [LaporanPublikController::class, 'sukses'])->name('laporan.sukses');
+    Route::get('/lacak', [LaporanPublikController::class, 'lacak'])
+        ->middleware('throttle:20,1')->name('lacak');
+
 
 require __DIR__ . '/auth.php';
