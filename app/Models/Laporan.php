@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\KategoriKerusakan;
 use App\Models\Instansi;
 use App\Models\Penugasan;
+use Illuminate\Support\Str;
 
 class Laporan extends Model
 {
@@ -26,7 +27,26 @@ class Laporan extends Model
         'tingkat_prioritas',
         'status',
         'diverifikasi_oleh',
+        'kode_lacak',
+        'is_anonim',
     ];
+
+    protected $casts = ['is_anonim' => 'boolean'];
+
+    public static function buatKode(): string
+    {
+        do {
+            $kode = 'AEB-' . strtoupper(Str::random(8));
+        } while (self::where('kode_lacak', $kode)->exists());
+
+        return $kode;
+    }
+
+    // Pakai ini di semua dashboard: {{ $laporan->nama_pelapor }}
+    public function getNamaPelaporAttribute(): string
+    {
+        return $this->is_anonim || ! $this->user ? 'Anonim' : $this->user->name;
+    }
 
     // User yang membuat laporan
     public function user()
