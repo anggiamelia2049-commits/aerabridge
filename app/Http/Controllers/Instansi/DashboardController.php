@@ -103,7 +103,7 @@ class DashboardController extends Controller
             }])
             ->get();
 
-        return view('instansi.dashboard.index', compact(
+        return view('instansi.dashboard', compact(
             'titikPeta',
             'statistik',
             'perluVerifikasi',

@@ -31,7 +31,10 @@ use App\Http\Controllers\Instansi\LaporanController as InstansiLaporanController
 use App\Http\Controllers\Instansi\PenugasanController as InstansiPenugasanController;
 use App\Http\Controllers\Instansi\NotifikasiController as InstansiNotifikasiController;
 use App\Http\Controllers\Instansi\DeteksiAiController as InstansiDeteksiAiController;
+use App\Http\Controllers\Instansi\KategoriKerusakanController as InstansiKategoriKerusakanController;
+use App\Http\Controllers\Instansi\TimSatgasController as InstansiTimSatgasController;
 use App\Http\Controllers\Instansi\DashboardController as InstansiDashboardController;
+use App\Http\Controllers\Instansi\StatistikController;
 
 use Illuminate\Support\Facades\Route;
 
@@ -87,14 +90,14 @@ Route::middleware('auth')->group(function () {
 
     // ==== Khusus Warga ====
     Route::name('warga.')->prefix('warga')->middleware('role:warga')->group(function () {
-    Route::get('/dashboard', [WargaDashboardController::class, 'index'])->name('dashboard');
+        Route::get('/dashboard', [WargaDashboardController::class, 'index'])->name('dashboard');
 
-    Route::resource('laporan', WargaLaporanController::class);
-    Route::resource('notifikasi', WargaNotifikasiController::class);
-    Route::resource('poin', WargaPoinKontribusiController::class)->only(['index']);
-    Route::resource('aeraPay', WargaAeraPayController::class)->only(['index', 'show', 'create', 'store']);
-    Route::resource('user-edukasi', WargaUserEdukasiProgressController::class);
-});
+        Route::resource('laporan', WargaLaporanController::class);
+        Route::resource('notifikasi', WargaNotifikasiController::class);
+        Route::resource('poin', WargaPoinKontribusiController::class)->only(['index']);
+        Route::resource('aeraPay', WargaAeraPayController::class)->only(['index', 'show', 'create', 'store']);
+        Route::resource('user-edukasi', WargaUserEdukasiProgressController::class);
+    });
 
     // ==== Khusus Petugas ====
     Route::name('petugas.')->prefix('petugas')->middleware('role:petugas')->group(function () {
@@ -121,15 +124,18 @@ Route::middleware('auth')->group(function () {
         Route::get('/dashboard', [InstansiDashboardController::class, 'index'])->name('dashboard');
 
         Route::resource('laporan', InstansiLaporanController::class)->only(['index', 'show']);
-        Route::put('laporan/{id}/verify', [InstansiLaporanController::class, 'verify'])
-            ->name('laporan.verify');
 
         Route::resource('penugasan', InstansiPenugasanController::class);
         Route::resource('notifikasi', InstansiNotifikasiController::class);
 
         // Deteksi AI: read-only, controller meng-abort(403) pada aksi tulis.
-        Route::resource('deteksi-ai', InstansiDeteksiAiController::class)
-            ->only(['index', 'show']);
+        Route::resource('deteksi-ai', InstansiDeteksiAiController::class)->only(['index', 'show']);
+        Route::get('/verifikasi', [InstansiLaporanController::class, 'verifikasi'])->name('verifikasi.index');
+        Route::post('/laporan/{laporan}/verify', [InstansiLaporanController::class, 'verify'])->name('laporan.verify');
+
+        Route::resource('tim-satgas', InstansiTimSatgasController::class)->only(['index', 'show'])->parameters(['tim-satgas' => 'tim_satgas']);
+        Route::resource('kategori-kerusakan', InstansiKategoriKerusakanController::class)->only('index');
+        Route::get('statistik', [StatistikController::class, 'index'])->name('statistik.index');
     });
 });
 

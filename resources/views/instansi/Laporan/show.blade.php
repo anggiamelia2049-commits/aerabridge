@@ -1,3 +1,6 @@
+@extends('template.layout')
+
+ @section('content')
 <table border="1">
     <tr>
         <th>User</th>
@@ -89,3 +92,4 @@
 @endif
 
 <a href="{{ route('instansi.laporan.index') }}">Back</a>
+@endsection

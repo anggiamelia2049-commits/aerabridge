@@ -35,6 +35,24 @@ class LaporanController extends Controller
         return view('instansi.laporan.index', compact('laporan', 'status', 'prioritas'));
     }
 
+    public function verifikasi()
+    {
+        $instansiId = $this->instansiId();
+
+        $status = 'Menunggu';
+        $prioritas = null;
+
+        $laporan = Laporan::with(['kategori', 'user'])
+            ->where('instansi_id', $instansiId)
+            ->where('status', 'Menunggu')
+            ->orderByRaw("FIELD(tingkat_prioritas, 'Krisis', 'Sedang', 'Rendah')")
+            ->latest()
+            ->get();
+
+        return view('instansi.laporan.index', compact('laporan', 'status', 'prioritas'));
+    }
+
+
     /**
      * Menampilkan detail laporan untuk ditinjau instansi.
      */

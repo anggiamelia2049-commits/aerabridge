@@ -1,3 +1,6 @@
+@extends('template.layout')
+
+ @section('content')
 <p>
     <a href="{{ route('instansi.penugasan.index') }}">Aktif</a> |
     <a href="{{ route('instansi.penugasan.index', ['filter' => 'validasi']) }}">Menunggu Validasi</a> |
@@ -40,3 +43,4 @@
     </tr>
     @endforelse
 </table>
+@endsection

@@ -1,3 +1,6 @@
+@extends('template.layout')
+
+ @section('content')
 <h2>Notifikasi</h2>
 
 <p>Belum dibaca: <strong>{{ $jumlahBelumDibaca }}</strong></p>
@@ -40,3 +43,4 @@
         @endforeach
     </table>
 @endif
+@endsection

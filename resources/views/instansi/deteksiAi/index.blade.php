@@ -1,3 +1,6 @@
+@extends('template.layout')
+
+ @section('content')
 <table border="1">
     <tr>
         <th>No</th>
@@ -27,3 +30,4 @@
     </tr>
     @endforeach
 </table>
+@endsection

@@ -39,17 +39,15 @@
          @resize.window="if (window.innerWidth >= 1024) mobileSidebarOpen = false">
 
         {{-- ==================== SIDEBAR ====================
-             Nilai $role mengikuti middleware role:... di routes/web.php, yaitu:
-             'super_admin', 'warga', 'petugas'. Belum ada grup role 'instansi'
-             di routes saat ini — sidebar-instansi.blade.php disiapkan untuk
-             pengembangan berikutnya dan belum terhubung ke route manapun. --}}
+             Nilai $role mengikuti middleware role:... di routes/web.php:
+             'super_admin', 'warga', 'petugas', 'instansi'. --}}
         @php
             $role = $role ?? (auth()->check() ? auth()->user()->role : 'super_admin');
         @endphp
 
-        {{-- ===== SIDEBAR DESKTOP: lebar 16rem <-> 0, smooth ===== --}}
+        {{-- ===== SIDEBAR DESKTOP: lebar 16rem <-> 0, smooth, tetap diam saat halaman di-scroll ===== --}}
         <aside
-            class="hidden overflow-hidden transition-[width,visibility] duration-300 ease-in-out lg:block lg:shrink-0"
+            class="hidden overflow-hidden transition-[width,visibility] duration-300 ease-in-out lg:sticky lg:top-0 lg:block lg:h-screen lg:shrink-0 lg:self-start"
             :class="sidebarOpen ? 'lg:w-64' : 'lg:w-0 lg:invisible'"
             :aria-hidden="(!sidebarOpen).toString()"
         >
@@ -65,7 +63,6 @@
                         @break
 
                     @case('instansi')
-                        {{-- TODO: belum ada grup route 'instansi.*' di web.php --}}
                         @include('template.sidebar-instansi')
                         @break
 

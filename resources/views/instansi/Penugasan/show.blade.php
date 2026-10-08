@@ -1,3 +1,6 @@
+@extends('template.layout')
+
+ @section('content')
 <h2>Detail Penugasan</h2>
 
 <p><strong>Laporan:</strong> {{ $penugasan->laporan->judul ?? '-' }}</p>
@@ -47,3 +50,4 @@
 
 <br><br>
 <a href="{{ route('instansi.penugasan.index') }}">Kembali</a>
+@endsection

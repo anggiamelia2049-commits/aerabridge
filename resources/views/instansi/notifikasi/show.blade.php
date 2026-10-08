@@ -1,3 +1,6 @@
+@extends('template.layout')
+
+ @section('content')
 <h2>{{ $notifikasi->judul }}</h2>
 
 <p><small>{{ $notifikasi->tipe }} &middot; {{ $notifikasi->created_at->format('d-m-Y H:i') }}</small></p>
@@ -17,3 +20,4 @@
 <br>
 
 <a href="{{ route('instansi.notifikasi.index') }}">Kembali</a>
+@endsection

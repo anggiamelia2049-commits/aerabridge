@@ -1,3 +1,6 @@
+@extends('template.layout')
+
+ @section('content')
 <form action="{{ route('instansi.penugasan.update', $penugasan->id) }}" method="POST">
     {{ csrf_field() }}
     @method('PUT')
@@ -42,3 +45,4 @@
     <button type="submit">Alihkan Tugas</button>
     <a href="{{ route('instansi.penugasan.index') }}">Back</a>
 </form>
+@endsection
