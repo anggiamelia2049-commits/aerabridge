@@ -80,10 +80,4 @@
         </ul>
     </nav>
 
-    {{-- Footer sidebar: role badge --}}
-    <div class="border-t border-white/10 px-4 py-4">
-        <p class="text-xs text-cyan-muda">Masuk sebagai</p>
-        <p class="text-sm font-semibold">{{ auth()->user()->nama ?? 'Warga' }}</p>
-        <p class="text-xs text-cyan-muda">Warga</p>
-    </div>
 </div>

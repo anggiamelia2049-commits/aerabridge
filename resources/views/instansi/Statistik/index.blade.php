@@ -5,7 +5,7 @@
 @section('content')
 <div class="p-6">
     <div class="mb-6">
-        <h1 class="text-xl font-semibold text-slate-800">Statistik</h1>
+        <h1 class="text-3xl font-bold text-slate-800">Statistik</h1>
         <p class="text-sm text-slate-500">Ringkasan laporan dan penugasan di instansi Anda.</p>
     </div>
 
