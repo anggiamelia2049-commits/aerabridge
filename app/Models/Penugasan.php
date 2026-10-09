@@ -21,6 +21,8 @@ class Penugasan extends Model
         'tanggal_penugasan',
         'tanggal_selesai',
         'catatan',
+        'foto_hasil',
+        'catatan_penyelesaian',
     ];
 
     protected $casts = [
