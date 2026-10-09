@@ -2,7 +2,7 @@
     <div class="px-4 sm:px-8 pb-2">
         <!-- Logo -->
         <div class="flex justify-center mb-4">
-            <img src="{{ asset('images/logo-aera-bridge.png') }}" alt="Aera Bridge" class="h-12 w-auto">
+            <img src="{{ asset('images/logo.png') }}" alt="AERA Bridge" class="h-100 w-auto">
         </div>
 
         <h2 class="font-inter font-extrabold text-3xl text-[#0C343D] text-center mb-8">MASUK</h2>

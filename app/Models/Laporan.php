@@ -15,10 +15,16 @@ class Laporan extends Model
 
     protected $fillable = [
         'user_id',
+        'kode_lacak',
+        'is_anonim',
         'kategori_id',
         'instansi_id',
         'judul',
         'deskripsi',
+        'tanggal_kejadian',
+        'kecamatan',
+        'jenis_laporan',
+        'kategori_lainnya',
         'foto',
         'lampiran',
         'latitude',
@@ -27,8 +33,6 @@ class Laporan extends Model
         'tingkat_prioritas',
         'status',
         'diverifikasi_oleh',
-        'kode_lacak',
-        'is_anonim',
     ];
 
     protected $casts = ['is_anonim' => 'boolean'];
