@@ -122,6 +122,7 @@
                             <option value="{{ $kec }}" @selected(old('kecamatan') == $kec)>Kecamatan {{ $kec }}</option>
                         @endforeach
                     </select>
+                    <p id="statusLokasi" class="text-xs text-gray-500 mt-1">Mengunci lokasi GPS...</p>
                     @error('kecamatan') <p class="text-xs text-merah mt-1">{{ $message }}</p> @enderror
                     @error('latitude') <p class="text-xs text-merah mt-1">Lokasi GPS belum terkunci.</p> @enderror
                 </div>
@@ -154,7 +155,7 @@
                         <textarea name="deskripsi" rows="6" required placeholder="Ketik Isi Laporan Anda *"
                                   class="w-full px-4 py-3 pr-10 rounded-lg border border-gray-500 bg-white text-xs font-medium text-gray-900 placeholder:text-gray-900 focus:border-cyan-4 focus:ring-1 focus:ring-cyan-4">{{ old('deskripsi') }}</textarea>
                         <svg class="w-4 h-4 absolute right-4 top-4 text-gray-900 pointer-events-none"
-                             xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                             xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
                         </svg>
                     </div>
@@ -215,9 +216,9 @@
                 {{-- Rahasia + Kirim --}}
                 <div class="flex items-center justify-end gap-6">
                     <label class="flex items-center gap-2 text-xs text-gray-900 select-none cursor-not-allowed"
-                        title="Laporan tanpa akun otomatis dikirim secara rahasia">
+                           title="Laporan tanpa akun otomatis dikirim secara rahasia">
                         <input type="checkbox" checked onclick="return false" tabindex="-1"
-                            class="w-4 h-4 rounded text-sky-400 focus:ring-0 pointer-events-none">
+                               class="w-4 h-4 rounded text-sky-400 focus:ring-0 pointer-events-none">
                         Rahasia
                     </label>
 
@@ -251,16 +252,31 @@
     // ===== Lokasi GPS =====
     function kunciLokasi() {
         const status = $('statusLokasi');
-        if (!navigator.geolocation) { status.textContent = 'Browser tidak mendukung geolokasi.'; return; }
-        status.textContent = 'Mengunci lokasi...';
+        if (!navigator.geolocation) {
+            status.textContent = 'Browser tidak mendukung geolokasi.';
+            status.classList.add('text-merah');
+            return;
+        }
+        status.textContent = 'Mengunci lokasi GPS...';
+        status.classList.remove('text-merah');
+
         navigator.geolocation.getCurrentPosition(
             (pos) => {
                 $('latitude').value = pos.coords.latitude.toFixed(8);
                 $('longitude').value = pos.coords.longitude.toFixed(8);
                 status.textContent = 'Lokasi GPS terkunci.';
+                status.classList.remove('text-merah');
             },
-            () => { status.textContent = 'Lokasi gagal dikunci. Izinkan akses lokasi lalu coba lagi.'; },
-            { enableHighAccuracy: true, timeout: 15000 }
+            (err) => {
+                const pesan = {
+                    1: 'Izin lokasi ditolak. Klik ikon gembok di address bar, set Lokasi ke Izinkan, lalu refresh.',
+                    2: 'Lokasi tidak tersedia. Nyalakan layanan lokasi di Windows (Settings > Privacy & security > Location).',
+                    3: 'Waktu habis saat mencari lokasi. Coba lagi.',
+                };
+                status.textContent = (pesan[err.code] || 'Lokasi gagal dikunci.') + ' (kode ' + err.code + ')';
+                status.classList.add('text-merah');
+            },
+            { enableHighAccuracy: false, timeout: 20000, maximumAge: 60000 }
         );
     }
 
@@ -274,13 +290,18 @@
             $('btnJepret').classList.remove('hidden');
             $('btnBuka').classList.add('hidden');
             $('btnUlang').classList.add('hidden');
-            kunciLokasi();
+            if (!$('latitude').value) kunciLokasi();
         } catch (e) {
             alert('Kamera tidak bisa diakses. Izinkan akses kamera, atau gunakan Lampiran.');
         }
     }
 
     function jepret() {
+        if (!video.videoWidth) {
+            alert('Kamera belum siap. Tunggu gambar muncul, lalu tekan Jepret lagi.');
+            return;
+        }
+
         const skala = Math.min(1, 1280 / video.videoWidth);
         canvas.width = video.videoWidth * skala;
         canvas.height = video.videoHeight * skala;
@@ -367,12 +388,15 @@
 
     syncKategoriLainnya();
 
+    // Minta lokasi begitu halaman dibuka, jadi kamera maupun lampiran sama-sama aman
+    kunciLokasi();
+
     // ===== Validasi sebelum kirim =====
     $('formLaporan').addEventListener('submit', (e) => {
         if (!$('latitude').value || !$('longitude').value) {
             e.preventDefault();
-            alert('Lokasi GPS belum terkunci. Izinkan akses lokasi dulu.');
             kunciLokasi();
+            alert('Lokasi GPS belum terkunci. Lihat keterangan di bawah kolom Lokasi Kejadian, lalu tekan Kirim lagi setelah tertulis "Lokasi GPS terkunci".');
         }
     });
 </script>
