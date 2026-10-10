@@ -44,45 +44,51 @@
     <div class="flex items-center gap-4">
 
         {{-- Notifikasi --}}
-        <div class="relative">
-            <button
-                @click="notifOpen = !notifOpen"
-                @click.outside="notifOpen = false"
-                class="relative flex h-10 w-10 items-center justify-center rounded-full text-abu-tua transition hover:bg-abu-muda"
-                aria-label="Notifikasi"
-            >
-                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
-                </svg>
-                @if(($jumlahNotifikasiBelumDibaca ?? 0) > 0)
-                    <span class="absolute -top-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-merah text-[10px] font-bold text-white">
-                        {{ $jumlahNotifikasiBelumDibaca > 9 ? '9+' : $jumlahNotifikasiBelumDibaca }}
-                    </span>
-                @endif
-            </button>
+        @if (($role ?? null) === 'petugas')
+            {{-- Petugas: data asli lewat polling (lihat notif-petugas.blade.php) --}}
+            @include('template.notif-petugas')
+        @else
+            {{-- Role lain: tidak diubah, kecuali kolom pesan menjadi isi --}}
+            <div class="relative">
+                <button
+                    @click="notifOpen = !notifOpen"
+                    @click.outside="notifOpen = false"
+                    class="relative flex h-10 w-10 items-center justify-center rounded-full text-abu-tua transition hover:bg-abu-muda"
+                    aria-label="Notifikasi"
+                >
+                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
+                    </svg>
+                    @if(($jumlahNotifikasiBelumDibaca ?? 0) > 0)
+                        <span class="absolute -top-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-merah text-[10px] font-bold text-white">
+                            {{ $jumlahNotifikasiBelumDibaca > 9 ? '9+' : $jumlahNotifikasiBelumDibaca }}
+                        </span>
+                    @endif
+                </button>
 
-            <div
-                x-show="notifOpen"
-                x-cloak
-                x-transition
-                class="absolute right-0 mt-2 w-80 rounded-xl border border-abu-muda bg-white shadow-lg"
-            >
-                <div class="border-b border-abu-muda px-4 py-3">
-                    <p class="text-sm font-semibold text-abu-tua">Notifikasi</p>
+                <div
+                    x-show="notifOpen"
+                    x-cloak
+                    x-transition
+                    class="absolute right-0 mt-2 w-80 rounded-xl border border-abu-muda bg-white shadow-lg"
+                >
+                    <div class="border-b border-abu-muda px-4 py-3">
+                        <p class="text-sm font-semibold text-abu-tua">Notifikasi</p>
+                    </div>
+                    <ul class="max-h-80 divide-y divide-abu-muda overflow-y-auto">
+                        @forelse(($notifikasiTerbaru ?? []) as $notif)
+                            <li class="px-4 py-3 text-sm hover:bg-abu-muda/40">
+                                <p class="font-medium text-abu-tua">{{ $notif->judul }}</p>
+                                <p class="text-abu-tua/70">{{ $notif->isi }}</p>
+                                <p class="mt-1 text-xs text-abu-tua/50">{{ $notif->created_at->diffForHumans() }}</p>
+                            </li>
+                        @empty
+                            <li class="px-4 py-6 text-center text-sm text-abu-tua/60">Belum ada notifikasi.</li>
+                        @endforelse
+                    </ul>
                 </div>
-                <ul class="max-h-80 divide-y divide-abu-muda overflow-y-auto">
-                    @forelse(($notifikasiTerbaru ?? []) as $notif)
-                        <li class="px-4 py-3 text-sm hover:bg-abu-muda/40">
-                            <p class="font-medium text-abu-tua">{{ $notif->judul }}</p>
-                            <p class="text-abu-tua/70">{{ $notif->pesan }}</p>
-                            <p class="mt-1 text-xs text-abu-tua/50">{{ $notif->created_at->diffForHumans() }}</p>
-                        </li>
-                    @empty
-                        <li class="px-4 py-6 text-center text-sm text-abu-tua/60">Belum ada notifikasi.</li>
-                    @endforelse
-                </ul>
             </div>
-        </div>
+        @endif
 
         {{-- Profil --}}
         <div class="relative">
@@ -98,7 +104,7 @@
 
                 @if ($fotoProfil)
                     <img src="{{ asset('storage/' . $fotoProfil) }}"
-                         alt="Foto {{ auth()->user()->name }}"
+                         alt="Foto {{ auth()->user()->nama }}"
                          class="h-10 w-10 rounded-full object-cover">
                 @else
                     {{-- Avatar default: ikon user dalam lingkaran --}}
@@ -107,7 +113,7 @@
                     </svg>
                 @endif
                 <span class="hidden text-left sm:block">
-                    <span class="block text-sm font-semibold text-abu-tua">{{ auth()->user()->name ?? 'Pengguna' }}</span>
+                    <span class="block text-sm font-semibold text-abu-tua">{{ auth()->user()->nama ?? 'Pengguna' }}</span>
                     <span class="block text-xs text-abu-tua/60">{{ Str::title(str_replace('_', ' ', $role ?? 'super_admin')) }}</span>
                 </span>
                 <svg class="h-4 w-4 text-abu-tua/60" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">

@@ -1,3 +1,9 @@
+@extends('template.layout')
+
+@section('title', 'Edit Kategori Kerusakan')
+
+@section('content')
+
 <form action="{{ route('super_admin.kategori.update', $kategori->id) }}" method="POST">
 
     @csrf
@@ -98,3 +104,5 @@
     </a>
 
 </form>
+
+@endsection

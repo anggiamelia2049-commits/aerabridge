@@ -1,40 +1,54 @@
+@extends('template.layout')
+
+@section('title', 'Data Laporan')
+
+@section('content')
+
+@if (session('success'))
+    <p style="color: green;">{{ session('success') }}</p>
+@endif
+
 <table border="1">
     <tr>
         <th>No</th>
-        <th>User</th>
+        <th>Kode Lacak</th>
+        <th>Pelapor</th>
+        <th>Jenis</th>
         <th>Kategori</th>
         <th>Instansi</th>
         <th>Judul</th>
-        <th>Deskripsi</th>
+        <th>Tanggal Kejadian</th>
+        <th>Kecamatan</th>
         <th>Foto</th>
-        <th>Latitude</th>
-        <th>Longitude</th>
-        <th>Alamat</th>
         <th>Prioritas</th>
         <th>Status</th>
         <th>Verifikasi Oleh</th>
         <th>Aksi</th>
     </tr>
 
-    @foreach ($laporan as $v)
+    @forelse ($laporan as $v)
         <tr>
             <td>{{ $loop->iteration }}</td>
 
-            <td>
-                {{ optional($v->user)->nama ?? '-' }}
-            </td>
+            <td>{{ $v->kode_lacak ?? '-' }}</td>
+
+            <td>{{ $v->nama_pelapor }}</td>
+
+            <td>{{ $v->jenis_laporan ?? '-' }}</td>
 
             <td>
-                {{ optional($v->kategori)->nama_kategori ?? '-' }}
+                {{ optional($v->kategori)->nama_kategori ?? ($v->kategori_lainnya ?: '-') }}
             </td>
 
-            <td>
-                {{ optional($v->instansi)->nama_instansi ?? '-' }}
-            </td>
+            <td>{{ optional($v->instansi)->nama_instansi ?? '-' }}</td>
 
             <td>{{ $v->judul }}</td>
 
-            <td>{{ $v->deskripsi }}</td>
+            <td>
+                {{ $v->tanggal_kejadian ? \Carbon\Carbon::parse($v->tanggal_kejadian)->format('d-m-Y') : '-' }}
+            </td>
+
+            <td>{{ $v->kecamatan ?? '-' }}</td>
 
             <td>
                 @if ($v->foto)
@@ -54,19 +68,11 @@
                 @endif
             </td>
 
-            <td>{{ $v->latitude }}</td>
-
-            <td>{{ $v->longitude }}</td>
-
-            <td>{{ $v->alamat ?? '-' }}</td>
-
             <td>{{ $v->tingkat_prioritas }}</td>
 
             <td>{{ $v->status }}</td>
 
-            <td>
-                {{ optional($v->diverifikasiOleh)->nama ?? '-' }}
-            </td>
+            <td>{{ optional($v->diverifikasiOleh)->name ?? '-' }}</td>
 
             <td>
                 <a href="{{ route('super_admin.laporan.show', $v->id) }}">
@@ -94,5 +100,11 @@
                 </form>
             </td>
         </tr>
-    @endforeach
+    @empty
+        <tr>
+            <td colspan="14">Belum ada laporan.</td>
+        </tr>
+    @endforelse
 </table>
+
+@endsection

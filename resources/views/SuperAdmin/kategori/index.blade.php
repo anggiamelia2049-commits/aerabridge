@@ -1,3 +1,13 @@
+@extends('template.layout')
+
+@section('title', 'Data Kategori Kerusakan')
+
+@section('content')
+
+@if (session('success'))
+    <p style="color: green;">{{ session('success') }}</p>
+@endif
+
 <table border="1">
     <tr>
         <th>No</th>
@@ -63,3 +73,5 @@
     </tr>
     @endforeach
 </table>
+
+@endsection

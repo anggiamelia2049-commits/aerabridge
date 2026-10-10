@@ -8,53 +8,53 @@ use App\Models\Penugasan;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class PenugasanController extends Controller
 {
     /**
-     * Menampilkan daftar tugas milik petugas yang sedang login.
-     * Filter: aktif (ditugaskan/dalam_proses), prioritas (Kritis), selesai.
+     * Daftar tugas milik petugas yang login.
+     * Filter tab: semua, aktif, prioritas (aktif + Kritis), selesai.
      */
     public function index(Request $request)
     {
-        $query = Penugasan::with(['laporan', 'timSatgas'])
+        $filter = $request->query('filter', 'semua');
+
+        if (! in_array($filter, ['semua', 'aktif', 'prioritas', 'selesai'])) {
+            $filter = 'semua';
+        }
+
+        $query = Penugasan::with('laporan')
             ->where('petugas_id', Auth::id());
 
-        if ($request->filled('filter')) {
-            match ($request->filter) {
-                'aktif' => $query->whereIn('status', [
-                    'ditugaskan',
-                    'dalam_proses',
-                ]),
-
-                'prioritas' => $query->whereHas('laporan', function ($q) {
-                    $q->where('tingkat_prioritas', 'Kritis');
-                }),
-
-                'selesai' => $query->where('status', 'selesai'),
-
-                default => null,
-            };
+        if ($filter === 'aktif') {
+            $query->aktif();
+        } elseif ($filter === 'prioritas') {
+            $query->aktif()->whereHas('laporan', function ($q) {
+                $q->where('tingkat_prioritas', 'Kritis');
+            });
+        } elseif ($filter === 'selesai') {
+            $query->where('status', 'selesai');
         }
 
         $penugasan = $query->latest('tanggal_penugasan')->get();
 
-        return view('Petugas.penugasan.index', compact('penugasan'));
+        return view('petugas.penugasan.index', compact('penugasan', 'filter'));
     }
 
     /**
-     * Menampilkan detail 1 tugas, termasuk sisa waktu SLA.
+     * Detail satu tugas, termasuk batas dan sisa waktu SLA.
      */
     public function show(string $id)
     {
-        $penugasan = Penugasan::with(['laporan', 'timSatgas'])->findOrFail($id);
-        $this->pastikanMilikPetugas($penugasan);
+        $penugasan = $this->cariTugas($id, ['laporan.kategori', 'laporan.instansi', 'timSatgas']);
 
         $batasSla = $penugasan->batasWaktuSla();
         $sisaMenit = $penugasan->sisaWaktuSla();
         $overdue = $penugasan->isOverdue();
 
-        return view('Petugas.penugasan.show', compact(
+        return view('petugas.penugasan.show', compact(
             'penugasan',
             'batasSla',
             'sisaMenit',
@@ -63,59 +63,63 @@ class PenugasanController extends Controller
     }
 
     /**
-     * Form closing report (upload foto hasil + catatan penyelesaian).
-     * Hanya bisa diakses kalau tugas sedang "dalam_proses".
+     * Form closing report. Hanya bisa dibuka saat tugas "dalam_proses".
      */
     public function edit(string $id)
     {
-        $penugasan = Penugasan::findOrFail($id);
-        $this->pastikanMilikPetugas($penugasan);
+        $penugasan = $this->cariTugas($id);
 
-        abort_unless(
-            $penugasan->status === 'dalam_proses',
-            403,
-            'Closing report hanya bisa diisi saat tugas sedang dikerjakan.'
-        );
+        if ($penugasan->status !== 'dalam_proses') {
+            return redirect()
+                ->route('petugas.penugasan.show', $penugasan->id)
+                ->with('error', 'Closing report hanya bisa diisi saat tugas sedang dikerjakan.');
+        }
 
-        return view('Petugas.penugasan.closing-report', compact('penugasan'));
+        return view('petugas.penugasan.closing-report', compact('penugasan'));
     }
 
     /**
-     * Menangani 2 aksi dari sisi petugas:
-     * 1. status = 'dalam_proses' -> petugas menekan "Mulai Tugas"
-     * 2. status = 'selesai'      -> petugas mengirim closing report
+     * Dua aksi lewat satu route:
+     * - status = dalam_proses : petugas menekan "Mulai Tugas"
+     * - status = selesai      : petugas mengirim closing report
      */
     public function update(Request $request, string $id)
     {
-        $penugasan = Penugasan::findOrFail($id);
-        $this->pastikanMilikPetugas($penugasan);
+        $request->validate([
+            'status' => 'required|in:dalam_proses,selesai',
+        ]);
 
-        return match ($request->status) {
-            'dalam_proses' => $this->mulaiTugas($penugasan),
-            'selesai' => $this->kirimClosingReport($request, $penugasan),
-            default => back()->with('error', 'Status tidak valid.'),
-        };
+        $penugasan = $this->cariTugas($id);
+
+        if ($request->status === 'dalam_proses') {
+            return $this->mulaiTugas($penugasan);
+        }
+
+        return $this->kirimClosingReport($request, $penugasan);
     }
 
     /**
-     * Aksi: petugas menekan "Mulai Tugas".
+     * Mulai tugas: penugasan jadi dalam_proses, laporan jadi Diproses.
      */
     private function mulaiTugas(Penugasan $penugasan)
     {
         if ($penugasan->status !== 'ditugaskan') {
-            return back()->with('error', 'Tugas ini tidak dapat dimulai.');
+            return back()->with('error', 'Tugas ini tidak bisa dimulai.');
         }
 
-        $penugasan->update(['status' => 'dalam_proses']);
+        DB::transaction(function () use ($penugasan) {
+            $penugasan->update(['status' => 'dalam_proses']);
+            $penugasan->laporan->update(['status' => 'Diproses']);
+        });
 
-        return back()->with('success', 'Tugas berhasil dimulai.');
+        return redirect()
+            ->route('petugas.penugasan.show', $penugasan->id)
+            ->with('success', 'Tugas berhasil dimulai.');
     }
 
     /**
-     * Aksi: petugas mengirim closing report (foto hasil + catatan).
-     * Status diubah jadi "selesai"; validasi akhir tetap dilakukan Instansi
-     * lewat validasiClosingReport()/tolakClosingReport() sesuai flowchart
-     * proposal (jika ditolak, status dikembalikan ke "dalam_proses").
+     * Kirim closing report: simpan foto + catatan, penugasan dan laporan
+     * jadi selesai, lalu beri tahu user instansi terkait.
      */
     private function kirimClosingReport(Request $request, Penugasan $penugasan)
     {
@@ -124,35 +128,55 @@ class PenugasanController extends Controller
         }
 
         $request->validate([
-            'foto_hasil' => 'required|image|mimes:jpg,jpeg,png|max:2048',
-            'catatan_penyelesaian' => 'required|string|max:1000',
+            'foto_hasil' => 'required|image|mimes:jpg,jpeg,png|max:5120',
+            'catatan_penyelesaian' => 'required|string|min:10|max:1000',
+        ], [
+            'foto_hasil.required' => 'Foto hasil perbaikan wajib diunggah.',
+            'foto_hasil.image' => 'File harus berupa gambar.',
+            'foto_hasil.mimes' => 'Format foto harus JPG atau PNG.',
+            'foto_hasil.max' => 'Ukuran foto maksimal 5 MB.',
+            'catatan_penyelesaian.required' => 'Catatan penyelesaian wajib diisi.',
+            'catatan_penyelesaian.min' => 'Catatan minimal 10 karakter.',
+            'catatan_penyelesaian.max' => 'Catatan maksimal 1000 karakter.',
         ]);
 
         $fotoPath = $request->file('foto_hasil')->store('closing-report', 'public');
 
-        $penugasan->update([
-            'foto_hasil' => $fotoPath,
-            'catatan_penyelesaian' => $request->catatan_penyelesaian,
-            'status' => 'selesai',
-            'tanggal_selesai' => now(),
-        ]);
+        try {
+            DB::transaction(function () use ($request, $penugasan, $fotoPath) {
+                $laporan = $penugasan->laporan;
 
-        // Kirim notifikasi ke semua user instansi terkait, supaya mereka tahu
-        // ada closing report baru yang menunggu validasi.
-        $penugasan->load('laporan');
-        $instansiUserIds = User::where('role', 'instansi')
-            ->where('instansi_id', $penugasan->laporan->instansi_id)
-            ->pluck('id');
+                $penugasan->update([
+                    'foto_hasil' => $fotoPath,
+                    'catatan_penyelesaian' => $request->catatan_penyelesaian,
+                    'status' => 'selesai',
+                    'tanggal_selesai' => now(),
+                ]);
 
-        foreach ($instansiUserIds as $userId) {
-            Notifikasi::create([
-                'user_id' => $userId,
-                'laporan_id' => $penugasan->laporan_id,
-                'judul' => 'Closing Report Menunggu Validasi',
-                'isi' => "Petugas telah mengirim closing report untuk laporan \"{$penugasan->laporan->judul}\". Mohon segera divalidasi.",
-                'tipe' => 'informasi',
-                'dibaca' => false,
-            ]);
+                $laporan->update(['status' => 'Selesai']);
+
+                // Beri tahu semua user instansi yang menangani laporan ini
+                $idUserInstansi = User::where('role', 'instansi')
+                    ->where('instansi_id', $laporan->instansi_id)
+                    ->pluck('id');
+
+                foreach ($idUserInstansi as $idUser) {
+                    Notifikasi::create([
+                        'user_id' => $idUser,
+                        'laporan_id' => $laporan->id,
+                        'judul' => 'Closing report menunggu validasi',
+                        'isi' => 'Petugas telah mengirim closing report untuk laporan "' . $laporan->judul . '". Mohon segera divalidasi.',
+                        'tipe' => 'informasi',
+                        'dibaca' => false,
+                    ]);
+                }
+            });
+        } catch (\Throwable $e) {
+            // Kalau database gagal, hapus foto yang sudah terlanjur tersimpan
+            Storage::disk('public')->delete($fotoPath);
+            report($e);
+
+            return back()->with('error', 'Closing report gagal dikirim. Silakan coba lagi.');
         }
 
         return redirect()
@@ -161,14 +185,13 @@ class PenugasanController extends Controller
     }
 
     /**
-     * Guard: pastikan tugas yang diakses memang milik petugas yang login.
+     * Cari tugas milik petugas yang login.
+     * Tugas milik petugas lain tidak ditemukan (404).
      */
-    private function pastikanMilikPetugas(Penugasan $penugasan): void
+    private function cariTugas(string $id, array $relasi = ['laporan']): Penugasan
     {
-        abort_unless(
-            $penugasan->petugas_id === Auth::id(),
-            403,
-            'Anda tidak memiliki akses ke tugas ini.'
-        );
+        return Penugasan::with($relasi)
+            ->where('petugas_id', Auth::id())
+            ->findOrFail($id);
     }
 }

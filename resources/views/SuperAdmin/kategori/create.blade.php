@@ -1,3 +1,9 @@
+@extends('template.layout')
+
+@section('title', 'Tambah Kategori Kerusakan')
+
+@section('content')
+
 <form action="{{ route('super_admin.kategori.store') }}" method="POST">
 
     @csrf
@@ -97,3 +103,5 @@
     </a>
 
 </form>
+
+@endsection

@@ -1,9 +1,15 @@
+@extends('template.layout')
+
+@section('title', 'Detail Notifikasi')
+
+@section('content')
+
 <h2>Detail Notifikasi</h2>
 
 <table border="1" cellpadding="10">
     <tr>
         <td>User Penerima</td>
-        <td>{{ $notifikasi->user->nama ?? '-' }}</td>
+        <td>{{ optional($notifikasi->user)->name ?? '-' }}</td>
     </tr>
 
     <tr>
@@ -28,7 +34,15 @@
 
     <tr>
         <td>Laporan Terkait</td>
-        <td>{{ $notifikasi->laporan->judul ?? '-' }}</td>
+        <td>
+            @if ($notifikasi->laporan)
+                <a href="{{ route('super_admin.laporan.show', $notifikasi->laporan->id) }}">
+                    {{ $notifikasi->laporan->judul }}
+                </a>
+            @else
+                -
+            @endif
+        </td>
     </tr>
 
     <tr>
@@ -40,3 +54,5 @@
 <br>
 
 <a href="{{ route('super_admin.notifikasi.index') }}">Kembali</a>
+
+@endsection

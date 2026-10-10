@@ -103,12 +103,12 @@ Route::middleware('auth')->group(function () {
 
     // ==== Khusus Petugas ====
     Route::name('petugas.')->prefix('petugas')->middleware('role:petugas')->group(function () {
-        // Laporan: read-only, controller meng-abort(403) pada create/store/edit/update/destroy.
+        // Laporan: read-only, hanya lihat daftar dan detail.
         Route::resource('laporan', PetugasLaporanController::class)
             ->only(['index', 'show']);
 
-        // Penugasan: bukan resource penuh — method custom (mulai tugas,
-        // closing report), bukan create/store/destroy standar.
+        // Penugasan: bukan resource penuh, karena aksinya khusus
+        // (mulai tugas dan closing report), tanpa create/store/destroy.
         Route::get('penugasan', [PetugasPenugasanController::class, 'index'])
             ->name('penugasan.index');
         Route::get('penugasan/{id}', [PetugasPenugasanController::class, 'show'])
@@ -118,7 +118,16 @@ Route::middleware('auth')->group(function () {
         Route::put('penugasan/{id}', [PetugasPenugasanController::class, 'update'])
             ->name('penugasan.update');
 
-        Route::resource('notifikasi', PetugasNotifikasiController::class);
+        // Data ringkas untuk lonceng notifikasi (JSON).
+        // WAJIB ditulis SEBELUM resource notifikasi, kalau tidak
+        // kata "ringkas" dianggap id notifikasi.
+        Route::get('notifikasi/ringkas', [PetugasNotifikasiController::class, 'ringkas'])
+            ->name('notifikasi.ringkas');
+
+        // Notifikasi: dibuat otomatis oleh sistem, petugas hanya boleh
+        // melihat, membuka, menandai dibaca, dan menghapus.
+        Route::resource('notifikasi', PetugasNotifikasiController::class)
+            ->only(['index', 'show', 'update', 'destroy']);
     });
 
     // ==== Khusus Instansi ====

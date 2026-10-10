@@ -1,112 +1,95 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Konten Edukasi</title>
-</head>
-<body>
+@extends('SuperAdmin.layouts.app')
 
-    <h1>Daftar Konten Edukasi</h1>
+@section('title', 'Konten Edukasi')
 
-    @if (session('success'))
-        <p>{{ session('success') }}</p>
-    @endif
+@section('content')
+@php
+    $badge = [
+        'publish'  => 'bg-[#4CAF50]/15 text-[#2e7d32]',
+        'draft'    => 'bg-[#FFC107]/20 text-[#8a6500]',
+        'nonaktif' => 'bg-gray-200 text-gray-600',
+    ];
+@endphp
 
-    <br><br>
+<div class="flex flex-wrap items-center justify-between gap-3 mb-6">
+    <div>
+        <h1 class="text-2xl font-bold text-[#0C343D]">Konten Edukasi</h1>
+        <p class="text-sm text-[#4A4A4A]">Kelola materi edukasi perawatan fasilitas publik.</p>
+    </div>
+    <a href="{{ route('super_admin.konten-edukasi.create') }}"
+        class="px-4 py-2.5 text-sm font-semibold text-white rounded-lg bg-[#45818E] hover:bg-[#0C343D]">
+        + Tambah Konten
+    </a>
+</div>
 
-    <table border="1" cellpadding="10" cellspacing="0">
-        <thead>
-            <tr>
-                <th>No</th>
-                <th>Judul</th>
-                <th>Thumbnail</th>
-                <th>Isi</th>
-                <th>Kategori</th>
-                <th>Penulis</th>
-                <th>Status</th>
-                <th><a href="{{ route('super_admin.konten-edukasi.create') }}">Tambah Konten</a></th>
-            </tr>
-        </thead>
+@if (session('success'))
+    <div class="p-4 mb-5 text-sm rounded-lg border border-[#4CAF50]/30 bg-[#4CAF50]/10 text-[#2e7d32]">
+        {{ session('success') }}
+    </div>
+@endif
 
-        <tbody>
-            @forelse ($konten as $v)
+<div class="bg-white rounded-xl border border-[#D9D9D9] overflow-hidden">
+    <div class="overflow-x-auto">
+        <table class="w-full text-sm text-left text-[#4A4A4A]">
+            <thead class="text-xs uppercase bg-[#0C343D] text-white">
                 <tr>
-                    <td>{{ $loop->iteration }}</td>
-
-                    <td>
-                        {{ $v->judul }}
-                    </td>
-
-                    <td>
-                        @if ($v->thumbnail)
-                            <img
-                                src="{{ asset('storage/' . $v->thumbnail) }}"
-                                alt="Thumbnail {{ $v->judul }}"
-                                width="100"
-                                height="100"
-                                style="object-fit: contain;"
-                            >
-                        @else
-                            Tidak ada thumbnail
-                        @endif
-                    </td>
-
-                    <td>
-                        {{ $v->isi }}
-                    </td>
-
-                    <td>
-                        {{ $v->kategori }}
-                    </td>
-
-                    <td>
-                        {{ $v->penulisUser->nama ?? '-' }}
-                    </td>
-
-                    <td>
-                        {{ $v->status }}
-                    </td>
-
-                    <td>
-                        <a href="{{ route('super_admin.konten-edukasi.show', $v->id) }}">
-                            Detail
-                        </a>
-
-                        |
-
-                        <a href="{{ route('super_admin.konten-edukasi.edit', $v->id) }}">
-                            Edit
-                        </a>
-
-                        |
-
-                        <form
-                            action="{{ route('super_admin.konten-edukasi.destroy', $v->id) }}"
-                            method="POST"
-                            style="display: inline;"
-                        >
-                            @csrf
-                            @method('DELETE')
-
-                            <button
-                                type="submit"
-                                onclick="return confirm('Apakah Anda yakin ingin menghapus konten ini?')"
-                            >
-                                Delete
-                            </button>
-                        </form>
-                    </td>
+                    <th class="px-4 py-3">No</th>
+                    <th class="px-4 py-3">Thumbnail</th>
+                    <th class="px-4 py-3">Judul</th>
+                    <th class="px-4 py-3">Kategori</th>
+                    <th class="px-4 py-3">Penulis</th>
+                    <th class="px-4 py-3">Status</th>
+                    <th class="px-4 py-3 text-center">Aksi</th>
                 </tr>
-            @empty
-                <tr>
-                    <td colspan="8">
-                        Belum ada konten edukasi.
-                    </td>
-                </tr>
-            @endforelse
-        </tbody>
-    </table>
-
-</body>
-</html>
+            </thead>
+            <tbody class="divide-y divide-[#D9D9D9]">
+                @forelse ($konten as $v)
+                    <tr class="hover:bg-[#A9D6DD]/20">
+                        <td class="px-4 py-3">{{ $loop->iteration }}</td>
+                        <td class="px-4 py-3">
+                            @if ($v->thumbnail)
+                                <img src="{{ asset('storage/' . $v->thumbnail) }}" alt="Thumbnail {{ $v->judul }}"
+                                    class="object-cover w-16 h-16 rounded-lg border border-[#D9D9D9]">
+                            @else
+                                <span class="flex items-center justify-center w-16 h-16 text-[10px] text-gray-400 rounded-lg bg-gray-100 border border-[#D9D9D9]">Tidak ada</span>
+                            @endif
+                        </td>
+                        <td class="px-4 py-3 max-w-xs">
+                            <div class="font-semibold text-[#0C343D]">{{ $v->judul }}</div>
+                            <div class="mt-0.5 text-xs text-gray-500">{{ \Illuminate\Support\Str::limit(strip_tags($v->isi), 80) }}</div>
+                        </td>
+                        <td class="px-4 py-3">
+                            <span class="px-2.5 py-1 text-xs font-medium rounded-full bg-[#A9D6DD]/60 text-[#0C343D]">{{ $v->kategori }}</span>
+                        </td>
+                        <td class="px-4 py-3">{{ $v->penulisUser->nama ?? '-' }}</td>
+                        <td class="px-4 py-3">
+                            <span class="px-2.5 py-1 text-xs font-semibold rounded-full {{ $badge[$v->status] ?? 'bg-gray-200 text-gray-600' }}">
+                                {{ ucfirst($v->status) }}
+                            </span>
+                        </td>
+                        <td class="px-4 py-3">
+                            <div class="flex items-center justify-center gap-2">
+                                <a href="{{ route('super_admin.konten-edukasi.show', $v->id) }}"
+                                    class="px-3 py-1.5 text-xs font-medium rounded-lg border border-[#D9D9D9] hover:bg-gray-50">Detail</a>
+                                <a href="{{ route('super_admin.konten-edukasi.edit', $v->id) }}"
+                                    class="px-3 py-1.5 text-xs font-medium text-white rounded-lg bg-[#45818E] hover:bg-[#0C343D]">Edit</a>
+                                <form action="{{ route('super_admin.konten-edukasi.destroy', $v->id) }}" method="POST" class="inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit"
+                                        onclick="return confirm('Apakah Anda yakin ingin menghapus konten ini?')"
+                                        class="px-3 py-1.5 text-xs font-medium text-white rounded-lg bg-[#E53935] hover:bg-[#c62828]">Hapus</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="7" class="px-4 py-10 text-center text-gray-500">Belum ada konten edukasi.</td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+</div>
+@endsection

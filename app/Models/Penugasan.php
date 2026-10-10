@@ -129,4 +129,72 @@ class Penugasan extends Model
 
         return $sisaMenit !== null && $sisaMenit < 0;
     }
+
+    // ===================== TAMPILAN =====================
+
+    /**
+     * Teks status yang rapi untuk tampilan, mis. "Dalam proses".
+     */
+    public function labelStatus(): string
+    {
+        $label = [
+            'ditugaskan'   => 'Ditugaskan',
+            'dalam_proses' => 'Dalam proses',
+            'selesai'      => 'Selesai',
+            'dibatalkan'   => 'Dibatalkan',
+        ];
+
+        return $label[$this->status] ?? $this->status;
+    }
+
+    /**
+     * Teks SLA siap tampil, mis. "Sisa 5 jam 20 menit",
+     * "Terlambat 2 jam", atau "Selesai tepat waktu".
+     */
+    public function teksSla(): string
+    {
+        if ($this->status === 'dibatalkan') {
+            return 'Tugas dibatalkan';
+        }
+
+        $sisa = $this->sisaWaktuSla();
+
+        if ($sisa === null) {
+            return 'Batas SLA belum ditentukan';
+        }
+
+        $durasi = $this->formatDurasi(abs($sisa));
+
+        if ($this->status === 'selesai') {
+            return $sisa >= 0 ? 'Selesai tepat waktu' : 'Selesai terlambat ' . $durasi;
+        }
+
+        return $sisa >= 0 ? 'Sisa ' . $durasi : 'Terlambat ' . $durasi;
+    }
+
+    /**
+     * Ubah menit jadi teks, mis. 1500 menit menjadi "1 hari 1 jam".
+     */
+    private function formatDurasi(int $menit): string
+    {
+        $hari = intdiv($menit, 1440);
+        $jam = intdiv($menit % 1440, 60);
+        $sisaMenit = $menit % 60;
+
+        $teks = [];
+
+        if ($hari > 0) {
+            $teks[] = $hari . ' hari';
+        }
+
+        if ($jam > 0) {
+            $teks[] = $jam . ' jam';
+        }
+
+        if ($hari == 0) {
+            $teks[] = $sisaMenit . ' menit';
+        }
+
+        return implode(' ', $teks);
+    }
 }

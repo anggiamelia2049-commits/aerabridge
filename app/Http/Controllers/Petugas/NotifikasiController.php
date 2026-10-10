@@ -4,27 +4,29 @@ namespace App\Http\Controllers\Petugas;
 
 use App\Http\Controllers\Controller;
 use App\Models\Notifikasi;
+use App\Models\Penugasan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class NotifikasiController extends Controller
 {
     /**
-     * Kotak notifikasi untuk akun petugas yang login.
-     * Mis. "Penugasan Baru", "Prioritas Diubah", "Pengingat SLA"
-     * (lihat mock-up 7.4.C: sidebar "Nontifikasi Laporan").
+     * Kotak notifikasi petugas yang login.
+     * Filter: semua, atau belum_dibaca.
      */
     public function index(Request $request)
     {
-        $query = Notifikasi::with('laporan')
-            ->where('user_id', Auth::id());
+        $filter = $request->query('filter', 'semua');
 
-        if ($request->get('filter') === 'belum_dibaca') {
-            $query->where('dibaca', false);
+        if ($filter !== 'belum_dibaca') {
+            $filter = 'semua';
         }
 
-        if ($request->filled('tipe')) {
-            $query->where('tipe', $request->tipe);
+        $query = Notifikasi::where('user_id', Auth::id());
+
+        if ($filter === 'belum_dibaca') {
+            $query->where('dibaca', false);
         }
 
         $notifikasis = $query->latest()->get();
@@ -35,43 +37,70 @@ class NotifikasiController extends Controller
 
         return view('petugas.notifikasi.index', compact(
             'notifikasis',
-            'jumlahBelumDibaca'
+            'jumlahBelumDibaca',
+            'filter'
         ));
     }
 
-    public function create()
+    /**
+     * Data ringkas untuk lonceng di navbar (dipanggil tiap 15 detik lewat JavaScript).
+     * Mengembalikan JSON: jumlah belum dibaca + 5 notifikasi terbaru.
+     */
+    public function ringkas()
     {
-        abort(403, 'Notifikasi dibuat otomatis oleh sistem.');
-    }
+        $jumlah = Notifikasi::where('user_id', Auth::id())
+            ->where('dibaca', false)
+            ->count();
 
-    public function store(Request $request)
-    {
-        abort(403, 'Notifikasi dibuat otomatis oleh sistem.');
+        $daftar = Notifikasi::where('user_id', Auth::id())
+            ->latest()
+            ->take(5)
+            ->get()
+            ->map(function ($n) {
+                return [
+                    'id' => $n->id,
+                    'judul' => $n->judul,
+                    'isi' => Str::limit($n->isi, 80),
+                    'waktu' => $n->created_at->locale('id')->diffForHumans(),
+                    'dibaca' => $n->dibaca,
+                    'url' => route('petugas.notifikasi.show', $n->id),
+                ];
+            });
+
+        return response()->json([
+            'jumlah' => $jumlah,
+            'daftar' => $daftar,
+        ]);
     }
 
     /**
-     * Buka notifikasi, otomatis ditandai sudah dibaca.
+     * Buka satu notifikasi. Otomatis ditandai sudah dibaca.
      */
     public function show(string $id)
     {
-        $notifikasi = Notifikasi::with('laporan')->findOrFail($id);
-
-        $this->authorizeNotifikasi($notifikasi);
+        $notifikasi = Notifikasi::with('laporan')
+            ->where('user_id', Auth::id())
+            ->findOrFail($id);
 
         if (! $notifikasi->dibaca) {
             $notifikasi->update(['dibaca' => true]);
         }
 
-        return view('petugas.notifikasi.show', compact('notifikasi'));
-    }
+        // Cari tugas terkait supaya bisa langsung dibuka dari notifikasi
+        $penugasan = null;
 
-    public function edit(string $id)
-    {
-        abort(403, 'Notifikasi tidak dapat diubah.');
+        if ($notifikasi->laporan_id) {
+            $penugasan = Penugasan::where('laporan_id', $notifikasi->laporan_id)
+                ->where('petugas_id', Auth::id())
+                ->latest('tanggal_penugasan')
+                ->first();
+        }
+
+        return view('petugas.notifikasi.show', compact('notifikasi', 'penugasan'));
     }
 
     /**
-     * Tandai satu notifikasi (atau semua, lewat id="semua") sebagai dibaca.
+     * Tandai dibaca. id = "semua" menandai semua notifikasi sekaligus.
      */
     public function update(Request $request, string $id)
     {
@@ -83,9 +112,7 @@ class NotifikasiController extends Controller
             return back()->with('success', 'Semua notifikasi ditandai sudah dibaca.');
         }
 
-        $notifikasi = Notifikasi::findOrFail($id);
-
-        $this->authorizeNotifikasi($notifikasi);
+        $notifikasi = Notifikasi::where('user_id', Auth::id())->findOrFail($id);
 
         $notifikasi->update([
             'dibaca' => $request->boolean('dibaca', true),
@@ -96,23 +123,12 @@ class NotifikasiController extends Controller
 
     public function destroy(string $id)
     {
-        $notifikasi = Notifikasi::findOrFail($id);
-
-        $this->authorizeNotifikasi($notifikasi);
+        $notifikasi = Notifikasi::where('user_id', Auth::id())->findOrFail($id);
 
         $notifikasi->delete();
 
         return redirect()
             ->route('petugas.notifikasi.index')
             ->with('success', 'Notifikasi berhasil dihapus.');
-    }
-
-    private function authorizeNotifikasi(Notifikasi $notifikasi): void
-    {
-        abort_unless(
-            $notifikasi->user_id === Auth::id(),
-            403,
-            'Anda tidak memiliki akses ke notifikasi ini.'
-        );
     }
 }
