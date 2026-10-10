@@ -33,6 +33,7 @@ class Laporan extends Model
         'tingkat_prioritas',
         'status',
         'diverifikasi_oleh',
+        
     ];
 
     protected $casts = ['is_anonim' => 'boolean'];
