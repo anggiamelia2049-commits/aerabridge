@@ -19,7 +19,7 @@
                     <h3 class="text-xl font-semibold text-cyan-6">{{ $laporan->judul }}</h3>
                     <span @class([
                         'px-2.5 py-1 rounded-full text-xs font-semibold',
-                        'bg-merah/10 text-merah' => $laporan->tingkat_prioritas === 'Krisis',
+                        'bg-merah/10 text-merah' => $laporan->tingkat_prioritas === 'Kritis',
                         'bg-oranye/10 text-oranye' => $laporan->tingkat_prioritas === 'Sedang',
                         'bg-kuning/20 text-abu-tua' => $laporan->tingkat_prioritas === 'Rendah',
                     ])>

@@ -192,7 +192,7 @@
 
     <label>Tingkat Prioritas:</label>
     <select name="tingkat_prioritas" required>
-        @foreach (['Krisis', 'Sedang', 'Rendah'] as $p)
+        @foreach (['Kritis', 'Sedang', 'Rendah'] as $p)
             <option
                 value="{{ $p }}"
                 {{ old('tingkat_prioritas', $laporan->tingkat_prioritas) == $p ? 'selected' : '' }}

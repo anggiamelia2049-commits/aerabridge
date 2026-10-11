@@ -1,4 +1,4 @@
-@extends('SuperAdmin.layouts.app')
+@extends('template.layout')
 
 @section('title', 'Konten Edukasi')
 

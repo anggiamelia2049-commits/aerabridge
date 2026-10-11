@@ -1,28 +1,59 @@
 <?php
 
-namespace App\Http\Requests;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
-
-class StoreUserRequest extends FormRequest
+return new class extends Migration
 {
-    public function authorize(): bool
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
     {
-        // Hanya super_admin yang boleh submit form ini
-        return $this->user()->role === 'super_admin';
+        Schema::create('users', function (Blueprint $table) {
+            $table->id();
+            $table->string('nik')->unique();
+            $table->string('nama');
+            $table->string('username');
+            $table->string('email')->unique();
+            $table->string('password');
+            $table->string('no_hp');
+            $table->enum('jenis_kelamin', ['Laki-laki','Perempuan']);
+            $table->string('pekerjaan');
+            $table->text('alamat')->nullable();
+            $table->date('tanggal_lahir');
+            $table->enum('penyandang_disabilitas', ['Ya','Tidak'])->default('Tidak');
+            $table->string('foto')->nullable();
+            $table->enum('role', ['super_admin','warga','instansi','petugas']);
+            $table->enum('status', ['Aktif','Nonaktif'])->default('Aktif');
+            $table->rememberToken();
+            $table->timestamps();
+        });
+
+        Schema::create('password_reset_tokens', function (Blueprint $table) {
+            $table->string('email')->primary();
+            $table->string('token');
+            $table->timestamp('created_at')->nullable();
+        });
+
+        Schema::create('sessions', function (Blueprint $table) {
+            $table->string('id')->primary();
+            $table->foreignId('user_id')->nullable()->index();
+            $table->string('ip_address', 45)->nullable();
+            $table->text('user_agent')->nullable();
+            $table->longText('payload');
+            $table->integer('last_activity')->index();
+        });
     }
 
-    public function rules(): array
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
     {
-        return [
-            'name'     => ['required', 'string', 'max:255'],
-            'email'    => ['required', 'email', 'unique:users,email'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
-            'role'     => ['required', Rule::in(['instansi', 'petugas'])], 
-            // sengaja TIDAK termasuk 'super_admin' & 'warga' di sini —
-            // super_admin cuma dibuat lewat Tinker/seeder,
-            // warga daftar sendiri lewat register publik
-        ];
+        Schema::dropIfExists('users');
+        Schema::dropIfExists('password_reset_tokens');
+        Schema::dropIfExists('sessions');
     }
-}
+};

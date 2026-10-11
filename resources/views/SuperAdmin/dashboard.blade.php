@@ -32,7 +32,7 @@
     ];
 
     $badge = [
-        'Krisis' => ['Krisis', 'bg-[#f45b5b] text-white'],
+        'Kritis' => ['Kritis', 'bg-[#f45b5b] text-white'],
         'Sedang' => ['Sedang', 'bg-[#f99d3a] text-white'],
         'Rendah' => ['Rendah', 'bg-[#f9d63a] text-gray-900'],
     ];

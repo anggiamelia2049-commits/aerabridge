@@ -108,7 +108,7 @@
             @forelse ($laporanPrioritas as $v)
                 @php
                     $badge = match (strtolower($v->tingkat_prioritas)) {
-                        'krisis' => ['kritis', 'bg-red-300 text-red-600'],
+                        'kritis' => ['kritis', 'bg-red-300 text-red-600'],
                         'sedang' => ['sedang', 'bg-orange-200 text-orange-500'],
                         default  => ['rendah', 'bg-yellow-100 text-yellow-600'],
                     };

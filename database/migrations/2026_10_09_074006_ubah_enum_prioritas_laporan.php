@@ -12,6 +12,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        DB::statement("ALTER TABLE laporan MODIFY tingkat_prioritas ENUM('Krisis','Sedang','Rendah') NOT NULL DEFAULT 'Sedang'");
+        DB::statement("ALTER TABLE laporan MODIFY tingkat_prioritas ENUM('Kritis','Sedang','Rendah') NOT NULL DEFAULT 'Sedang'");
     }
 };

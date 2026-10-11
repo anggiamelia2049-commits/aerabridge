@@ -22,7 +22,7 @@ return new class extends Migration
             $table->decimal('latitude', 10,8);
             $table->decimal('longitude', 11,8);
             $table->text('alamat')->nullable();
-            $table->enum('tingkat_prioritas', ['Krisis','Sedang','Rendah'])->default('Sedang');
+            $table->enum('tingkat_prioritas', ['Kritis','Sedang','Rendah'])->default('Sedang');
             $table->enum('status', ['Menunggu','Diverifikasi', 'Diproses', 'Selesai', 'Ditolak'])->default('Menunggu');
             $table->foreignId('diverifikasi_oleh')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();

@@ -16,7 +16,7 @@
     $laporan   = $penugasan->laporan;
     $prioritas = $laporan->tingkat_prioritas ?? null;
     $prioritasClass = match ($prioritas) {
-        'Krisis', 'Kritis' => 'bg-merah/10 text-merah',
+        'Kritis', 'Kritis' => 'bg-merah/10 text-merah',
         'Sedang'           => 'bg-oranye/10 text-oranye',
         default            => 'bg-kuning/20 text-yellow-700',
     };

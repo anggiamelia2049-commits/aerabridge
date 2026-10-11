@@ -22,14 +22,14 @@ class DashboardController extends Controller
         $instansiId = $this->instansiId();
 
         // ==== Filter peta heatmap ====
-        $prioritas = $request->get('prioritas');   // Krisis | Sedang | Rendah
+        $prioritas = $request->get('prioritas');   // Kritis | Sedang | Rendah
         $status = $request->get('status');         // Menunggu | Diverifikasi | ...
 
         $peta = Laporan::with(['kategori', 'user'])
             ->where('instansi_id', $instansiId)
             ->whereNotIn('status', ['Ditolak']);
 
-        if (in_array($prioritas, ['Krisis', 'Sedang', 'Rendah'], true)) {
+        if (in_array($prioritas, ['Kritis', 'Sedang', 'Rendah'], true)) {
             $peta->where('tingkat_prioritas', $prioritas);
         }
 
@@ -46,8 +46,8 @@ class DashboardController extends Controller
             'diproses' => $this->hitungLaporan($instansiId, 'Diproses'),
             'selesai' => $this->hitungLaporan($instansiId, 'Selesai'),
             'ditolak' => $this->hitungLaporan($instansiId, 'Ditolak'),
-            'krisis' => Laporan::where('instansi_id', $instansiId)
-                ->where('tingkat_prioritas', 'Krisis')
+            'kritis' => Laporan::where('instansi_id', $instansiId)
+                ->where('tingkat_prioritas', 'Kritis')
                 ->whereIn('status', ['Menunggu', 'Diverifikasi', 'Diproses'])
                 ->count(),
         ];
@@ -58,7 +58,7 @@ class DashboardController extends Controller
         $perluVerifikasi = Laporan::with(['kategori', 'user'])
             ->where('instansi_id', $instansiId)
             ->where('status', 'Menunggu')
-            ->orderByRaw("FIELD(tingkat_prioritas, 'Krisis', 'Sedang', 'Rendah')")
+            ->orderByRaw("FIELD(tingkat_prioritas, 'Kritis', 'Sedang', 'Rendah')")
             ->latest()
             ->limit(10)
             ->get();

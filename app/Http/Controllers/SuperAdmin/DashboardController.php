@@ -29,16 +29,16 @@ class DashboardController extends Controller
             ->pluck('total', 'tingkat_prioritas');
 
         $chart = [
-            'labels' => ['Krisis', 'Sedang', 'Rendah'],
+            'labels' => ['Kritis', 'Sedang', 'Rendah'],
             'data'   => [
-                (int) ($perPrioritas['Krisis'] ?? 0),
+                (int) ($perPrioritas['Kritis'] ?? 0),
                 (int) ($perPrioritas['Sedang'] ?? 0),
                 (int) ($perPrioritas['Rendah'] ?? 0),
             ],
         ];
 
         // ===== Daftar laporan terbaru (berdasarkan prioritas) =====
-        // Di MySQL, ORDER BY kolom ENUM mengikuti urutan definisi: Krisis, Sedang, Rendah
+        // Di MySQL, ORDER BY kolom ENUM mengikuti urutan definisi: Kritis, Sedang, Rendah
         $laporanTerbaru = Laporan::whereNotIn('status', ['Selesai', 'Ditolak'])
             ->orderBy('tingkat_prioritas')
             ->latest()

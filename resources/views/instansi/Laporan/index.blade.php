@@ -40,7 +40,7 @@
 
         <select name="prioritas" onchange="this.form.submit()" class="rounded-lg border border-abu-muda px-3 py-1.5 text-sm">
             <option value="">Semua prioritas</option>
-            <option value="Krisis" {{ $prioritas === 'Krisis' ? 'selected' : '' }}>Krisis</option>
+            <option value="Kritis" {{ $prioritas === 'Kritis' ? 'selected' : '' }}>Kritis</option>
             <option value="Sedang" {{ $prioritas === 'Sedang' ? 'selected' : '' }}>Sedang</option>
             <option value="Rendah" {{ $prioritas === 'Rendah' ? 'selected' : '' }}>Rendah</option>
         </select>
@@ -66,7 +66,7 @@
             @forelse ($laporan as $v)
                 @php
                     $prioritasClass = match ($v->tingkat_prioritas) {
-                        'Krisis' => 'bg-merah/10 text-merah',
+                        'Kritis' => 'bg-merah/10 text-merah',
                         'Sedang' => 'bg-oranye/10 text-oranye',
                         default => 'bg-kuning/20 text-yellow-700',
                     };

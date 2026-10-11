@@ -38,7 +38,7 @@ class StatistikController extends Controller
             'Ditolak'      => '#4A4A4A',
         ];
         $prioritasWarna = [
-            'Krisis' => '#E53935',
+            'Kritis' => '#E53935',
             'Sedang' => '#FF9800',
             'Rendah' => '#FFC107',
         ];

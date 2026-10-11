@@ -71,7 +71,7 @@ class PenugasanController extends Controller
             ->whereDoesntHave('penugasan', function ($q) {
                 $q->whereIn('status', ['ditugaskan', 'dalam_proses', 'selesai']);
             })
-            // Diperbaiki: proposal konsisten pakai "Kritis", bukan "Krisis"
+            // Diperbaiki: proposal konsisten pakai "Kritis", bukan "Kritis"
             ->orderByRaw("FIELD(tingkat_prioritas, 'Kritis', 'Sedang', 'Rendah')")
             ->get();
 

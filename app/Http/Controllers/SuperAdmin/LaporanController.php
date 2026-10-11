@@ -57,7 +57,7 @@ class LaporanController extends Controller
             'latitude' => 'required|numeric|between:-90,90',
             'longitude' => 'required|numeric|between:-180,180',
             'alamat' => 'nullable|string',
-            'tingkat_prioritas' => 'nullable|in:Krisis,Sedang,Rendah',
+            'tingkat_prioritas' => 'nullable|in:Kritis,Sedang,Rendah',
             'status' => 'nullable|in:Menunggu,Diverifikasi,Diproses,Selesai,Ditolak',
         ]);
 
@@ -136,7 +136,7 @@ class LaporanController extends Controller
             'latitude' => 'required|numeric|between:-90,90',
             'longitude' => 'required|numeric|between:-180,180',
             'alamat' => 'nullable|string',
-            'tingkat_prioritas' => 'nullable|in:Krisis,Sedang,Rendah',
+            'tingkat_prioritas' => 'nullable|in:Kritis,Sedang,Rendah',
             'status' => 'nullable|in:Menunggu,Diverifikasi,Diproses,Selesai,Ditolak',
         ]);
 

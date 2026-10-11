@@ -9,7 +9,7 @@
         <h2 class="text-lg font-semibold text-cyan-6">Disposisi Tugas</h2>
         <p class="mt-1 text-sm text-abu-tua">
             Pilih laporan dan tim satgas. Countdown SLA akan aktif otomatis sesuai tingkat prioritas laporan
-            (Krisis 12 jam, Sedang 3 hari, Rendah 7 hari).
+            (Kritis 12 jam, Sedang 3 hari, Rendah 7 hari).
         </p>
     </div>
 

@@ -26,7 +26,7 @@ class LaporanController extends Controller
             $query->where('status', $status);
         }
 
-        if (in_array($prioritas, ['Krisis', 'Sedang', 'Rendah'], true)) {
+        if (in_array($prioritas, ['Kritis', 'Sedang', 'Rendah'], true)) {
             $query->where('tingkat_prioritas', $prioritas);
         }
 
@@ -45,7 +45,7 @@ class LaporanController extends Controller
         $laporan = Laporan::with(['kategori', 'user'])
             ->where('instansi_id', $instansiId)
             ->where('status', 'Menunggu')
-            ->orderByRaw("FIELD(tingkat_prioritas, 'Krisis', 'Sedang', 'Rendah')")
+            ->orderByRaw("FIELD(tingkat_prioritas, 'Kritis', 'Sedang', 'Rendah')")
             ->latest()
             ->get();
 
@@ -76,7 +76,7 @@ class LaporanController extends Controller
 
         $request->validate([
             'status' => 'required|in:Diverifikasi,Ditolak',
-            'tingkat_prioritas' => 'nullable|in:Krisis,Sedang,Rendah',
+            'tingkat_prioritas' => 'nullable|in:Kritis,Sedang,Rendah',
         ]);
 
         $laporan->update([

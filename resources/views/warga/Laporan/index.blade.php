@@ -41,7 +41,7 @@
                                 <td class="px-4 py-3 text-abu-tua">{{ $item->kategori->nama_kategori ?? '-' }}</td>
                                 <td class="px-4 py-3 text-abu-tua">{{ $item->instansi->nama_instansi ?? '-' }}</td>
                                 <td class="px-4 py-3">
-                                    <span @class([ 'px-2.5 py-1 rounded-full text-xs font-semibold' , 'bg-merah/10 text-merah'=> $item->tingkat_prioritas === 'Krisis',
+                                    <span @class([ 'px-2.5 py-1 rounded-full text-xs font-semibold' , 'bg-merah/10 text-merah'=> $item->tingkat_prioritas === 'Kritis',
                                         'bg-oranye/10 text-oranye' => $item->tingkat_prioritas === 'Sedang',
                                         'bg-kuning/20 text-abu-tua' => $item->tingkat_prioritas === 'Rendah',
                                         ])>
