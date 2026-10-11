@@ -1,85 +1,96 @@
-<form action="{{ route('super_admin.hadiah.update', $hadiah->id) }}" method="POST" enctype="multipart/form-data">
-    {{ csrf_field() }}
-    {{ method_field('PUT') }}
+@extends('template.layout')
 
-    Nama Hadiah :
-    <input type="text" name="nama_hadiah"
-        value="{{ old('nama_hadiah', $hadiah->nama_hadiah) }}">
-    @if ($errors->has('nama_hadiah'))
-        <span>{{ $errors->first('nama_hadiah') }}</span>
-    @endif
+@section('content')
+@php
+    $field = 'w-full h-11 px-4 rounded-lg border border-abu-muda bg-white text-sm text-gray-900 placeholder:text-gray-400 focus:border-cyan-4 focus:ring-1 focus:ring-cyan-4';
+    $label = 'block text-sm font-semibold text-cyan-6 mb-1.5';
+@endphp
 
-    <br>
+<div class="p-6">
+    <div class="max-w-3xl mx-auto bg-white rounded-2xl shadow overflow-hidden">
+        <div class="px-6 py-5">
+            <p class="text-sm text-gray-600">Ubah data hadiah.</p>
+        </div>
 
-    Deskripsi :
-    <textarea name="deskripsi">{{ old('deskripsi', $hadiah->deskripsi) }}</textarea>
-    @if ($errors->has('deskripsi'))
-        <span>{{ $errors->first('deskripsi') }}</span>
-    @endif
+        <form method="POST" action="{{ route('super_admin.hadiah.update', $hadiah->id) }}" enctype="multipart/form-data" class="px-6 pb-6 space-y-5">
+            @csrf
+            @method('PUT')
 
-    <br>
+            <div>
+                <label for="nama_hadiah" class="{{ $label }}">Nama Hadiah <span class="text-merah">*</span></label>
+                <input type="text" id="nama_hadiah" name="nama_hadiah" maxlength="150"
+                       value="{{ old('nama_hadiah', $hadiah->nama_hadiah) }}" class="{{ $field }}" required>
+                @error('nama_hadiah') <p class="text-xs text-merah mt-1">{{ $message }}</p> @enderror
+            </div>
 
-    Poin Dibutuhkan :
-    <input type="number" name="poin_dibutuhkan"
-        value="{{ old('poin_dibutuhkan', $hadiah->poin_dibutuhkan) }}">
-    @if ($errors->has('poin_dibutuhkan'))
-        <span>{{ $errors->first('poin_dibutuhkan') }}</span>
-    @endif
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+                <div>
+                    <label for="poin_dibutuhkan" class="{{ $label }}">Poin Dibutuhkan <span class="text-merah">*</span></label>
+                    <input type="number" id="poin_dibutuhkan" name="poin_dibutuhkan" min="0"
+                           value="{{ old('poin_dibutuhkan', $hadiah->poin_dibutuhkan) }}" class="{{ $field }}" required>
+                    @error('poin_dibutuhkan') <p class="text-xs text-merah mt-1">{{ $message }}</p> @enderror
+                </div>
 
-    <br>
+                <div>
+                    <label for="stok" class="{{ $label }}">Stok <span class="text-merah">*</span></label>
+                    <input type="number" id="stok" name="stok" min="0"
+                           value="{{ old('stok', $hadiah->stok) }}" class="{{ $field }}" required>
+                    @error('stok') <p class="text-xs text-merah mt-1">{{ $message }}</p> @enderror
+                </div>
 
-    Stok :
-    <input type="number" name="stok"
-        value="{{ old('stok', $hadiah->stok) }}">
-    @if ($errors->has('stok'))
-        <span>{{ $errors->first('stok') }}</span>
-    @endif
+                <div>
+                    <label for="status" class="{{ $label }}">Status <span class="text-merah">*</span></label>
+                    <select id="status" name="status" class="{{ $field }}" required>
+                        @foreach (['tersedia' => 'Tersedia', 'habis' => 'Habis', 'nonaktif' => 'Nonaktif'] as $nilai => $teks)
+                            <option value="{{ $nilai }}" @selected(old('status', $hadiah->status) === $nilai)>{{ $teks }}</option>
+                        @endforeach
+                    </select>
+                    @error('status') <p class="text-xs text-merah mt-1">{{ $message }}</p> @enderror
+                </div>
+            </div>
 
-    <br>
+            <div>
+                <label for="deskripsi" class="{{ $label }}">Deskripsi</label>
+                <textarea id="deskripsi" name="deskripsi" rows="5"
+                          class="w-full px-4 py-3 rounded-lg border border-abu-muda bg-white text-sm text-gray-900 placeholder:text-gray-400 focus:border-cyan-4 focus:ring-1 focus:ring-cyan-4">{{ old('deskripsi', $hadiah->deskripsi) }}</textarea>
+                @error('deskripsi') <p class="text-xs text-merah mt-1">{{ $message }}</p> @enderror
+            </div>
 
-    Gambar Saat Ini :
-    @if($hadiah->gambar)
-        <br>
-        <img src="{{ asset('storage/' . $hadiah->gambar) }}" width="120">
-        <br>
-        {{ $hadiah->gambar }}
-    @else
-        Belum ada gambar
-    @endif
+            <div>
+                <label for="gambar" class="{{ $label }}">Gambar Hadiah</label>
 
-    <br>
+                @if ($hadiah->gambar)
+                    <div class="mb-3">
+                        <p class="text-xs text-gray-500 mb-1">Gambar saat ini</p>
+                        <img src="{{ asset('storage/' . $hadiah->gambar) }}" alt="{{ $hadiah->nama_hadiah }}"
+                             class="w-32 h-32 object-cover rounded-lg border border-abu-muda">
+                    </div>
+                @endif
 
-    Gambar Baru :
-    <input type="file" name="gambar">
-    @if ($errors->has('gambar'))
-        <span>{{ $errors->first('gambar') }}</span>
-    @endif
+                <input type="file" id="gambar" name="gambar" accept=".jpg,.jpeg,.png"
+                       class="block w-full text-sm text-gray-700 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-cyan-3/20 file:text-cyan-6 file:font-semibold">
+                <p class="text-xs text-gray-500 mt-1">Kosongkan jika tidak ingin mengganti gambar. JPG atau PNG, maksimal 2 MB.</p>
+                <img id="previewGambar" class="hidden mt-3 w-32 h-32 object-cover rounded-lg border border-abu-muda" alt="Pratinjau gambar baru">
+                @error('gambar') <p class="text-xs text-merah mt-1">{{ $message }}</p> @enderror
+            </div>
 
-    <br>
+            <div class="flex items-center justify-end gap-3 pt-3">
+                <a href="{{ route('super_admin.hadiah.index') }}"
+                   class="px-5 py-2.5 rounded-lg border border-gray-300 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition">Batal</a>
+                <button type="submit"
+                        class="px-6 py-2.5 rounded-lg bg-cyan-4 hover:bg-cyan-6 text-white text-sm font-bold transition">Simpan Perubahan</button>
+            </div>
+        </form>
+    </div>
+</div>
 
-    Status :
-    <select name="status">
-        <option value="tersedia"
-            {{ old('status', $hadiah->status) == 'tersedia' ? 'selected' : '' }}>
-            Tersedia
-        </option>
-
-        <option value="habis"
-            {{ old('status', $hadiah->status) == 'habis' ? 'selected' : '' }}>
-            Habis
-        </option>
-
-        <option value="nonaktif"
-            {{ old('status', $hadiah->status) == 'nonaktif' ? 'selected' : '' }}>
-            Nonaktif
-        </option>
-    </select>
-    @if ($errors->has('status'))
-        <span>{{ $errors->first('status') }}</span>
-    @endif
-
-    <br>
-
-    <button type="submit">Update</button>
-    <a href="{{ route('super_admin.hadiah.index') }}">Back</a>
-</form>
+<script>
+    document.getElementById('gambar').addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        const img = document.getElementById('previewGambar');
+        if (!file) { img.classList.add('hidden'); return; }
+        img.src = URL.createObjectURL(file);
+        img.classList.remove('hidden');
+    });
+</script>
+@endsection
