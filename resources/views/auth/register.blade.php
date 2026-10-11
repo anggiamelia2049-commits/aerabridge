@@ -5,7 +5,7 @@
         <div class="hidden lg:flex lg:w-[42%] h-full bg-[#0C343D] text-white relative overflow-hidden flex-col justify-between">
     <div class="relative z-10 px-11 pt-11">
         <div class="mb-16">
-            <img src="{{ asset('images/logo-aera-bridge.png') }}" alt="Aera Bridge" class="h-3.5 w-auto">
+            <img src="{{ asset('images/logo.png') }}" alt="AERA Bridge" class="h-20 w-auto">
         </div>
 
         <div class="max-w-[350px]">

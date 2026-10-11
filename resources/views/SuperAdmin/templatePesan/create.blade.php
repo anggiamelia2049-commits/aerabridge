@@ -1,56 +1,72 @@
-<form action="{{ route('super_admin.template-pesan.store') }}" method="POST">
-    {{ csrf_field() }}
+<x-app-layout>
+    @php
+        $field = 'w-full h-11 px-4 rounded-lg border border-abu-muda bg-white text-sm text-gray-900 placeholder:text-gray-400 focus:border-cyan-4 focus:ring-1 focus:ring-cyan-4';
+        $label = 'block text-sm font-semibold text-cyan-6 mb-1.5';
+    @endphp
 
-    Kode Template :
-    <input type="text" name="kode_template" value="{{ old('kode_template') }}">
-    @if ($errors->has('kode_template'))
-    <span>{{ $errors->first('kode_template') }}</span>
-    @endif
+    <div class="flex min-h-screen bg-gray-100">
+        <aside class="shrink-0">@include('template.sidebar-superadmin')</aside>
 
-    <br>
+        <main class="flex-1 p-6 min-w-0">
+            <h1 class="text-2xl font-bold text-cyan-6 mb-6">Tambah Template Pesan</h1>
 
-    Judul :
-    <input type="text" name="judul" value="{{ old('judul') }}">
-    @if ($errors->has('judul'))
-    <span>{{ $errors->first('judul') }}</span>
-    @endif
+            <form method="POST" action="{{ route('super_admin.template-pesan.store') }}"
+                  class="bg-white rounded-2xl shadow p-6 max-w-3xl space-y-5">
+                @csrf
 
-    <br>
+                <div>
+                    <label for="kode_template" class="{{ $label }}">Kode Template <span class="text-merah">*</span></label>
+                    <input type="text" id="kode_template" name="kode_template" value="{{ old('kode_template') }}"
+                           placeholder="contoh: LAPORAN_DIVERIFIKASI" class="{{ $field }}" required>
+                    <p class="text-xs text-gray-500 mt-1">Harus unik. Dipakai sistem untuk memilih pesan yang tepat.</p>
+                    @error('kode_template') <p class="text-xs text-merah mt-1">{{ $message }}</p> @enderror
+                </div>
 
-    Isi Pesan :
-    <textarea name="isi_pesan">{{ old('isi_pesan') }}</textarea>
-    @if ($errors->has('isi_pesan'))
-    <span>{{ $errors->first('isi_pesan') }}</span>
-    @endif
+                <div>
+                    <label for="judul" class="{{ $label }}">Judul Pesan <span class="text-merah">*</span></label>
+                    <input type="text" id="judul" name="judul" value="{{ old('judul') }}"
+                           placeholder="contoh: Laporan Anda Telah Diverifikasi" class="{{ $field }}" required>
+                    @error('judul') <p class="text-xs text-merah mt-1">{{ $message }}</p> @enderror
+                </div>
 
-    <br>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    <div>
+                        <label for="kategori" class="{{ $label }}">Kategori <span class="text-merah">*</span></label>
+                        <select id="kategori" name="kategori" class="{{ $field }}" required>
+                            <option value="">Pilih kategori</option>
+                            @foreach (['laporan' => 'Laporan', 'penugasan' => 'Penugasan', 'sla' => 'SLA', 'reward' => 'Reward', 'lainnya' => 'Lainnya'] as $nilai => $teks)
+                                <option value="{{ $nilai }}" @selected(old('kategori') === $nilai)>{{ $teks }}</option>
+                            @endforeach
+                        </select>
+                        @error('kategori') <p class="text-xs text-merah mt-1">{{ $message }}</p> @enderror
+                    </div>
 
-    Kategori :
-    <select name="kategori">
-        <option value="">-- Pilih Kategori --</option>
-        <option value="laporan" {{ old('kategori') == 'laporan' ? 'selected' : '' }}>Laporan</option>
-        <option value="penugasan" {{ old('kategori') == 'penugasan' ? 'selected' : '' }}>Penugasan</option>
-        <option value="sla" {{ old('kategori') == 'sla' ? 'selected' : '' }}>SLA</option>
-        <option value="reward" {{ old('kategori') == 'reward' ? 'selected' : '' }}>Reward</option>
-        <option value="lainnya" {{ old('kategori') == 'lainnya' ? 'selected' : '' }}>Lainnya</option>
-    </select>
-    @if ($errors->has('kategori'))
-    <span>{{ $errors->first('kategori') }}</span>
-    @endif
+                    <div>
+                        <label for="status" class="{{ $label }}">Status <span class="text-merah">*</span></label>
+                        <select id="status" name="status" class="{{ $field }}" required>
+                            @foreach (['aktif' => 'Aktif', 'nonaktif' => 'Nonaktif'] as $nilai => $teks)
+                                <option value="{{ $nilai }}" @selected(old('status', 'aktif') === $nilai)>{{ $teks }}</option>
+                            @endforeach
+                        </select>
+                        @error('status') <p class="text-xs text-merah mt-1">{{ $message }}</p> @enderror
+                    </div>
+                </div>
 
-    <br>
+                <div>
+                    <label for="isi_pesan" class="{{ $label }}">Isi Pesan <span class="text-merah">*</span></label>
+                    <textarea id="isi_pesan" name="isi_pesan" rows="7" required
+                              placeholder="Tulis isi pesan yang akan dikirim ke pengguna..."
+                              class="w-full px-4 py-3 rounded-lg border border-abu-muda bg-white text-sm text-gray-900 placeholder:text-gray-400 focus:border-cyan-4 focus:ring-1 focus:ring-cyan-4">{{ old('isi_pesan') }}</textarea>
+                    @error('isi_pesan') <p class="text-xs text-merah mt-1">{{ $message }}</p> @enderror
+                </div>
 
-    Status :
-    <select name="status">
-        <option value="aktif" {{ old('status') == 'aktif' ? 'selected' : '' }}>Aktif</option>
-        <option value="nonaktif" {{ old('status') == 'nonaktif' ? 'selected' : '' }}>Nonaktif</option>
-    </select>
-    @if ($errors->has('status'))
-    <span>{{ $errors->first('status') }}</span>
-    @endif
-
-    <br>
-
-    <button type="submit">Save</button>
-    <a href="{{ route('super_admin.template-pesan.index') }}">Back</a>
-</form>
+                <div class="flex items-center justify-end gap-3 pt-3">
+                    <a href="{{ route('super_admin.template-pesan.index') }}"
+                       class="px-5 py-2.5 rounded-lg border border-gray-300 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition">Batal</a>
+                    <button type="submit"
+                            class="px-6 py-2.5 rounded-lg bg-cyan-4 hover:bg-cyan-6 text-white text-sm font-bold transition">Simpan</button>
+                </div>
+            </form>
+        </main>
+    </div>
+</x-app-layout>

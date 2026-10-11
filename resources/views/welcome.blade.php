@@ -122,7 +122,6 @@
                             <option value="{{ $kec }}" @selected(old('kecamatan') == $kec)>Kecamatan {{ $kec }}</option>
                         @endforeach
                     </select>
-                    <p id="statusLokasi" class="text-xs text-gray-500 mt-1">Mengunci lokasi GPS...</p>
                     @error('kecamatan') <p class="text-xs text-merah mt-1">{{ $message }}</p> @enderror
                     @error('latitude') <p class="text-xs text-merah mt-1">Lokasi GPS belum terkunci.</p> @enderror
                 </div>
@@ -230,7 +229,7 @@
 
                 {{-- Lacak progres --}}
                 <div>
-                    <p class="text-xs text-red-500 mb-2">* Lacak Progres Khusus (Pengguna Rahasia)</p>
+                    <p class="text-xs text-[#FF0000] mb-2">* Lacak Progres Khusus (Pengguna Rahasia)</p>
                     <a href="{{ route('lacak') }}" class="inline-block px-4 py-1.5 rounded-md bg-cyan-6 text-white text-xs font-semibold hover:bg-cyan-4 transition">Lacak Progres</a>
                 </div>
             </form>
