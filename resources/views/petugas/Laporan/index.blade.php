@@ -3,87 +3,124 @@
 @section('title', 'Laporan')
 
 @section('content')
-<div>
+<div class="container-fluid px-0">
 
-    <div class="flex items-center justify-between mb-6">
-        <h2 class="text-[36px] font-bold text-gray-800">Daftar Laporan</h2>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="fw-bold text-dark mb-1">Daftar Laporan</h3>
+            <p class="text-muted mb-0 small">Kelola dan pantau laporan masyarakat.</p>
+        </div>
     </div>
 
-    <div class="bg-white rounded-xl shadow-sm overflow-x-auto">
-        <table class="w-full text-sm text-left whitespace-nowrap">
-            <thead class="bg-gray-50 text-gray-500 uppercase text-xs">
-                <tr>
-                    <th class="px-4 py-3">No</th>
-                    <th class="px-4 py-3">User</th>
-                    <th class="px-4 py-3">Kategori</th>
-                    <th class="px-4 py-3">Instansi</th>
-                    <th class="px-4 py-3">Judul</th>
-                    <th class="px-4 py-3">Deskripsi</th>
-                    <th class="px-4 py-3">Foto</th>
-                    <th class="px-4 py-3">Latitude</th>
-                    <th class="px-4 py-3">Longitude</th>
-                    <th class="px-4 py-3">Alamat</th>
-                    <th class="px-4 py-3">Prioritas</th>
-                    <th class="px-4 py-3">Status</th>
-                    <th class="px-4 py-3">Verifikasi Oleh</th>
-                    <th class="px-4 py-3">Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse ($laporan as $v)
-                <tr class="border-t border-gray-100">
-                    <td class="px-4 py-3">{{ $loop->iteration }}</td>
-                    <td class="px-4 py-3">{{ $v->user->nama ?? '-' }}</td>
-                    <td class="px-4 py-3">{{ $v->kategori->nama_kategori ?? '-' }}</td>
-                    <td class="px-4 py-3">{{ $v->instansi->nama_instansi ?? '-' }}</td>
-                    <td class="px-4 py-3">{{ $v->judul }}</td>
-                    <td class="px-4 py-3 max-w-xs truncate">{{ $v->deskripsi }}</td>
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-0">
 
-                    <td class="px-4 py-3">
-                        @if ($v->foto)
-                            <img src="{{ asset('storage/' . $v->foto) }}"
-                                 class="w-12 h-12 rounded object-cover">
-                        @else
-                            <span class="text-gray-400 text-xs">Tidak ada foto</span>
-                        @endif
-                    </td>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="px-3 py-3">No</th>
+                            <th class="py-3">Pelapor</th>
+                            <th class="py-3">Kategori</th>
+                            <th class="py-3">Instansi</th>
+                            <th class="py-3">Judul Laporan</th>
+                            <th class="py-3">Foto</th>
+                            <th class="py-3">Prioritas</th>
+                            <th class="py-3">Status</th>
+                            <th class="py-3">Verifikasi Oleh</th>
+                            <th class="text-center py-3 pe-3">Aksi</th>
+                        </tr>
+                    </thead>
 
-                    <td class="px-4 py-3">{{ $v->latitude }}</td>
-                    <td class="px-4 py-3">{{ $v->longitude }}</td>
-                    <td class="px-4 py-3">{{ $v->alamat }}</td>
+                    <tbody>
+                        @forelse ($laporan as $v)
+                        <tr>
+                            <td class="px-3 text-muted">{{ $loop->iteration }}</td>
 
-                    <td class="px-4 py-3">
-                        <span class="px-2 py-0.5 rounded-full text-xs font-medium
-                            {{ $v->tingkat_prioritas == 'Kritis' ? 'bg-red-100 text-red-700' :
-                               ($v->tingkat_prioritas == 'Sedang' ? 'bg-orange-100 text-orange-700' : 'bg-green-100 text-green-700') }}">
-                            {{ $v->tingkat_prioritas }}
-                        </span>
-                    </td>
+                            <td>
+                                <span class="fw-semibold text-dark">
+                                    {{ $v->user->nama ?? '-' }}
+                                </span>
+                            </td>
 
-                    <td class="px-4 py-3">
-                        <span class="px-2 py-0.5 rounded-full text-xs font-medium
-                            {{ $v->status == 'Selesai' ? 'bg-green-100 text-green-700' :
-                               ($v->status == 'Diproses' ? 'bg-orange-100 text-orange-700' : 'bg-gray-100 text-gray-600') }}">
-                            {{ $v->status }}
-                        </span>
-                    </td>
+                            <td>{{ $v->kategori->nama_kategori ?? '-' }}</td>
 
-                    <td class="px-4 py-3">{{ $v->diverifikasiOleh->nama ?? '-' }}</td>
+                            <td>{{ $v->instansi->nama_instansi ?? '-' }}</td>
 
-                    <td class="px-4 py-3 text-right">
-                        <a href="{{ route('petugas.laporan.show', $v->id) }}"
-                           class="text-cyan-700 hover:underline">Detail</a>
-                    </td>
-                </tr>
-                @empty
-                <tr>
-                    <td colspan="14" class="px-4 py-6 text-center text-gray-400">
-                        Belum ada laporan.
-                    </td>
-                </tr>
-                @endforelse
-            </tbody>
-        </table>
+                            <td style="min-width: 180px; max-width: 240px;">
+                                <div class="text-dark fw-semibold text-truncate"
+                                     title="{{ $v->judul }}">
+                                    {{ $v->judul }}
+                                </div>
+                                <small class="text-muted d-block text-truncate"
+                                       title="{{ $v->deskripsi }}">
+                                    {{ $v->deskripsi }}
+                                </small>
+                            </td>
+
+                            <td>
+                                @if ($v->foto)
+                                    <img src="{{ asset('storage/' . $v->foto) }}"
+                                         alt="Foto laporan"
+                                         width="48"
+                                         height="48"
+                                         class="rounded"
+                                         style="object-fit: cover;">
+                                @else
+                                    <span class="text-muted small">-</span>
+                                @endif
+                            </td>
+
+                            <td>
+                                @if ($v->tingkat_prioritas == 'Krisis')
+                                    <span class="badge bg-danger fw-normal">Krisis</span>
+                                @elseif ($v->tingkat_prioritas == 'Sedang')
+                                    <span class="badge bg-warning text-dark fw-normal">Sedang</span>
+                                @else
+                                    <span class="badge bg-success fw-normal">
+                                        {{ $v->tingkat_prioritas ?? '-' }}
+                                    </span>
+                                @endif
+                            </td>
+
+                            <td>
+                                @if ($v->status == 'Selesai')
+                                    <span class="badge bg-success fw-normal">Selesai</span>
+                                @elseif ($v->status == 'Diproses')
+                                    <span class="badge bg-primary fw-normal">Diproses</span>
+                                @elseif ($v->status == 'Diverifikasi')
+                                    <span class="badge bg-info text-dark fw-normal">Diverifikasi</span>
+                                @elseif ($v->status == 'Ditolak')
+                                    <span class="badge bg-danger fw-normal">Ditolak</span>
+                                @else
+                                    <span class="badge bg-secondary fw-normal">
+                                        {{ $v->status ?? 'Menunggu' }}
+                                    </span>
+                                @endif
+                            </td>
+
+                            <td>{{ $v->diverifikasiOleh->nama ?? '-' }}</td>
+
+                            <td class="text-center pe-3">
+                                <a href="{{ route('petugas.laporan.show', $v->id) }}"
+                                   class="btn btn-sm btn-outline-primary">
+                                    Detail
+                                </a>
+                            </td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="10" class="text-center py-5">
+                                <p class="text-muted mb-1">Belum ada laporan.</p>
+                                <small class="text-muted">Laporan masyarakat akan muncul di sini.</small>
+                            </td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
     </div>
 
 </div>
