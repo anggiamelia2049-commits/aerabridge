@@ -1,53 +1,57 @@
-<table border="1" cellpadding="10">
-    <tr>
-        <th>Nama Hadiah</th>
-        <td>{{ $hadiah->nama_hadiah }}</td>
-    </tr>
+@extends('template.layout')
 
-    <tr>
-        <th>Deskripsi</th>
-        <td>{{ $hadiah->deskripsi ?? '-' }}</td>
-    </tr>
+@section('content')
+<div class="p-6">
+    <div class="max-w-3xl mx-auto bg-white rounded-2xl shadow overflow-hidden">
+        <div class="flex items-center justify-between gap-4 px-6 py-5">
+            <p class="text-sm text-gray-600">Detail hadiah.</p>
+        </div>
 
-    <tr>
-        <th>Poin Dibutuhkan</th>
-        <td>{{ $hadiah->poin_dibutuhkan }}</td>
-    </tr>
-
-    <tr>
-        <th>Stok</th>
-        <td>{{ $hadiah->stok }}</td>
-    </tr>
-
-    <tr>
-        <th>Gambar</th>
-        <td>
+        <div class="px-6 pb-6 space-y-5 text-sm text-gray-700">
             @if ($hadiah->gambar)
-                <img src="{{ asset('storage/' . $hadiah->gambar) }}" width="150">
-            @else
-                Tidak ada gambar
+                <img src="{{ asset('storage/' . $hadiah->gambar) }}" alt="{{ $hadiah->nama_hadiah }}"
+                     class="w-48 h-48 object-cover rounded-xl border border-abu-muda">
             @endif
-        </td>
-    </tr>
 
-    <tr>
-        <th>Status</th>
-        <td>{{ $hadiah->status }}</td>
-    </tr>
+            <div>
+                <p class="text-xs text-gray-500">Nama Hadiah</p>
+                <p class="font-semibold text-cyan-6 text-base">{{ $hadiah->nama_hadiah }}</p>
+            </div>
 
-    <tr>
-        <th>Dibuat</th>
-        <td>{{ $hadiah->created_at->format('d-m-Y H:i') }}</td>
-    </tr>
+            <div class="flex flex-wrap gap-10">
+                <div>
+                    <p class="text-xs text-gray-500">Poin Dibutuhkan</p>
+                    <p class="font-semibold">{{ number_format($hadiah->poin_dibutuhkan, 0, ',', '.') }} poin</p>
+                </div>
+                <div>
+                    <p class="text-xs text-gray-500">Stok</p>
+                    <p class="font-semibold">{{ $hadiah->stok }}</p>
+                </div>
+                <div>
+                    <p class="text-xs text-gray-500 mb-0.5">Status</p>
+                    <span @class([
+                        'inline-block px-3 py-1 rounded-full text-xs font-semibold capitalize',
+                        'bg-hijau/10 text-hijau' => $hadiah->status === 'tersedia',
+                        'bg-kuning/20 text-abu-tua' => $hadiah->status === 'habis',
+                        'bg-abu-muda text-abu-tua' => $hadiah->status === 'nonaktif',
+                    ])>{{ $hadiah->status }}</span>
+                </div>
+            </div>
 
-    <tr>
-        <th>Terakhir Diubah</th>
-        <td>{{ $hadiah->updated_at->format('d-m-Y H:i') }}</td>
-    </tr>
-</table>
+            <div>
+                <p class="text-xs text-gray-500 mb-1">Deskripsi</p>
+                <div class="rounded-lg border border-abu-muda bg-gray-50 p-4 whitespace-pre-line">{{ $hadiah->deskripsi ?: '-' }}</div>
+            </div>
 
-<br>
+            <div class="flex gap-10 text-xs text-gray-500">
+                <p>Dibuat: {{ $hadiah->created_at?->translatedFormat('d F Y, H:i') }}</p>
+                <p>Diperbarui: {{ $hadiah->updated_at?->translatedFormat('d F Y, H:i') }}</p>
+            </div>
 
-<a href="{{ route('super_admin.hadiah.index') }}">Kembali</a>
-|
-<a href="{{ route('super_admin.hadiah.edit', $hadiah->id) }}">Edit</a>
+            <a href="{{ route('super_admin.hadiah.edit', $hadiah->id) }}"
+               class="shrink-0 px-5 py-2.5 rounded-lg bg-cyan-4 hover:bg-cyan-6 text-white text-sm font-bold transition">Edit</a>
+            <a href="{{ route('super_admin.hadiah.index') }}" class="inline-block text-sm text-gray-500 hover:underline">Kembali</a>
+        </div>
+    </div>
+</div>
+@endsection
