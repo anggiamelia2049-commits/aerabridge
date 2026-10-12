@@ -26,6 +26,8 @@ use App\Http\Controllers\Warga\DashboardController as WargaDashboardController;
 use App\Http\Controllers\Petugas\LaporanController as PetugasLaporanController;
 use App\Http\Controllers\Petugas\PenugasanController as PetugasPenugasanController;
 use App\Http\Controllers\Petugas\NotifikasiController as PetugasNotifikasiController;
+use App\Http\Controllers\Petugas\DashboardController as PetugasDashboardController;
+
 
 use App\Http\Controllers\Instansi\LaporanController as InstansiLaporanController;
 use App\Http\Controllers\Instansi\PenugasanController as InstansiPenugasanController;
@@ -35,6 +37,7 @@ use App\Http\Controllers\Instansi\KategoriKerusakanController as InstansiKategor
 use App\Http\Controllers\Instansi\TimSatgasController as InstansiTimSatgasController;
 use App\Http\Controllers\Instansi\DashboardController as InstansiDashboardController;
 use App\Http\Controllers\Instansi\StatistikController;
+
 
 use App\Http\Controllers\LaporanPublikController;
 
@@ -104,6 +107,8 @@ Route::middleware('auth')->group(function () {
     // ==== Khusus Petugas ====
     Route::name('petugas.')->prefix('petugas')->middleware('role:petugas')->group(function () {
         // Laporan: read-only, hanya lihat daftar dan detail.
+        Route::get('/dashboard', [PetugasDashboardController::class, 'index'])->name('dashboard');
+
         Route::resource('laporan', PetugasLaporanController::class)
             ->only(['index', 'show']);
 

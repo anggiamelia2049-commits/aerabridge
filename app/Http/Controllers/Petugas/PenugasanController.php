@@ -118,8 +118,9 @@ class PenugasanController extends Controller
     }
 
     /**
-     * Kirim closing report: simpan foto + catatan, penugasan dan laporan
-     * jadi selesai, lalu beri tahu user instansi terkait.
+     * Kirim closing report: simpan foto + catatan, penugasan jadi selesai,
+     * lalu beri tahu user instansi. Status laporan tetap Diproses sampai
+     * instansi memvalidasi (lihat Instansi\PenugasanController::validasiClosingReport).
      */
     private function kirimClosingReport(Request $request, Penugasan $penugasan)
     {
@@ -152,8 +153,6 @@ class PenugasanController extends Controller
                     'status' => 'selesai',
                     'tanggal_selesai' => now(),
                 ]);
-
-                $laporan->update(['status' => 'Selesai']);
 
                 // Beri tahu semua user instansi yang menangani laporan ini
                 $idUserInstansi = User::where('role', 'instansi')

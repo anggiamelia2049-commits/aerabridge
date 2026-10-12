@@ -13,20 +13,40 @@ use Illuminate\Support\Facades\Storage;
 class LaporanController extends Controller
 {
     /**
+     * Pemetaan filter dari sidebar (?status=...) ke status asli di database.
+     * key   = nilai ?status= di URL
+     * value = [status di DB, judul halaman]
+     */
+    private const FILTER_STATUS = [
+        'menunggu_verifikasi' => ['Menunggu',     'Verifikasi Laporan'],
+        'disposisi'           => ['Diverifikasi', 'Disposisi Laporan'],
+        'diproses'            => ['Diproses',     'Tindak Lanjut'],
+        'selesai'             => ['Selesai',      'Laporan Selesai'],
+        'ditolak'             => ['Ditolak',      'Laporan Ditolak'],
+    ];
+
+    /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+        // Kalau ?status= kosong atau tidak dikenal, tampilkan semua laporan
+        $filter = self::FILTER_STATUS[$request->query('status')] ?? null;
+
         $laporan = Laporan::with([
             'user',
             'kategori',
             'instansi',
             'diverifikasiOleh'
         ])
+        ->when($filter, fn ($q) => $q->where('status', $filter[0]))
         ->latest()
-        ->get();
+        ->paginate(10)
+        ->withQueryString();
 
-        return view('SuperAdmin.laporan.index', compact('laporan'));
+        $judulHalaman = $filter[1] ?? 'Semua Laporan';
+
+        return view('SuperAdmin.laporan.index', compact('laporan', 'judulHalaman'));
     }
 
     /**
@@ -123,7 +143,7 @@ class LaporanController extends Controller
     /**
      * Update the specified resource in storage.
      */
-   public function update(Request $request, string $id)
+    public function update(Request $request, string $id)
     {
         $laporan = Laporan::findOrFail($id);
 
@@ -149,15 +169,17 @@ class LaporanController extends Controller
             $foto = $request->file('foto')->store('laporan', 'public');
         }
 
-        // Tentukan siapa yang verifikasi: kalau status berubah jadi salah satu status
-        // "sudah ditinjau admin", catat siapa adminnya. Kalau balik ke Menunggu, kosongkan lagi.
+        // Catat pemverifikasi HANYA saat status benar-benar berubah,
+        // supaya edit biasa tidak menimpa admin yang memverifikasi sebelumnya.
         $diverifikasiOleh = $laporan->diverifikasi_oleh;
         $statusBaru = $request->status ?? 'Menunggu';
 
-        if (in_array($statusBaru, ['Diverifikasi', 'Diproses', 'Selesai', 'Ditolak'])) {
-            $diverifikasiOleh = Auth::id();
-        } elseif ($statusBaru === 'Menunggu') {
-            $diverifikasiOleh = null;
+        if ($statusBaru !== $laporan->status) {
+            if (in_array($statusBaru, ['Diverifikasi', 'Diproses', 'Selesai', 'Ditolak'])) {
+                $diverifikasiOleh = Auth::id();
+            } elseif ($statusBaru === 'Menunggu') {
+                $diverifikasiOleh = null;
+            }
         }
 
         $laporan->update([
@@ -213,8 +235,7 @@ class LaporanController extends Controller
             'diverifikasi_oleh' => Auth::id(),
         ]);
 
-        return redirect()
-            ->route('super_admin.laporan.index')
-            ->with('success', 'Status laporan berhasil diperbarui');
+        // back() supaya tetap di tab/filter yang sedang dibuka di sidebar
+        return back()->with('success', 'Status laporan berhasil diperbarui');
     }
 }
