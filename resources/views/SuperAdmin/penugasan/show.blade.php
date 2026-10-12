@@ -1,3 +1,6 @@
+@extends('template.layout')
+
+@section('content')
 <table border="1" cellpadding="10">
     <tr>
         <th>Laporan</th>
@@ -43,3 +46,4 @@
 <br>
 
 <a href="{{ route('super_admin.penugasan.index') }}">Kembali</a>
+@endsection

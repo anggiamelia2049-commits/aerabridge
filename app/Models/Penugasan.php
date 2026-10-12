@@ -69,10 +69,10 @@ class Penugasan extends Model
      * Dipakai di PenugasanController::index() sebagai filter default,
      * dan bisa dipakai juga untuk kartu "Tugas Aktif" di dashboard petugas.
      */
-    public function scopeAktif($query)
-    {
-        return $query->whereIn('status', ['ditugaskan', 'dalam_proses']);
-    }
+  public function scopeAktif($query)
+  {
+      return $query->whereIn('status', ['ditugaskan', 'dalam_proses']);
+  }
 
     // ===================== SLA =====================
 

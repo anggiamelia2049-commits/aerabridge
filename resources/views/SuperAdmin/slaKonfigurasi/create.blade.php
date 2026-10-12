@@ -1,3 +1,6 @@
+@extends('template.layout')
+
+@section('content')
 <form action="{{ route('super_admin.sla-konfigurasi.store') }}" method="POST">
     {{ csrf_field() }}
 
@@ -51,4 +54,4 @@
 
     <button type="submit">Save</button>
     <a href="{{ route('super_admin.sla-konfigurasi.index') }}">Back</a>
-
+@endsection

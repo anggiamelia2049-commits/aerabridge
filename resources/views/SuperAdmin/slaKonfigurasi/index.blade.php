@@ -1,3 +1,6 @@
+@extends('template.layout')
+
+@section('content')
 <table border="1">
     <tr>
         <th>No</th>
@@ -37,3 +40,4 @@
     </tr>
     @endforelse
 </table>
+@endsection
