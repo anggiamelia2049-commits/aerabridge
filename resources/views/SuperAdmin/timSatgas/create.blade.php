@@ -1,3 +1,6 @@
+@extends('template.layout')
+
+@section('content')
 <form action="{{ route('super_admin.tim-satgas.store') }}" method="POST">
     {{ csrf_field() }}
 
@@ -64,3 +67,4 @@
     <button type="submit">Save</button>
     <a href="{{ route('super_admin.tim-satgas.index') }}">Back</a>
 </form>
+@endsection

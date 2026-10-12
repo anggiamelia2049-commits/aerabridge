@@ -1,3 +1,6 @@
+@extends('template.layout')
+
+@section('content')
 <form action="{{ route('super_admin.tim-satgas.update', $timSatgas->id) }}" method="POST">
     {{ csrf_field() }}
     @method('PUT')
@@ -65,3 +68,4 @@
     <button type="submit">Update</button>
     <a href="{{ route('super_admin.tim-satgas.index') }}">Back</a>
 </form>
+@endsection

@@ -149,18 +149,16 @@ Route::middleware('auth')->group(function () {
         Route::get('/verifikasi', [InstansiLaporanController::class, 'verifikasi'])->name('verifikasi.index');
         Route::post('/laporan/{laporan}/verify', [InstansiLaporanController::class, 'verify'])->name('laporan.verify');
 
-        Route::resource('tim-satgas', InstansiTimSatgasController::class)->only(['index', 'show'])->parameters(['tim-satgas' => 'tim_satgas']);
-        Route::resource('kategori-kerusakan', InstansiKategoriKerusakanController::class)->only('index');
-        Route::get('statistik', [StatistikController::class, 'index'])->name('statistik.index');
+        Route::resource('tim-satgas', InstansiTimSatgasController::class)->only(['index', 'show', 'create', 'store', 'edit', 'update'])->parameters(['tim-satgas' => 'tim_satgas']);
+    Route::resource('kategori-kerusakan', InstansiKategoriKerusakanController::class)->only('index');
+    Route::get('statistik', [StatistikController::class, 'index'])->name('statistik.index');
     });
 });
 
 Route::get('/', [LaporanPublikController::class, 'create'])->name('home');
-    Route::post('/laporan', [LaporanPublikController::class, 'store'])
-        ->middleware(['guest', 'throttle:5,1'])->name('laporan.publik.store');
-    Route::get('/laporan/sukses', [LaporanPublikController::class, 'sukses'])->name('laporan.sukses');
-    Route::get('/lacak', [LaporanPublikController::class, 'lacak'])
-        ->middleware('throttle:20,1')->name('lacak');
+Route::post('/laporan', [LaporanPublikController::class, 'store'])->middleware(['guest', 'throttle:5,1'])->name('laporan.publik.store');
+Route::get('/laporan/sukses', [LaporanPublikController::class, 'sukses'])->name('laporan.sukses');
+Route::get('/lacak', [LaporanPublikController::class, 'lacak'])->middleware('throttle:20,1')->name('lacak');
 
 
 require __DIR__ . '/auth.php';

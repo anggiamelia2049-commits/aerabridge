@@ -1,3 +1,6 @@
+@extends('template.layout')
+
+@section('content')
 <h2>Detail Deteksi AI</h2>
 
 <table border="1" cellpadding="10">
@@ -54,3 +57,4 @@
 <br>
 
 <a href="{{ route('super_admin.deteksi-ai.index') }}">Kembali</a>
+@endsection

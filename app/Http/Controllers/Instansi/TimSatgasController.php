@@ -1,21 +1,37 @@
 <?php
-
+// app/Http/Controllers/Instansi/TimSatgasController.php
 namespace App\Http\Controllers\Instansi;
-
-use App\Http\Controllers\Controller;
-use App\Models\TimSatgas;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Controller;
+use App\Models\{Penugasan, TimSatgas};
+use Illuminate\Http\Request;
 
 class TimSatgasController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $timSatgas = TimSatgas::where('instansi_id', $this->instansiId())
-            ->latest()
-            ->paginate(10);
+        $instansiId = Auth::user()->instansi_id; // sesuaikan jika berbeda
 
-        return view('instansi.tim-satgas.index', compact('timSatgas'));
+        $timSatgas = TimSatgas::where('instansi_id', $instansiId)
+            ->withCount(['penugasan as penugasan_aktif_count' => fn ($q) => $q->aktif()])
+            ->when($request->q, fn ($q, $s) => $q->where(fn ($w) => $w->where('nama_tim', 'like', "%$s%")->orWhere('ketua', 'like', "%$s%")))
+            ->when($request->status, fn ($q, $s) => $q->where('status', $s))
+            ->latest()->paginate(10)->withQueryString();
+
+        $base = TimSatgas::where('instansi_id', $instansiId);
+        $totalAktif = (clone $base)->where('status', 'aktif')->count();
+        $totalBertugas = (clone $base)->whereHas('penugasan', fn ($q) => $q->aktif())->count();
+        $totalOverdue = Penugasan::aktif()->with('laporan') ->get()->filter(fn ($p) => $p->isOverdue())->count();
+
+        return view('instansi.tim-satgas.index', compact('timSatgas', 'totalAktif', 'totalBertugas', 'totalOverdue'));
+    }
+
+    public function show(TimSatgas $timSatgas)
+    {
+        abort_if($timSatgas->instansi_id !== Auth::user()->instansi_id, 403);
+        $timSatgas->load('penugasan.laporan', 'penugasan.petugas');
+
+        return view('instansi.tim-satgas.show', ['tim' => $timSatgas]);
     }
 
     public function create()
@@ -26,47 +42,25 @@ class TimSatgasController extends Controller
     public function store(Request $request)
     {
         $data = $this->validated($request);
-        $data['instansi_id'] = $this->instansiId();
+        $data['instansi_id'] = Auth::user()->instansi_id;
+        $tim = TimSatgas::create($data);
 
-        TimSatgas::create($data);
-
-        return redirect()->route('instansi.tim-satgas.index')
-            ->with('success', 'Tim satgas berhasil ditambahkan.');
-    }
-
-    // Nama variabel $timSatgas cocok dengan parameter route {tim_satgas} (Laravel mengubah ke snake_case)
-    public function show(TimSatgas $timSatgas)
-    {
-        $this->pastikanMilikInstansi($timSatgas);
-
-        return view('instansi.tim-satgas.show', compact('timSatgas'));
+        return redirect()->route('instansi.tim-satgas.show', $tim)->with('success', 'Tim Satgas berhasil ditambahkan.');
     }
 
     public function edit(TimSatgas $timSatgas)
     {
-        $this->pastikanMilikInstansi($timSatgas);
+        abort_if($timSatgas->instansi_id !== Auth::user()->instansi_id, 403);
 
-        return view('instansi.tim-satgas.edit', compact('timSatgas'));
+        return view('instansi.tim-satgas.edit', ['tim' => $timSatgas]);
     }
 
     public function update(Request $request, TimSatgas $timSatgas)
     {
-        $this->pastikanMilikInstansi($timSatgas);
-
+        abort_if($timSatgas->instansi_id !== Auth::user()->instansi_id, 403);
         $timSatgas->update($this->validated($request));
 
-        return redirect()->route('instansi.tim-satgas.index')
-            ->with('success', 'Data tim satgas berhasil diperbarui.');
-    }
-
-    public function destroy(TimSatgas $timSatgas)
-    {
-        $this->pastikanMilikInstansi($timSatgas);
-
-        $timSatgas->delete();
-
-        return redirect()->route('instansi.tim-satgas.index')
-            ->with('success', 'Tim satgas berhasil dihapus.');
+        return redirect()->route('instansi.tim-satgas.show', $timSatgas)->with('success', 'Tim Satgas berhasil diperbarui.');
     }
 
     private function validated(Request $request): array
@@ -74,20 +68,9 @@ class TimSatgasController extends Controller
         return $request->validate([
             'nama_tim'       => 'required|string|max:255',
             'ketua'          => 'required|string|max:255',
+            'kontak'         => 'required|string|max:30',
             'jumlah_anggota' => 'required|integer|min:0',
-            'kontak'         => 'required|string|max:50',
             'status'         => 'required|in:aktif,nonaktif',
         ]);
-    }
-
-    // Asumsi: tabel users punya kolom instansi_id. Sesuaikan jika berbeda.
-    private function instansiId()
-    {
-        return Auth::user()->instansi_id;
-    }
-
-    private function pastikanMilikInstansi(TimSatgas $tim): void
-    {
-        abort_if($tim->instansi_id !== $this->instansiId(), 403);
     }
 }
