@@ -1,19 +1,20 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'AERA Bridge')</title>
-    
-    
+
+
     {{-- Tailwind CSS --}}
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    
+
 
     {{-- Font utama --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-          rel="stylesheet">
+        rel="stylesheet">
 
     {{-- Mencegah elemen x-cloak berkedip sebelum Alpine siap --}}
     <style>
@@ -28,7 +29,7 @@
 <body class="font-sans antialiased bg-abu-muda text-abu-tua">
 
     <div class="flex min-h-screen"
-         x-data="{
+        x-data="{
             sidebarOpen: true,
             mobileSidebarOpen: false,
             init() {
@@ -50,16 +51,16 @@
                 }
             }
          }"
-         @keydown.escape.window="mobileSidebarOpen = false"
-         @resize.window="if (window.innerWidth >= 1024) mobileSidebarOpen = false">
+        @keydown.escape.window="mobileSidebarOpen = false"
+        @resize.window="if (window.innerWidth >= 1024) mobileSidebarOpen = false">
 
         {{-- SIDEBAR --}}
         @php
-            $role = $role ?? (
-                auth()->check()
-                    ? auth()->user()->role
-                    : 'super_admin'
-            );
+        $role = $role ?? (
+        auth()->check()
+        ? auth()->user()->role
+        : 'super_admin'
+        );
         @endphp
 
         {{-- SIDEBAR DESKTOP --}}
@@ -70,20 +71,20 @@
 
             <div class="h-full w-64">
                 @switch($role)
-                    @case('warga')
-                        @include('template.sidebar-warga')
-                        @break
+                @case('warga')
+                @include('template.sidebar-warga')
+                @break
 
-                    @case('petugas')
-                        @include('template.sidebar-petugas')
-                        @break
+                @case('petugas')
+                @include('template.sidebar-petugas')
+                @break
 
-                    @case('instansi')
-                        @include('template.sidebar-instansi')
-                        @break
+                @case('instansi')
+                @include('template.sidebar-instansi')
+                @break
 
-                    @default
-                        @include('template.sidebar-superadmin')
+                @default
+                @include('template.sidebar-superadmin')
                 @endswitch
             </div>
         </aside>
@@ -111,20 +112,20 @@
                 class="fixed inset-y-0 left-0 z-50 w-64 overflow-y-auto shadow-xl">
 
                 @switch($role)
-                    @case('warga')
-                        @include('template.sidebar-warga')
-                        @break
+                @case('warga')
+                @include('template.sidebar-warga')
+                @break
 
-                    @case('petugas')
-                        @include('template.sidebar-petugas')
-                        @break
+                @case('petugas')
+                @include('template.sidebar-petugas')
+                @break
 
-                    @case('instansi')
-                        @include('template.sidebar-instansi')
-                        @break
+                @case('instansi')
+                @include('template.sidebar-instansi')
+                @break
 
-                    @default
-                        @include('template.sidebar-superadmin')
+                @default
+                @include('template.sidebar-superadmin')
                 @endswitch
             </div>
         </div>
@@ -139,16 +140,16 @@
 
                 {{-- Pesan sukses --}}
                 @if (session('success'))
-                    <div class="mb-4 rounded-lg border border-hijau/30 bg-hijau/10 px-4 py-3 text-sm font-medium text-hijau">
-                        {{ session('success') }}
-                    </div>
+                <div class="mb-4 rounded-lg border border-hijau/30 bg-hijau/10 px-4 py-3 text-sm font-medium text-hijau">
+                    {{ session('success') }}
+                </div>
                 @endif
 
                 {{-- Pesan error --}}
                 @if (session('error'))
-                    <div class="mb-4 rounded-lg border border-merah/30 bg-merah/10 px-4 py-3 text-sm font-medium text-merah">
-                        {{ session('error') }}
-                    </div>
+                <div class="mb-4 rounded-lg border border-merah/30 bg-merah/10 px-4 py-3 text-sm font-medium text-merah">
+                    {{ session('error') }}
+                </div>
                 @endif
 
                 {{-- Konten halaman --}}
@@ -157,7 +158,20 @@
             </main>
 
             {{-- Footer --}}
-            @include('template.footer')
+
+            <footer class="bg-white px-4 py-2 text-xs text-gray-500 sm:px-5">
+                <div class="flex flex-col items-center justify-between gap-1 sm:flex-row">
+                    <p>
+                        © {{ date('Y') }} AERA Bridge — Smart Reporting Masalah Perkotaan.
+                    </p>
+
+                    <p>
+                        Dikembangkan oleh
+                        <span class="font-semibold text-gray-700">The Code Waves</span>
+                        untuk Kota Depok.
+                    </p>
+                </div>
+            </footer>
 
         </div>
     </div>
@@ -166,4 +180,5 @@
     @stack('scripts')
 
 </body>
+
 </html>

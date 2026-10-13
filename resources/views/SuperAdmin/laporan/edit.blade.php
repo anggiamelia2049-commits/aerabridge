@@ -185,16 +185,6 @@
             @enderror
         </div>
 
-        {{-- Alamat --}}
-        <div class="md:col-span-2">
-            <label for="alamat" class="{{ $labelClass }}">Alamat</label>
-            <textarea id="alamat" name="alamat" rows="2"
-                      class="{{ $inputClass }}">{{ old('alamat', $laporan->alamat) }}</textarea>
-            @error('alamat')
-                <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
-            @enderror
-        </div>
-
         {{-- Tingkat Prioritas --}}
         <div>
             <label for="tingkat_prioritas" class="{{ $labelClass }}">Tingkat Prioritas</label>

@@ -18,7 +18,7 @@
     </div>
 
     <div class="card border-0 shadow-sm">
-        <div class="card-body p-4">
+        <div class="card-body p-3">
 
             <h5 class="fw-bold text-dark mb-3">
                 {{ $laporan->judul }}
