@@ -122,6 +122,7 @@
                             <option value="{{ $kec }}" @selected(old('kecamatan') == $kec)>Kecamatan {{ $kec }}</option>
                         @endforeach
                     </select>
+                    <p id="statusLokasi" class="text-xs text-gray-500 mt-1">Mengunci lokasi GPS...</p>
                     @error('kecamatan') <p class="text-xs text-merah mt-1">{{ $message }}</p> @enderror
                     @error('latitude') <p class="text-xs text-merah mt-1">Lokasi GPS belum terkunci.</p> @enderror
                 </div>
@@ -167,7 +168,6 @@
                     <img id="preview" class="hidden w-full rounded-lg mb-3" alt="Foto laporan">
                     <canvas id="canvas" class="hidden"></canvas>
 
-                    {{-- Ambil Foto --}}
                     <button type="button" id="btnBuka" class="flex items-center gap-2 text-sky-400 hover:text-sky-600 transition">
                         <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M3 8a2 2 0 012-2h1.5l1-1.5h9l1 1.5H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"/>
@@ -179,7 +179,6 @@
                     <button type="button" id="btnJepret" class="hidden w-full sm:w-auto mb-2 px-5 py-2 rounded-lg bg-cyan-4 hover:bg-cyan-6 text-white text-sm font-semibold transition">Jepret</button>
                     <button type="button" id="btnUlang" class="hidden w-full sm:w-auto mb-2 px-5 py-2 rounded-lg border border-gray-400 text-sm font-semibold">Ulangi Foto</button>
 
-                    {{-- Lampiran --}}
                     <label for="lampiran" class="flex items-center gap-2 mt-1 text-sky-400 hover:text-sky-600 cursor-pointer transition w-fit">
                         <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M18.5 11.5l-6.4 6.4a4.5 4.5 0 01-6.4-6.4l7.1-7.1a3 3 0 014.2 4.2l-7.1 7.1a1.5 1.5 0 01-2.1-2.1l6.4-6.4"/>
@@ -188,7 +187,6 @@
                     </label>
                     <input type="file" id="lampiran" name="lampiran" accept=".jpg,.jpeg,.png,.pdf" class="hidden">
 
-                    {{-- Kartu konfirmasi lampiran --}}
                     <div id="boxLampiran" class="hidden mt-2 ml-8 max-w-sm">
                         <div class="flex items-center gap-3 p-2 rounded-lg border border-green-300 bg-green-50">
                             <img id="previewLampiran" class="hidden w-14 h-14 object-cover rounded-md" alt="Pratinjau lampiran">
@@ -248,35 +246,44 @@
     const video = $('video'), preview = $('preview'), canvas = $('canvas');
     let stream = null;
 
-    // ===== Lokasi GPS =====
-    function kunciLokasi() {
-        const status = $('statusLokasi');
-        if (!navigator.geolocation) {
-            status.textContent = 'Browser tidak mendukung geolokasi.';
-            status.classList.add('text-merah');
-            return;
-        }
-        status.textContent = 'Mengunci lokasi GPS...';
-        status.classList.remove('text-merah');
+    // ===== Lokasi GPS (mengembalikan Promise: true = terkunci, false = gagal) =====
+    function setStatus(teks, merah = false) {
+        const el = $('statusLokasi');
+        if (!el) return; // aman walaupun elemen status tidak ada
+        el.textContent = teks;
+        el.classList.toggle('text-merah', merah);
+        el.classList.toggle('text-gray-500', !merah);
+    }
 
-        navigator.geolocation.getCurrentPosition(
-            (pos) => {
-                $('latitude').value = pos.coords.latitude.toFixed(8);
-                $('longitude').value = pos.coords.longitude.toFixed(8);
-                status.textContent = 'Lokasi GPS terkunci.';
-                status.classList.remove('text-merah');
-            },
-            (err) => {
-                const pesan = {
-                    1: 'Izin lokasi ditolak. Klik ikon gembok di address bar, set Lokasi ke Izinkan, lalu refresh.',
-                    2: 'Lokasi tidak tersedia. Nyalakan layanan lokasi di Windows (Settings > Privacy & security > Location).',
-                    3: 'Waktu habis saat mencari lokasi. Coba lagi.',
-                };
-                status.textContent = (pesan[err.code] || 'Lokasi gagal dikunci.') + ' (kode ' + err.code + ')';
-                status.classList.add('text-merah');
-            },
-            { enableHighAccuracy: false, timeout: 20000, maximumAge: 60000 }
-        );
+    function kunciLokasi() {
+        return new Promise((resolve) => {
+            if (!navigator.geolocation) {
+                setStatus('Browser tidak mendukung geolokasi.', true);
+                resolve(false);
+                return;
+            }
+
+            setStatus('Mengunci lokasi GPS...');
+
+            navigator.geolocation.getCurrentPosition(
+                (pos) => {
+                    $('latitude').value = pos.coords.latitude.toFixed(8);
+                    $('longitude').value = pos.coords.longitude.toFixed(8);
+                    setStatus('Lokasi GPS terkunci.');
+                    resolve(true);
+                },
+                (err) => {
+                    const pesan = {
+                        1: 'Izin lokasi ditolak. Klik ikon gembok di address bar, set Lokasi ke Izinkan, lalu refresh.',
+                        2: 'Lokasi tidak tersedia. Nyalakan layanan lokasi di Windows (Settings > Privacy & security > Location).',
+                        3: 'Waktu habis saat mencari lokasi. Coba lagi.',
+                    };
+                    setStatus((pesan[err.code] || 'Lokasi gagal dikunci.') + ' (kode ' + err.code + ')', true);
+                    resolve(false);
+                },
+                { enableHighAccuracy: false, timeout: 20000, maximumAge: 60000 }
+            );
+        });
     }
 
     // ===== Kamera =====
@@ -321,7 +328,7 @@
     $('btnUlang').addEventListener('click', bukaKamera);
     $('btnJepret').addEventListener('click', jepret);
 
-    // ===== Lampiran: tampilkan konfirmasi setelah file dipilih =====
+    // ===== Lampiran =====
     let urlLampiran = null;
 
     function resetLampiran() {
@@ -364,7 +371,7 @@
 
     $('hapusLampiran').addEventListener('click', resetLampiran);
 
-    // ===== Kategori "Lainnya": kotak input muncul saat opsi itu dipilih =====
+    // ===== Kategori "Lainnya" =====
     const boxLainnya = $('boxKategoriLainnya');
     const inputLainnya = $('kategori_lainnya');
 
@@ -387,15 +394,27 @@
 
     syncKategoriLainnya();
 
-    // Minta lokasi begitu halaman dibuka, jadi kamera maupun lampiran sama-sama aman
+    // ===== Minta lokasi begitu halaman dibuka =====
     kunciLokasi();
 
-    // ===== Validasi sebelum kirim =====
-    $('formLaporan').addEventListener('submit', (e) => {
-        if (!$('latitude').value || !$('longitude').value) {
-            e.preventDefault();
-            kunciLokasi();
-            alert('Lokasi GPS belum terkunci. Lihat keterangan di bawah kolom Lokasi Kejadian, lalu tekan Kirim lagi setelah tertulis "Lokasi GPS terkunci".');
+    // ===== Saat Kirim: kalau lokasi belum ada, coba kunci dulu lalu kirim otomatis =====
+    const form = $('formLaporan');
+    let sedangMengunci = false;
+
+    form.addEventListener('submit', async (e) => {
+        if ($('latitude').value && $('longitude').value) return; // lokasi sudah ada, lanjut kirim
+
+        e.preventDefault();
+        if (sedangMengunci) return;
+        sedangMengunci = true;
+
+        const berhasil = await kunciLokasi();
+        sedangMengunci = false;
+
+        if (berhasil) {
+            form.submit();
+        } else {
+            alert('Lokasi GPS belum terkunci. Baca keterangan merah di bawah kolom Lokasi Kejadian, perbaiki izin lokasinya, lalu tekan Kirim lagi.');
         }
     });
 </script>
