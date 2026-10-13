@@ -3,33 +3,27 @@
 namespace App\Http\Controllers\SuperAdmin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Instansi;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        $users = User::all();
+        $users = User::with('instansi')->get();
 
         return view('SuperAdmin.user.index', compact('users'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        return view('SuperAdmin.user.create');
+        $instansis = Instansi::where('status', 'Aktif')->get();
+
+        return view('SuperAdmin.user.create', compact('instansis'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $request->validate([
@@ -46,7 +40,10 @@ class UserController extends Controller
             'penyandang_disabilitas' => 'required|in:Ya,Tidak',
             'foto' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'role' => 'required|in:super_admin,warga,instansi,petugas',
+            'instansi_id' => 'required_if:role,instansi|nullable|exists:instansi,id',
             'status' => 'required|in:Aktif,Nonaktif',
+        ], [
+            'instansi_id.required_if' => 'Instansi wajib dipilih untuk akun dengan role instansi.',
         ]);
 
         $foto = null;
@@ -69,6 +66,7 @@ class UserController extends Controller
             'penyandang_disabilitas' => $request->penyandang_disabilitas,
             'foto' => $foto,
             'role' => $request->role,
+            'instansi_id' => $request->role === 'instansi' ? $request->instansi_id : null,
             'status' => $request->status,
         ]);
 
@@ -77,29 +75,21 @@ class UserController extends Controller
             ->with('success', 'User berhasil ditambahkan.');
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show($id)
     {
-        $user = User::findOrFail($id);
+        $user = User::with('instansi')->findOrFail($id);
 
         return view('SuperAdmin.user.show', compact('user'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit($id)
     {
         $dataedituser = User::findOrFail($id);
+        $instansis = Instansi::where('status', 'Aktif')->get();
 
-        return view('SuperAdmin.user.edit', compact('dataedituser'));
+        return view('SuperAdmin.user.edit', compact('dataedituser', 'instansis'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, $id)
     {
         $user = User::findOrFail($id);
@@ -118,7 +108,10 @@ class UserController extends Controller
             'penyandang_disabilitas' => 'required|in:Ya,Tidak',
             'foto' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'role' => 'required|in:super_admin,warga,instansi,petugas',
+            'instansi_id' => 'required_if:role,instansi|nullable|exists:instansi,id',
             'status' => 'required|in:Aktif,Nonaktif',
+        ], [
+            'instansi_id.required_if' => 'Instansi wajib dipilih untuk akun dengan role instansi.',
         ]);
 
         $data = [
@@ -133,12 +126,13 @@ class UserController extends Controller
             'tanggal_lahir' => $request->tanggal_lahir,
             'penyandang_disabilitas' => $request->penyandang_disabilitas,
             'role' => $request->role,
+            'instansi_id' => $request->role === 'instansi' ? $request->instansi_id : null,
             'status' => $request->status,
         ];
 
         if ($request->filled('password')) {
             $data['password'] = bcrypt($request->password);
-            }
+        }
 
         if ($request->hasFile('foto')) {
             if ($user->foto) {
@@ -155,9 +149,6 @@ class UserController extends Controller
             ->with('success', 'User berhasil diperbarui.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy($id)
     {
         $user = User::findOrFail($id);

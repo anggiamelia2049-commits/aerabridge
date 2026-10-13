@@ -1,135 +1,81 @@
 @extends('template.layout')
 
 @section('content')
-    <div class="flex items-center justify-end mb-4">
-        <a href="{{ route('super_admin.user.create') }}"
-            class="px-5 py-2 rounded-lg bg-cyan-700 text-white text-sm font-medium hover:bg-cyan-6 transition">
-            + Tambah Data User
-        </a>
-    </div>
-    <div class="bg-white rounded-lg shadow overflow-x-auto">
+<div class="p-6">
+    <div class="bg-white rounded-2xl shadow overflow-hidden">
 
-        <table class="w-full text-sm text-left">
-            <thead class="bg-gray-100">
-                <tr>
-                    <th class="px-4 py-3">No</th>
-                    <th class="px-4 py-3">Foto</th>
-                    <th class="px-4 py-3">NIK</th>
-                    <th class="px-4 py-3">Nama</th>
-                    <th class="px-4 py-3">Username</th>
-                    <th class="px-4 py-3">Email</th>
-                    <th class="px-4 py-3">No HP</th>
-                    <th class="px-4 py-3">Jenis Kelamin</th>
-                    <th class="px-4 py-3">Pekerjaan</th>
-                    <th class="px-4 py-3">Role</th>
-                    <th class="px-4 py-3">Status</th>
-                    <th class="px-4 py-3">Aksi</th>
-                </tr>
-            </thead>
+        <div class="flex items-center justify-between gap-4 px-6 py-5">
+            <p class="text-sm text-gray-600">Kelola akun pengguna: warga, petugas, instansi, dan super admin.</p>
+            <a href="{{ route('super_admin.user.create') }}"
+               class="shrink-0 px-5 py-2.5 rounded-lg bg-cyan-4 hover:bg-cyan-6 text-white text-sm font-bold transition">
+                + Tambah User
+            </a>
+        </div>
 
-            <tbody>
-
-                @forelse($users as $user)
-                    <tr class="border-b">
-
-                        <td class="px-4 py-3">
-                            {{ $loop->iteration }}
-                        </td>
-
-                        <td class="px-4 py-3">
-
-                            @if ($user->foto)
-                                <img src="{{ asset('storage/' . $user->foto) }}" width="60" height="60"
-                                    class="object-cover rounded">
-                            @else
-                                <span class="text-gray-500">
-                                    Tidak ada foto
-                                </span>
-                            @endif
-
-                        </td>
-
-                        <td class="px-4 py-3">
-                            {{ $user->nik }}
-                        </td>
-
-                        <td class="px-4 py-3">
-                            {{ $user->nama }}
-                        </td>
-
-                        <td class="px-4 py-3">
-                            {{ $user->username }}
-                        </td>
-
-                        <td class="px-4 py-3">
-                            {{ $user->email }}
-                        </td>
-
-                        <td class="px-4 py-3">
-                            {{ $user->no_hp }}
-                        </td>
-
-                        <td class="px-4 py-3">
-                            {{ $user->jenis_kelamin }}
-                        </td>
-
-                        <td class="px-4 py-3">
-                            {{ $user->pekerjaan }}
-                        </td>
-
-                        <td class="px-4 py-3">
-                            {{ $user->role }}
-                        </td>
-
-                        <td class="px-4 py-3">
-                            {{ $user->status }}
-                        </td>
-
-                        <td class="px-4 py-3 whitespace-nowrap">
-
-                            <a href="{{ route('super_admin.user.show', $user->id) }}"
-                                class="text-[#45818E] hover:underline">
-                                Lihat
-                            </a>
-
-                            |
-
-                            <a href="{{ route('super_admin.user.edit', $user->id) }}"
-                                class="text-[#45818E] hover:underline">
-                                Edit
-                            </a>
-
-                            |
-
-                            <form action="{{ route('super_admin.user.destroy', $user->id) }}" method="POST"
-                                class="inline">
-
-                                @csrf
-                                @method('DELETE')
-
-                                <button type="submit" onclick="return confirm('Yakin ingin menghapus user ini?')"
-                                    class="text-red-500 hover:underline">
-                                    Hapus
-                                </button>
-
-                            </form>
-
-                        </td>
-
-                    </tr>
-
-                @empty
-
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm text-left">
+                <thead class="bg-cyan-6 text-white">
                     <tr>
-                        <td colspan="12" class="px-4 py-6 text-center">
-                            Belum ada data user.
-                        </td>
+                        <th class="px-4 py-3.5 font-semibold">No</th>
+                        <th class="px-4 py-3.5 font-semibold">Foto</th>
+                        <th class="px-4 py-3.5 font-semibold">Nama</th>
+                        <th class="px-4 py-3.5 font-semibold">Email</th>
+                        <th class="px-4 py-3.5 font-semibold">No HP</th>
+                        <th class="px-4 py-3.5 font-semibold">Role</th>
+                        <th class="px-4 py-3.5 font-semibold">Instansi</th>
+                        <th class="px-4 py-3.5 font-semibold">Status</th>
+                        <th class="px-4 py-3.5 font-semibold text-center">Aksi</th>
                     </tr>
-                @endforelse
-
-            </tbody>
-
-        </table>
-
+                </thead>
+                <tbody class="divide-y divide-gray-200 text-gray-700">
+                    @forelse ($users as $user)
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-4 py-3.5">{{ $loop->iteration }}</td>
+                            <td class="px-4 py-3.5">
+                                @if ($user->foto)
+                                    <img src="{{ asset('storage/' . $user->foto) }}" alt="{{ $user->nama }}"
+                                         class="w-12 h-12 object-cover rounded-lg border border-abu-muda">
+                                @else
+                                    <div class="w-12 h-12 rounded-lg bg-gray-100 border border-abu-muda flex items-center justify-center text-[10px] text-gray-400">Tidak ada</div>
+                                @endif
+                            </td>
+                            <td class="px-4 py-3.5 font-semibold">{{ $user->nama }}</td>
+                            <td class="px-4 py-3.5">{{ $user->email }}</td>
+                            <td class="px-4 py-3.5 whitespace-nowrap">{{ $user->no_hp }}</td>
+                            <td class="px-4 py-3.5">
+                                <span class="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-cyan-3/20 text-cyan-6">
+                                    {{ str_replace('_', ' ', ucfirst($user->role)) }}
+                                </span>
+                            </td>
+                            <td class="px-4 py-3.5">{{ $user->role === 'instansi' ? ($user->instansi->nama_instansi ?? 'Belum terhubung') : '-' }}</td>
+                            <td class="px-4 py-3.5">
+                                <span @class([
+                                    'inline-block px-3 py-1 rounded-full text-xs font-semibold',
+                                    'bg-hijau/10 text-hijau' => $user->status === 'Aktif',
+                                    'bg-abu-muda text-abu-tua' => $user->status !== 'Aktif',
+                                ])>{{ $user->status }}</span>
+                            </td>
+                            <td class="px-4 py-3.5">
+                                <div class="flex items-center justify-center gap-4 text-sm font-semibold">
+                                    <a href="{{ route('super_admin.user.show', $user->id) }}" class="text-cyan-4 hover:underline">Detail</a>
+                                    <a href="{{ route('super_admin.user.edit', $user->id) }}" class="text-oranye hover:underline">Edit</a>
+                                    <form method="POST" action="{{ route('super_admin.user.destroy', $user->id) }}"
+                                          onsubmit="return confirm('Yakin ingin menghapus user ini?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="text-merah hover:underline">Hapus</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="9" class="px-4 py-10 text-center text-gray-400">Belum ada data user.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
     </div>
+</div>
 @endsection

@@ -3,161 +3,169 @@
 @section('title', 'Edit User')
 
 @section('content')
+@php
+    $field = 'w-full h-11 px-4 rounded-lg border border-abu-muda bg-white text-sm text-gray-900 placeholder:text-gray-400 focus:border-cyan-4 focus:ring-1 focus:ring-cyan-4';
+    $label = 'block text-sm font-semibold text-cyan-6 mb-1.5';
+    $u = $dataedituser;
+@endphp
+
 <div class="p-6">
-
-    <div class="flex items-center justify-between mb-6">
-        <h2 class="text-[36px] font-bold text-gray-800">Edit User</h2>
-        <a href="{{ route('super_admin.user.index') }}"
-           class="text-sm text-cyan-700 hover:underline flex items-center gap-1">
-            &larr; Kembali ke daftar
-        </a>
-    </div>
-
-    @if($errors->any())
-        <div class="mb-4 px-4 py-3 rounded-lg bg-red-100 text-red-700 text-sm">
-            <ul class="list-disc list-inside space-y-1">
-                @foreach($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
+    <div class="max-w-4xl mx-auto bg-white rounded-2xl shadow overflow-hidden">
+        <div class="px-6 py-5">
+            <p class="text-sm text-gray-600">Ubah data akun pengguna.</p>
         </div>
-    @endif
 
-    <form action="{{ route('super_admin.user.update', $dataedituser->id) }}"
-          method="POST"
-          enctype="multipart/form-data">
-        @csrf
-        @method('PUT')
+        <form action="{{ route('super_admin.user.update', $u->id) }}" method="POST" enctype="multipart/form-data" class="px-6 pb-6">
+            @csrf
+            @method('PUT')
 
-        <div class="bg-white rounded-xl shadow-sm p-6">
-            <div class="flex flex-col sm:flex-row gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
 
-                {{-- Foto --}}
-                <div class="flex-shrink-0 flex flex-col items-center sm:items-start gap-3">
-                    @if($dataedituser->foto)
-                        <img src="{{ asset('storage/' . $dataedituser->foto) }}"
-                             class="w-36 h-36 rounded-lg object-cover border border-gray-200">
-                    @else
-                        <div class="w-36 h-36 rounded-lg bg-gray-100 flex items-center justify-center text-gray-400 text-sm text-center px-2">
-                            Tidak ada foto
-                        </div>
+                <div>
+                    <label for="nik" class="{{ $label }}">NIK <span class="text-merah">*</span></label>
+                    <input type="text" id="nik" name="nik" value="{{ old('nik', $u->nik) }}" class="{{ $field }}" required>
+                    @error('nik') <p class="text-xs text-merah mt-1">{{ $message }}</p> @enderror
+                </div>
+
+                <div>
+                    <label for="nama" class="{{ $label }}">Nama <span class="text-merah">*</span></label>
+                    <input type="text" id="nama" name="nama" value="{{ old('nama', $u->nama) }}" class="{{ $field }}" required>
+                    @error('nama') <p class="text-xs text-merah mt-1">{{ $message }}</p> @enderror
+                </div>
+
+                <div>
+                    <label for="username" class="{{ $label }}">Username <span class="text-merah">*</span></label>
+                    <input type="text" id="username" name="username" value="{{ old('username', $u->username) }}" class="{{ $field }}" required>
+                    @error('username') <p class="text-xs text-merah mt-1">{{ $message }}</p> @enderror
+                </div>
+
+                <div>
+                    <label for="email" class="{{ $label }}">Email <span class="text-merah">*</span></label>
+                    <input type="email" id="email" name="email" value="{{ old('email', $u->email) }}" class="{{ $field }}" required>
+                    @error('email') <p class="text-xs text-merah mt-1">{{ $message }}</p> @enderror
+                </div>
+
+                <div>
+                    <label for="password" class="{{ $label }}">Password</label>
+                    <input type="password" id="password" name="password" class="{{ $field }}">
+                    <p class="text-xs text-gray-500 mt-1">Kosongkan jika tidak ingin mengubah password.</p>
+                    @error('password') <p class="text-xs text-merah mt-1">{{ $message }}</p> @enderror
+                </div>
+
+                <div>
+                    <label for="no_hp" class="{{ $label }}">No HP <span class="text-merah">*</span></label>
+                    <input type="text" id="no_hp" name="no_hp" value="{{ old('no_hp', $u->no_hp) }}" class="{{ $field }}" required>
+                    @error('no_hp') <p class="text-xs text-merah mt-1">{{ $message }}</p> @enderror
+                </div>
+
+                <div>
+                    <label for="jenis_kelamin" class="{{ $label }}">Jenis Kelamin <span class="text-merah">*</span></label>
+                    <select id="jenis_kelamin" name="jenis_kelamin" class="{{ $field }}" required>
+                        @foreach (['Laki-laki', 'Perempuan'] as $jk)
+                            <option value="{{ $jk }}" @selected(old('jenis_kelamin', $u->jenis_kelamin) === $jk)>{{ $jk }}</option>
+                        @endforeach
+                    </select>
+                    @error('jenis_kelamin') <p class="text-xs text-merah mt-1">{{ $message }}</p> @enderror
+                </div>
+
+                <div>
+                    <label for="pekerjaan" class="{{ $label }}">Pekerjaan <span class="text-merah">*</span></label>
+                    <input type="text" id="pekerjaan" name="pekerjaan" value="{{ old('pekerjaan', $u->pekerjaan) }}" class="{{ $field }}" required>
+                    @error('pekerjaan') <p class="text-xs text-merah mt-1">{{ $message }}</p> @enderror
+                </div>
+
+                <div>
+                    <label for="tanggal_lahir" class="{{ $label }}">Tanggal Lahir <span class="text-merah">*</span></label>
+                    <input type="date" id="tanggal_lahir" name="tanggal_lahir"
+                           value="{{ old('tanggal_lahir', $u->tanggal_lahir?->format('Y-m-d')) }}" class="{{ $field }}" required>
+                    @error('tanggal_lahir') <p class="text-xs text-merah mt-1">{{ $message }}</p> @enderror
+                </div>
+
+                <div>
+                    <label for="penyandang_disabilitas" class="{{ $label }}">Penyandang Disabilitas <span class="text-merah">*</span></label>
+                    <select id="penyandang_disabilitas" name="penyandang_disabilitas" class="{{ $field }}" required>
+                        @foreach (['Ya', 'Tidak'] as $d)
+                            <option value="{{ $d }}" @selected(old('penyandang_disabilitas', $u->penyandang_disabilitas) === $d)>{{ $d }}</option>
+                        @endforeach
+                    </select>
+                    @error('penyandang_disabilitas') <p class="text-xs text-merah mt-1">{{ $message }}</p> @enderror
+                </div>
+
+                <div>
+                    <label for="role" class="{{ $label }}">Role <span class="text-merah">*</span></label>
+                    <select id="role" name="role" class="{{ $field }}" required>
+                        @foreach (['super_admin' => 'Super Admin', 'warga' => 'Warga', 'instansi' => 'Instansi', 'petugas' => 'Petugas'] as $nilai => $teks)
+                            <option value="{{ $nilai }}" @selected(old('role', $u->role) === $nilai)>{{ $teks }}</option>
+                        @endforeach
+                    </select>
+                    @error('role') <p class="text-xs text-merah mt-1">{{ $message }}</p> @enderror
+                </div>
+
+                {{-- Instansi: hanya muncul untuk role instansi --}}
+                <div id="boxInstansi" class="hidden">
+                    <label for="instansi_id" class="{{ $label }}">Instansi <span class="text-merah">*</span></label>
+                    <select id="instansi_id" name="instansi_id" class="{{ $field }}">
+                        <option value="">Pilih instansi</option>
+                        @foreach ($instansis as $i)
+                            <option value="{{ $i->id }}" @selected(old('instansi_id', $u->instansi_id) == $i->id)>{{ $i->nama_instansi }}</option>
+                        @endforeach
+                    </select>
+                    @error('instansi_id') <p class="text-xs text-merah mt-1">{{ $message }}</p> @enderror
+                </div>
+
+                <div>
+                    <label for="status" class="{{ $label }}">Status <span class="text-merah">*</span></label>
+                    <select id="status" name="status" class="{{ $field }}" required>
+                        @foreach (['Aktif', 'Nonaktif'] as $s)
+                            <option value="{{ $s }}" @selected(old('status', $u->status) === $s)>{{ $s }}</option>
+                        @endforeach
+                    </select>
+                    @error('status') <p class="text-xs text-merah mt-1">{{ $message }}</p> @enderror
+                </div>
+
+                <div class="md:col-span-2">
+                    <label for="foto" class="{{ $label }}">Foto</label>
+                    @if ($u->foto)
+                        <img src="{{ asset('storage/' . $u->foto) }}" alt="{{ $u->nama }}"
+                             class="w-28 h-28 object-cover rounded-lg border border-abu-muda mb-3">
                     @endif
-                    <input type="file" name="foto"
-                           class="text-xs text-gray-600 file:mr-2 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-medium file:bg-cyan-50 file:text-cyan-700 hover:file:bg-cyan-100">
+                    <input type="file" id="foto" name="foto" accept=".jpg,.jpeg,.png"
+                           class="block w-full text-sm text-gray-700 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-cyan-3/20 file:text-cyan-6 file:font-semibold">
+                    <p class="text-xs text-gray-500 mt-1">Kosongkan jika tidak ingin mengganti foto. JPG atau PNG, maksimal 2 MB.</p>
+                    @error('foto') <p class="text-xs text-merah mt-1">{{ $message }}</p> @enderror
                 </div>
 
-                {{-- Form fields --}}
-                <div class="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
-
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">NIK</label>
-                        <input type="text" name="nik" value="{{ old('nik', $dataedituser->nik) }}"
-                               class="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-cyan-500">
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Nama</label>
-                        <input type="text" name="nama" value="{{ old('nama', $dataedituser->nama) }}"
-                               class="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-cyan-500">
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Username</label>
-                        <input type="text" name="username" value="{{ old('username', $dataedituser->username) }}"
-                               class="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-cyan-500">
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Email</label>
-                        <input type="email" name="email" value="{{ old('email', $dataedituser->email) }}"
-                               class="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-cyan-500">
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Password</label>
-                        <input type="password" name="password"
-                               class="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-cyan-500">
-                        <p class="text-xs text-gray-400 mt-1">Kosongkan jika tidak ingin mengubah password.</p>
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">No HP</label>
-                        <input type="text" name="no_hp" value="{{ old('no_hp', $dataedituser->no_hp) }}"
-                               class="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-cyan-500">
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Jenis Kelamin</label>
-                        <select name="jenis_kelamin"
-                                class="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-cyan-500">
-                            <option value="Laki-laki" {{ $dataedituser->jenis_kelamin == 'Laki-laki' ? 'selected' : '' }}>Laki-laki</option>
-                            <option value="Perempuan" {{ $dataedituser->jenis_kelamin == 'Perempuan' ? 'selected' : '' }}>Perempuan</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Pekerjaan</label>
-                        <input type="text" name="pekerjaan" value="{{ old('pekerjaan', $dataedituser->pekerjaan) }}"
-                               class="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-cyan-500">
-                    </div>
-
-                    <div class="sm:col-span-2">
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Alamat</label>
-                        <textarea name="alamat" rows="2"
-                                  class="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-cyan-500">{{ old('alamat', $dataedituser->alamat) }}</textarea>
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Tanggal Lahir</label>
-                        <input type="date" name="tanggal_lahir" value="{{ old('tanggal_lahir', $dataedituser->tanggal_lahir) }}"
-                               class="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-cyan-500">
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Penyandang Disabilitas</label>
-                        <select name="penyandang_disabilitas"
-                                class="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-cyan-500">
-                            <option value="Ya" {{ $dataedituser->penyandang_disabilitas == 'Ya' ? 'selected' : '' }}>Ya</option>
-                            <option value="Tidak" {{ $dataedituser->penyandang_disabilitas == 'Tidak' ? 'selected' : '' }}>Tidak</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Role</label>
-                        <select name="role"
-                                class="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-cyan-500">
-                            <option value="super_admin" {{ $dataedituser->role == 'super_admin' ? 'selected' : '' }}>Super Admin</option>
-                            <option value="warga" {{ $dataedituser->role == 'warga' ? 'selected' : '' }}>Warga</option>
-                            <option value="instansi" {{ $dataedituser->role == 'instansi' ? 'selected' : '' }}>Instansi</option>
-                            <option value="petugas" {{ $dataedituser->role == 'petugas' ? 'selected' : '' }}>Petugas</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Status</label>
-                        <select name="status"
-                                class="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-cyan-500">
-                            <option value="Aktif" {{ $dataedituser->status == 'Aktif' ? 'selected' : '' }}>Aktif</option>
-                            <option value="Nonaktif" {{ $dataedituser->status == 'Nonaktif' ? 'selected' : '' }}>Nonaktif</option>
-                        </select>
-                    </div>
-
+                <div class="md:col-span-2">
+                    <label for="alamat" class="{{ $label }}">Alamat</label>
+                    <textarea id="alamat" name="alamat" rows="3"
+                              class="w-full px-4 py-3 rounded-lg border border-abu-muda bg-white text-sm text-gray-900 focus:border-cyan-4 focus:ring-1 focus:ring-cyan-4">{{ old('alamat', $u->alamat) }}</textarea>
+                    @error('alamat') <p class="text-xs text-merah mt-1">{{ $message }}</p> @enderror
                 </div>
             </div>
 
-            {{-- Tombol --}}
-            <div class="mt-6 pt-6 border-t border-gray-100 flex justify-end gap-3">
+            <div class="flex items-center justify-end gap-3 mt-6 pt-5 border-t border-gray-200">
                 <a href="{{ route('super_admin.user.index') }}"
-                   class="px-5 py-2 rounded-lg border border-gray-300 text-gray-700 text-sm font-medium hover:bg-gray-50 transition">
-                    Kembali
-                </a>
+                   class="px-5 py-2.5 rounded-lg border border-gray-300 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition">Batal</a>
                 <button type="submit"
-                        class="px-5 py-2 rounded-lg bg-cyan-700 text-white text-sm font-medium hover:bg-cyan-800 transition">
-                    Simpan
-                </button>
+                        class="px-6 py-2.5 rounded-lg bg-cyan-4 hover:bg-cyan-6 text-white text-sm font-bold transition">Simpan Perubahan</button>
             </div>
-        </div>
-    </form>
-
+        </form>
+    </div>
 </div>
+
+<script>
+    const roleEl = document.getElementById('role');
+    const boxInstansi = document.getElementById('boxInstansi');
+    const instansiEl = document.getElementById('instansi_id');
+
+    function syncInstansi() {
+        const tampil = roleEl.value === 'instansi';
+        boxInstansi.classList.toggle('hidden', !tampil);
+        instansiEl.required = tampil;
+        if (!tampil) instansiEl.value = '';
+    }
+
+    roleEl.addEventListener('change', syncInstansi);
+    syncInstansi();
+</script>
 @endsection
