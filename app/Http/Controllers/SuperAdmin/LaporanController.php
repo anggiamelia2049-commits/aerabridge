@@ -71,8 +71,11 @@ class LaporanController extends Controller
         $request->validate([
             'kategori_id' => 'required|exists:kategori_kerusakan,id',
             'instansi_id' => 'required|exists:instansi,id',
+            'jenis_laporan' => 'nullable|string|max:50',
             'judul' => 'required|string|max:255',
             'deskripsi' => 'required|string',
+            'tanggal_kejadian' => 'nullable|date',
+            'kecamatan' => 'nullable|string|max:100',
             'foto' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'latitude' => 'required|numeric|between:-90,90',
             'longitude' => 'required|numeric|between:-180,180',
@@ -90,10 +93,14 @@ class LaporanController extends Controller
 
         Laporan::create([
             'user_id' => Auth::id(),
+            'kode_lacak' => Laporan::buatKode(),
             'kategori_id' => $request->kategori_id,
             'instansi_id' => $request->instansi_id,
+            'jenis_laporan' => $request->jenis_laporan,
             'judul' => $request->judul,
             'deskripsi' => $request->deskripsi,
+            'tanggal_kejadian' => $request->tanggal_kejadian,
+            'kecamatan' => $request->kecamatan,
             'foto' => $foto,
             'latitude' => $request->latitude,
             'longitude' => $request->longitude,
@@ -150,8 +157,11 @@ class LaporanController extends Controller
         $request->validate([
             'kategori_id' => 'required|exists:kategori_kerusakan,id',
             'instansi_id' => 'required|exists:instansi,id',
+            'jenis_laporan' => 'nullable|string|max:50',
             'judul' => 'required|string|max:255',
             'deskripsi' => 'required|string',
+            'tanggal_kejadian' => 'nullable|date',
+            'kecamatan' => 'nullable|string|max:100',
             'foto' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'latitude' => 'required|numeric|between:-90,90',
             'longitude' => 'required|numeric|between:-180,180',
@@ -182,11 +192,15 @@ class LaporanController extends Controller
             }
         }
 
+        // kode_lacak sengaja tidak diubah saat edit (kode unik milik pelapor)
         $laporan->update([
             'kategori_id' => $request->kategori_id,
             'instansi_id' => $request->instansi_id,
+            'jenis_laporan' => $request->jenis_laporan,
             'judul' => $request->judul,
             'deskripsi' => $request->deskripsi,
+            'tanggal_kejadian' => $request->tanggal_kejadian,
+            'kecamatan' => $request->kecamatan,
             'foto' => $foto,
             'latitude' => $request->latitude,
             'longitude' => $request->longitude,

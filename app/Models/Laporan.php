@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\KategoriKerusakan;
 use App\Models\Instansi;
 use App\Models\Penugasan;
+use App\Models\DeteksiAi;
 use Illuminate\Support\Str;
 
 class Laporan extends Model
@@ -50,7 +51,7 @@ class Laporan extends Model
     // Pakai ini di semua dashboard: {{ $laporan->nama_pelapor }}
     public function getNamaPelaporAttribute(): string
     {
-    return ($this->is_anonim ? null : $this->user?->name) ?? 'Anonim';
+    return ($this->is_anonim ? null : $this->user?->nama) ?? 'Anonim';
     }
 
     // User yang membuat laporan
@@ -89,5 +90,11 @@ class Laporan extends Model
             User::class,
             'diverifikasi_oleh'
         );
+    }
+
+    // Hasil deteksi AI untuk laporan ini
+    public function deteksiAi()
+    {
+        return $this->hasOne(DeteksiAi::class, 'laporan_id')->latestOfMany();
     }
 }

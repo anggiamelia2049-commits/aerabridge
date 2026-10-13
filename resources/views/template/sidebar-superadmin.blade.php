@@ -2,15 +2,15 @@
 <div x-data="{
     kelolaLaporan: {{ request()->routeIs('super_admin.laporan.*') ? 'true' : 'false' }},
     konfigurasi: {{ request()->routeIs('super_admin.kategori.*', 'super_admin.sla-konfigurasi.*', 'super_admin.template-pesan.*', 'super_admin.hadiah.*', 'super_admin.konten-edukasi.*') ? 'true' : 'false' }}
-}" class="flex h-full w-64 flex-col bg-cyan-6 text-white">
+}" class="sidebar-root flex h-full w-64 flex-col bg-cyan-6 text-white">
 
     {{-- Logo --}}
-<div class="px-4 pt-4 pb-4">
-    <div class="flex items-center gap-2">
-        <img src="{{ asset('images/logo.png') }}" alt="AERA Bridge" class="h-16 w-auto">
+    <div class="px-4 pt-4 pb-4">
+        <div class="flex items-center gap-2">
+            <img src="{{ asset('images/logo.png') }}" alt="AERA Bridge" class="h-16 w-auto">
+        </div>
+        <div class="mt-4 mx-2" style="border-bottom: 1px solid rgba(254, 253, 253, 0.355);"></div>
     </div>
-    <div class="mt-4 mx-2" style="border-bottom: 1px solid rgba(254, 253, 253, 0.355);"></div>
-</div>
 
     <nav class="flex-1 overflow-y-auto px-3 pb-6">
         <ul class="space-y-1 text-sm">
@@ -60,7 +60,7 @@
             {{-- Kelola Laporan (dropdown) → satu controller super_admin.laporan.*, sub-item pakai filter status --}}
             <li>
                 <button @click="kelolaLaporan = !kelolaLaporan"
-                    class="flex w-full items-center justify-between gap-3 rounded-lg px-3 py-2.5 font-medium text-cyan-muda transition hover:bg-white/5 hover:text-white">
+                    class="flex w-full items-center justify-between gap-3 rounded-lg px-3 py-2.5 text-left font-medium text-cyan-muda transition hover:bg-white/5 hover:text-white">
                     <span class="flex items-center gap-3">
                         <svg class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"
                             stroke-width="1.8">
@@ -78,31 +78,31 @@
                 <ul x-show="kelolaLaporan" x-collapse class="mt-1 space-y-1 pl-11 text-cyan-muda">
                     <li>
                         <a href="{{ route('super_admin.laporan.index', ['status' => 'menunggu_verifikasi']) }}"
-                            class="block rounded-lg px-3 py-2 transition {{ request('status') === 'menunggu_verifikasi' ? 'bg-white/10 text-white' : 'hover:bg-white/5 hover:text-white' }}">
+                            class="block rounded-lg px-3 py-2 transition {{ request('status') === 'menunggu_verifikasi' ? 'bg-white/10 text-white' : 'text-cyan-muda hover:bg-white/5 hover:text-white' }}">
                             Verifikasi
                         </a>
                     </li>
                     <li>
                         <a href="{{ route('super_admin.laporan.index', ['status' => 'disposisi']) }}"
-                            class="block rounded-lg px-3 py-2 transition {{ request('status') === 'disposisi' ? 'bg-white/10 text-white' : 'hover:bg-white/5 hover:text-white' }}">
+                            class="block rounded-lg px-3 py-2 transition {{ request('status') === 'disposisi' ? 'bg-white/10 text-white' : 'text-cyan-muda hover:bg-white/5 hover:text-white' }}">
                             Disposisi
                         </a>
                     </li>
                     <li>
                         <a href="{{ route('super_admin.laporan.index', ['status' => 'diproses']) }}"
-                            class="block rounded-lg px-3 py-2 transition {{ request('status') === 'diproses' ? 'bg-white/10 text-white' : 'hover:bg-white/5 hover:text-white' }}">
+                            class="block rounded-lg px-3 py-2 transition {{ request('status') === 'diproses' ? 'bg-white/10 text-white' : 'text-cyan-muda hover:bg-white/5 hover:text-white' }}">
                             Tindak Lanjut
                         </a>
                     </li>
                     <li>
                         <a href="{{ route('super_admin.laporan.index', ['status' => 'selesai']) }}"
-                            class="block rounded-lg px-3 py-2 transition {{ request('status') === 'selesai' ? 'bg-white/10 text-white' : 'hover:bg-white/5 hover:text-white' }}">
+                            class="block rounded-lg px-3 py-2 transition {{ request('status') === 'selesai' ? 'bg-white/10 text-white' : 'text-cyan-muda hover:bg-white/5 hover:text-white' }}">
                             Laporan Selesai
                         </a>
                     </li>
                     <li>
                         <a href="{{ route('super_admin.laporan.index', ['status' => 'ditolak']) }}"
-                            class="block rounded-lg px-3 py-2 transition {{ request('status') === 'ditolak' ? 'bg-white/10 text-white' : 'hover:bg-white/5 hover:text-white' }}">
+                            class="block rounded-lg px-3 py-2 transition {{ request('status') === 'ditolak' ? 'bg-white/10 text-white' : 'text-cyan-muda hover:bg-white/5 hover:text-white' }}">
                             Laporan Ditolak
                         </a>
                     </li>
@@ -112,7 +112,7 @@
             {{-- Konfigurasi (dropdown) → kategori, sla-konfigurasi, template-pesan, hadiah, konten-edukasi --}}
             <li>
                 <button @click="konfigurasi = !konfigurasi"
-                    class="flex w-full items-center justify-between gap-3 rounded-lg px-3 py-2.5 font-medium text-cyan-muda transition hover:bg-white/5 hover:text-white">
+                    class="flex w-full items-center justify-between gap-3 rounded-lg px-3 py-2.5 text-left font-medium text-cyan-muda transition hover:bg-white/5 hover:text-white">
                     <span class="flex items-center gap-3">
                         <svg class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"
                             stroke-width="1.8">
@@ -131,31 +131,31 @@
                 <ul x-show="konfigurasi" x-collapse class="mt-1 space-y-1 pl-11 text-cyan-muda">
                     <li>
                         <a href="{{ route('super_admin.kategori.index') }}"
-                            class="block rounded-lg px-3 py-2 transition {{ request()->routeIs('super_admin.kategori.*') ? 'bg-white/10 text-white' : 'hover:bg-white/5 hover:text-white' }}">
+                            class="block rounded-lg px-3 py-2 transition {{ request()->routeIs('super_admin.kategori.*') ? 'bg-white/10 text-white' : 'text-cyan-muda hover:bg-white/5 hover:text-white' }}">
                             Kategori Laporan
                         </a>
                     </li>
                     <li>
                         <a href="{{ route('super_admin.sla-konfigurasi.index') }}"
-                            class="block rounded-lg px-3 py-2 transition {{ request()->routeIs('super_admin.sla-konfigurasi.*') ? 'bg-white/10 text-white' : 'hover:bg-white/5 hover:text-white' }}">
+                            class="block rounded-lg px-3 py-2 transition {{ request()->routeIs('super_admin.sla-konfigurasi.*') ? 'bg-white/10 text-white' : 'text-cyan-muda hover:bg-white/5 hover:text-white' }}">
                             Manajemen Tanggapan
                         </a>
                     </li>
                     <li>
                         <a href="{{ route('super_admin.template-pesan.index') }}"
-                            class="block rounded-lg px-3 py-2 transition {{ request()->routeIs('super_admin.template-pesan.*') ? 'bg-white/10 text-white' : 'hover:bg-white/5 hover:text-white' }}">
+                            class="block rounded-lg px-3 py-2 transition {{ request()->routeIs('super_admin.template-pesan.*') ? 'bg-white/10 text-white' : 'text-cyan-muda hover:bg-white/5 hover:text-white' }}">
                             Pesan Konfirmasi
                         </a>
                     </li>
                     <li>
                         <a href="{{ route('super_admin.hadiah.index') }}"
-                            class="block rounded-lg px-3 py-2 transition {{ request()->routeIs('super_admin.hadiah.*') ? 'bg-white/10 text-white' : 'hover:bg-white/5 hover:text-white' }}">
+                            class="block rounded-lg px-3 py-2 transition {{ request()->routeIs('super_admin.hadiah.*') ? 'bg-white/10 text-white' : 'text-cyan-muda hover:bg-white/5 hover:text-white' }}">
                             Tenggat Perbaikan
                         </a>
                     </li>
                     <li>
                         <a href="{{ route('super_admin.konten-edukasi.index') }}"
-                            class="block rounded-lg px-3 py-2 transition {{ request()->routeIs('super_admin.konten-edukasi.*') ? 'bg-white/10 text-white' : 'hover:bg-white/5 hover:text-white' }}">
+                            class="block rounded-lg px-3 py-2 transition {{ request()->routeIs('super_admin.konten-edukasi.*') ? 'bg-white/10 text-white' : 'text-cyan-muda hover:bg-white/5 hover:text-white' }}">
                             Visibilitas
                         </a>
                     </li>
