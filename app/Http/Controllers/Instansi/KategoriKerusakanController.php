@@ -9,8 +9,7 @@ class KategoriKerusakanController extends Controller
 {
     public function index()
     {
-        $kategori = KategoriKerusakan::orderBy('nama_kategori')->paginate(10);
-
+        $kategori = KategoriKerusakan::withCount('laporan')->orderBy('nama_kategori')->paginate(10);
         return view('instansi.kategori-kerusakan.index', compact('kategori'));
     }
 }

@@ -101,7 +101,7 @@
 
             {{-- Peta Kerusakan (ditunda, belum ada route) --}}
             <li>
-                <a href="#"
+                <a href="{{  route('instansi.peta.index') }}"
                     class="flex items-center gap-3 rounded-lg px-3 py-2.5 font-medium text-cyan-muda transition hover:bg-white/5 hover:text-white">
                     <svg class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />

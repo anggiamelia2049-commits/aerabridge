@@ -15,4 +15,9 @@ class KategoriKerusakan extends Model
         'warna_marker',
         'status'
     ];
+
+    public function laporan()
+    {
+        return $this->hasMany(Laporan::class, 'kategori_id');
+    }
 }

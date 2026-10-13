@@ -37,6 +37,7 @@ use App\Http\Controllers\Instansi\KategoriKerusakanController as InstansiKategor
 use App\Http\Controllers\Instansi\TimSatgasController as InstansiTimSatgasController;
 use App\Http\Controllers\Instansi\DashboardController as InstansiDashboardController;
 use App\Http\Controllers\Instansi\StatistikController;
+ use App\Http\Controllers\Instansi\PetaKerusakanController;
 
 
 use App\Http\Controllers\LaporanPublikController;
@@ -150,8 +151,9 @@ Route::middleware('auth')->group(function () {
         Route::post('/laporan/{laporan}/verify', [InstansiLaporanController::class, 'verify'])->name('laporan.verify');
 
         Route::resource('tim-satgas', InstansiTimSatgasController::class)->only(['index', 'show', 'create', 'store', 'edit', 'update'])->parameters(['tim-satgas' => 'tim_satgas']);
-    Route::resource('kategori-kerusakan', InstansiKategoriKerusakanController::class)->only('index');
-    Route::get('statistik', [StatistikController::class, 'index'])->name('statistik.index');
+        Route::resource('kategori-kerusakan', InstansiKategoriKerusakanController::class)->only('index');
+        Route::get('statistik', [StatistikController::class, 'index'])->name('statistik.index');
+        Route::get('/peta-kerusakan', [PetaKerusakanController::class, 'index'])->name('peta.index');
     });
 });
 
