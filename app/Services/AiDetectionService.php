@@ -15,11 +15,13 @@ class AiDetectionService
         $this->aiServiceUrl = config('services.ai.url');
     }
 
-    public function detectAndSave($laporanId, $fotoPath)
+    public function detectAndSave($laporanId, $fotoPath, $deskripsi = '')
     {
-        $response = Http::timeout(30)
+        $response = Http::timeout(40)
             ->attach('file', file_get_contents($fotoPath), basename($fotoPath))
-            ->post("{$this->aiServiceUrl}/api/ai/detect");
+            ->post("{$this->aiServiceUrl}/api/ai/detect", [
+                'deskripsi' => (string) $deskripsi,
+            ]);
 
         if (!$response->successful()) {
             throw new \Exception('AI service error, status ' . $response->status());

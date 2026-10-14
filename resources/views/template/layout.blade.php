@@ -4,167 +4,108 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'AERA Bridge')</title>
-
-
-    {{-- Tailwind CSS --}}
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-
 
     {{-- Font utama --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-        rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    {{-- Tailwind CSS + Alpine (lewat Vite) --}}
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     {{-- Mencegah elemen x-cloak berkedip sebelum Alpine siap --}}
     <style>
-        [x-cloak] {
-            display: none !important;
-        }
+        [x-cloak] { display: none !important; }
     </style>
 
     @stack('styles')
 </head>
 
-<body class="font-sans antialiased bg-abu-muda text-abu-tua">
+@php
+    $role = $role ?? (auth()->check() ? auth()->user()->role : 'super_admin');
 
-    <div class="flex min-h-screen"
-        x-data="{
-            sidebarOpen: true,
-            mobileSidebarOpen: false,
-            init() {
-                try {
-                    this.sidebarOpen = localStorage.getItem('sidebarOpen') !== 'false';
-                } catch (e) {}
+    $sidebarView = in_array($role, ['warga', 'petugas', 'instansi'], true)
+        ? "template.sidebar-{$role}"
+        : 'template.sidebar-superadmin';
+@endphp
 
-                this.$watch('sidebarOpen', v => {
-                    try {
-                        localStorage.setItem('sidebarOpen', v);
-                    } catch (e) {}
-                });
-            },
-            toggleSidebar() {
-                if (window.matchMedia('(min-width: 1024px)').matches) {
-                    this.sidebarOpen = !this.sidebarOpen;
-                } else {
-                    this.mobileSidebarOpen = !this.mobileSidebarOpen;
-                }
+<body class="font-sans antialiased bg-abu-muda text-abu-tua"
+    x-data="{
+        sidebarOpen: true,
+        mobileSidebarOpen: false,
+        init() {
+            try {
+                this.sidebarOpen = localStorage.getItem('sidebarOpen') !== 'false';
+            } catch (e) {}
+
+            this.$watch('sidebarOpen', v => {
+                try { localStorage.setItem('sidebarOpen', v); } catch (e) {}
+            });
+        },
+        toggleSidebar() {
+            if (window.matchMedia('(min-width: 1024px)').matches) {
+                this.sidebarOpen = !this.sidebarOpen;
+            } else {
+                this.mobileSidebarOpen = !this.mobileSidebarOpen;
             }
-         }"
-        @keydown.escape.window="mobileSidebarOpen = false"
-        @resize.window="if (window.innerWidth >= 1024) mobileSidebarOpen = false">
+        }
+    }"
+    :class="{ 'overflow-hidden': mobileSidebarOpen }"
+    @keydown.escape.window="mobileSidebarOpen = false"
+    @resize.window="if (window.innerWidth >= 1024) mobileSidebarOpen = false">
 
-        {{-- SIDEBAR --}}
-        @php
-        $role = $role ?? (
-        auth()->check()
-        ? auth()->user()->role
-        : 'super_admin'
-        );
-        @endphp
+    <div class="flex min-h-screen">
 
-        {{-- SIDEBAR DESKTOP --}}
+        {{-- SIDEBAR (satu saja, dipakai untuk desktop & mobile) --}}
         <aside
-            class="hidden overflow-hidden transition-[width,visibility] duration-300 ease-in-out lg:sticky lg:top-0 lg:block lg:h-screen lg:shrink-0 lg:self-start"
-            :class="sidebarOpen ? 'lg:w-64' : 'lg:w-0 lg:invisible'"
-            :aria-hidden="(!sidebarOpen).toString()">
+            class="lg:sticky lg:top-0 lg:h-screen lg:shrink-0 lg:self-start lg:overflow-hidden lg:transition-[width,visibility] lg:duration-300 lg:ease-in-out"
+            :class="sidebarOpen ? 'lg:w-64' : 'lg:w-0 lg:invisible'">
 
-            <div class="h-full w-64">
-                @switch($role)
-                @case('warga')
-                @include('template.sidebar-warga')
-                @break
-
-                @case('petugas')
-                @include('template.sidebar-petugas')
-                @break
-
-                @case('instansi')
-                @include('template.sidebar-instansi')
-                @break
-
-                @default
-                @include('template.sidebar-superadmin')
-                @endswitch
+            <div
+                class="fixed inset-y-0 left-0 z-50 w-64 -translate-x-full overflow-y-auto shadow-xl transition-transform duration-300 ease-in-out lg:static lg:h-full lg:translate-x-0 lg:shadow-none"
+                :class="mobileSidebarOpen ? '!translate-x-0' : ''">
+                @include($sidebarView)
             </div>
         </aside>
 
-        {{-- SIDEBAR MOBILE --}}
-        <div x-cloak class="lg:hidden">
-
-            {{-- Overlay --}}
-            <div
-                x-show="mobileSidebarOpen"
-                x-transition.opacity.duration.300ms
-                @click="mobileSidebarOpen = false"
-                class="fixed inset-0 z-40 bg-black/40">
-            </div>
-
-            {{-- Panel sidebar --}}
-            <div
-                x-show="mobileSidebarOpen"
-                x-transition:enter="transition ease-out duration-300"
-                x-transition:enter-start="-translate-x-full"
-                x-transition:enter-end="translate-x-0"
-                x-transition:leave="transition ease-in duration-200"
-                x-transition:leave-start="translate-x-0"
-                x-transition:leave-end="-translate-x-full"
-                class="fixed inset-y-0 left-0 z-50 w-64 overflow-y-auto shadow-xl">
-
-                @switch($role)
-                @case('warga')
-                @include('template.sidebar-warga')
-                @break
-
-                @case('petugas')
-                @include('template.sidebar-petugas')
-                @break
-
-                @case('instansi')
-                @include('template.sidebar-instansi')
-                @break
-
-                @default
-                @include('template.sidebar-superadmin')
-                @endswitch
-            </div>
+        {{-- Overlay (mobile saja) --}}
+        <div
+            x-cloak
+            x-show="mobileSidebarOpen"
+            x-transition.opacity.duration.300ms
+            @click="mobileSidebarOpen = false"
+            class="fixed inset-0 z-40 bg-black/40 lg:hidden"
+            aria-hidden="true">
         </div>
 
         {{-- MAIN CONTENT --}}
-        <div class="flex flex-1 flex-col min-w-0">
+        <div class="flex min-w-0 flex-1 flex-col">
 
-            {{-- Navbar --}}
             @include('template.navbar')
 
-            <main class="flex-1 overflow-y-auto px-4 py-6 sm:px-6 lg:px-8">
+            <main class="flex-1 px-4 py-6 sm:px-6 lg:px-8">
 
-                {{-- Pesan sukses --}}
                 @if (session('success'))
-                <div class="mb-4 rounded-lg border border-hijau/30 bg-hijau/10 px-4 py-3 text-sm font-medium text-hijau">
-                    {{ session('success') }}
-                </div>
+                    <div class="mb-4 rounded-lg border border-hijau/30 bg-hijau/10 px-4 py-3 text-sm font-medium text-hijau">
+                        {{ session('success') }}
+                    </div>
                 @endif
 
-                {{-- Pesan error --}}
                 @if (session('error'))
-                <div class="mb-4 rounded-lg border border-merah/30 bg-merah/10 px-4 py-3 text-sm font-medium text-merah">
-                    {{ session('error') }}
-                </div>
+                    <div class="mb-4 rounded-lg border border-merah/30 bg-merah/10 px-4 py-3 text-sm font-medium text-merah">
+                        {{ session('error') }}
+                    </div>
                 @endif
 
-                {{-- Konten halaman --}}
                 @yield('content')
 
             </main>
 
-            {{-- Footer --}}
-
             <footer class="bg-white px-4 py-2 text-xs text-gray-500 sm:px-5">
                 <div class="flex flex-col items-center justify-between gap-1 sm:flex-row">
-                    <p>
-                        © {{ date('Y') }} AERA Bridge — Smart Reporting Masalah Perkotaan.
-                    </p>
-
+                    <p>© {{ date('Y') }} AERA Bridge — Smart Reporting Masalah Perkotaan.</p>
                     <p>
                         Dikembangkan oleh
                         <span class="font-semibold text-gray-700">The Code Waves</span>
@@ -176,9 +117,7 @@
         </div>
     </div>
 
-    {{-- Script tambahan halaman --}}
     @stack('scripts')
-
 </body>
 
 </html>

@@ -7,11 +7,12 @@
         ];
 
         $statusClasses = [
-            'menunggu'     => 'bg-abu-muda text-abu-tua',
-            'diverifikasi' => 'bg-cyan-3/20 text-cyan-6',
-            'diproses'     => 'bg-oranye/10 text-oranye',
-            'selesai'      => 'bg-hijau/10 text-hijau',
-            'ditolak'      => 'bg-merah/10 text-merah',
+            'menunggu'         => 'bg-abu-muda text-abu-tua',
+            'terverifikasi ai' => 'bg-cyan-3/10 text-cyan-4',
+            'diverifikasi'     => 'bg-cyan-3/20 text-cyan-6',
+            'diproses'         => 'bg-oranye/10 text-oranye',
+            'selesai'          => 'bg-hijau/10 text-hijau',
+            'ditolak'          => 'bg-merah/10 text-merah',
         ];
     @endphp
 
@@ -27,8 +28,18 @@
 
             <div class="bg-white rounded-2xl shadow overflow-hidden">
                 {{-- Bagian atas kartu --}}
-                <div class="flex items-center justify-between gap-4 px-6 py-5">
-                    <p class="text-sm text-gray-600">Kelola dan pantau seluruh laporan kerusakan infrastruktur dari warga.</p>
+                <div class="flex flex-wrap items-center justify-between gap-4 px-6 py-5">
+                    <div>
+                        <h1 class="text-lg font-bold text-gray-800">{{ $judulHalaman }}</h1>
+                        <p class="text-sm text-gray-600">
+                            Kelola dan pantau seluruh laporan kerusakan infrastruktur dari warga.
+                            <span class="text-gray-400">({{ $laporan->total() }} laporan)</span>
+                        </p>
+                    </div>
+                    <a href="{{ route('super_admin.laporan.create') }}"
+                       class="px-5 py-2.5 rounded-lg bg-cyan-4 hover:bg-cyan-6 text-white text-sm font-bold transition">
+                        + Tambah Laporan
+                    </a>
                 </div>
 
                 {{-- Tabel --}}
@@ -57,7 +68,7 @@
                                 <tr class="hover:bg-gray-50">
                                     <td class="px-4 py-3.5">{{ $laporan->firstItem() + $loop->index }}</td>
                                     <td class="px-4 py-3.5 font-mono text-xs whitespace-nowrap">{{ $v->kode_lacak ?? '-' }}</td>
-                                    <td class="px-4 py-3.5 whitespace-nowrap">{{ $v->nama_pelapor ?? '-' }}</td>
+                                    <td class="px-4 py-3.5 whitespace-nowrap">{{ $v->nama_pelapor ?? optional($v->user)->name ?? '-' }}</td>
                                     <td class="px-4 py-3.5 font-semibold min-w-[180px]">{{ $v->judul }}</td>
                                     <td class="px-4 py-3.5">
                                         {{ optional($v->kategori)->nama_kategori ?? ($v->kategori_lainnya ?: '-') }}
@@ -69,7 +80,7 @@
                                         </span>
                                     </td>
                                     <td class="px-4 py-3.5">
-                                        <span class="inline-block px-3 py-1 rounded-full text-xs font-semibold capitalize {{ $statusClasses[$statusKey] ?? 'bg-gray-200 text-gray-600' }}">
+                                        <span class="inline-block px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap {{ $statusClasses[$statusKey] ?? 'bg-gray-200 text-gray-600' }}">
                                             {{ $v->status ?? '-' }}
                                         </span>
                                     </td>
@@ -91,14 +102,16 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="10" class="px-4 py-10 text-center text-gray-400">Belum ada laporan.</td>
+                                    <td colspan="10" class="px-4 py-10 text-center text-gray-400">
+                                        {{ request()->filled('status') ? 'Tidak ada laporan pada kategori ini.' : 'Belum ada laporan.' }}
+                                    </td>
                                 </tr>
                             @endforelse
                         </tbody>
                     </table>
                 </div>
 
-                {{-- Pagination --}}
+                {{-- Pagination (withQueryString di controller menjaga filter ?status=) --}}
                 @if ($laporan->hasPages())
                     <div class="px-6 py-4 border-t border-gray-200">
                         {{ $laporan->links() }}

@@ -14,20 +14,33 @@
 
 <header class="bg-cyan-6 px-4 pt-5 pb-44">
     <div class="max-w-3xl mx-auto">
-        <nav class="flex items-center justify-between text-white text-sm font-semibold">
-            <div class="flex items-center gap-6">
-                <img src="{{ asset('images/logo.png') }}" alt="AERA Bridge" class="h-20 w-auto">
-                <a href="#tentang" class="underline underline-offset-4 hidden sm:inline">TENTANG AERABRIDGE</a>
-            </div>
-            <div class="flex items-center gap-5">
-                @auth
-                    <a href="{{ url('/dashboard') }}">DASHBOARD</a>
-                @else
-                    <a href="{{ route('login') }}" class="underline underline-offset-4">MASUK</a>
-                    <a href="{{ route('register') }}" class="underline underline-offset-4">DAFTAR</a>
-                @endauth
-            </div>
-        </nav>
+    <nav class="flex items-center justify-between text-sm font-semibold">
+    <div class="flex items-center gap-6">
+        <img src="{{ asset('images/logo.png') }}" alt="AERA Bridge" class="h-20 w-auto">
+        <a href="#tentang"
+           class="hidden text-white no-underline transition hover:text-white/70 sm:inline">
+            TENTANG AERABRIDGE
+        </a>
+    </div>
+
+    <div class="flex items-center gap-5">
+        @auth
+            <a href="{{ url('/dashboard') }}"
+               class="text-white no-underline transition hover:text-white/70">
+                DASHBOARD
+            </a>
+        @else
+            <a href="{{ route('login') }}"
+               class="text-white no-underline transition hover:text-white/70">
+                MASUK
+            </a>
+            <a href="{{ route('register') }}"
+               class="text-white no-underline transition hover:text-white/70">
+               DAFTAR
+            </a>
+            @endauth
+        </div>
+    </nav>
 
         <h1 class="mt-12 text-3xl sm:text-4xl font-bold text-white leading-tight">
             Laporkan kerusakan infrastruktur<br>kami hubungkan ke dinas yang tepat

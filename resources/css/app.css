@@ -2,17 +2,35 @@
 @tailwind components;
 @tailwind utilities;
 
-.sidebar-root a,
-.sidebar-root a:hover {
-    text-decoration: none;
+@layer base {
+    a {
+        color: inherit;
+        text-decoration: none;
+    }
+
+    a:focus-visible,
+    button:focus-visible {
+        outline: 2px solid currentColor;
+        outline-offset: 2px;
+    }
 }
-.sidebar-root ul {
-    list-style: none;
-    margin-bottom: 0;
-}
-.sidebar-root > nav > ul {
-    padding-left: 0;
-}
-.sidebar-root button {
-    text-align: left;
+
+@layer components {
+    .sidebar-root a,
+    .sidebar-root a:hover {
+        text-decoration: none;
+    }
+
+    .sidebar-root ul {
+        list-style: none;
+        margin-bottom: 0;
+    }
+
+    .sidebar-root > nav > ul {
+        padding-left: 0;
+    }
+
+    .sidebar-root button {
+        text-align: left;
+    }
 }

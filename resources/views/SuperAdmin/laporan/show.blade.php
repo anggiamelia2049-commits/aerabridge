@@ -7,15 +7,19 @@
         ];
 
         $statusClasses = [
-            'menunggu'     => 'bg-abu-muda text-abu-tua',
-            'diverifikasi' => 'bg-cyan-3/20 text-cyan-6',
-            'diproses'     => 'bg-oranye/10 text-oranye',
-            'selesai'      => 'bg-hijau/10 text-hijau',
-            'ditolak'      => 'bg-merah/10 text-merah',
+            'menunggu'         => 'bg-abu-muda text-abu-tua',
+            'terverifikasi ai' => 'bg-cyan-3/10 text-cyan-4',
+            'diverifikasi'     => 'bg-cyan-3/20 text-cyan-6',
+            'diproses'         => 'bg-oranye/10 text-oranye',
+            'selesai'          => 'bg-hijau/10 text-hijau',
+            'ditolak'          => 'bg-merah/10 text-merah',
         ];
 
         $prioritasClass = $prioritasClasses[strtolower((string) $laporan->tingkat_prioritas)] ?? 'bg-gray-200 text-gray-600';
         $statusClass    = $statusClasses[strtolower((string) $laporan->status)] ?? 'bg-gray-200 text-gray-600';
+
+        // Status yang diterima controller verify()
+        $opsiVerifikasi = ['Diverifikasi', 'Diproses', 'Selesai', 'Ditolak'];
     @endphp
 
     <div class="flex min-h-screen bg-abu-muda">
@@ -25,6 +29,16 @@
             @if (session('success'))
                 <div class="rounded-lg border border-green-300 bg-green-50 px-4 py-3 text-sm text-hijau font-medium">
                     {{ session('success') }}
+                </div>
+            @endif
+
+            @if ($errors->any())
+                <div class="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                    <ul class="list-disc space-y-0.5 pl-5">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
                 </div>
             @endif
 
@@ -39,7 +53,7 @@
                         <span class="inline-block px-3 py-1 rounded-full text-xs font-semibold capitalize {{ $prioritasClass }}">
                             {{ $laporan->tingkat_prioritas ?? '-' }}
                         </span>
-                        <span class="inline-block px-3 py-1 rounded-full text-xs font-semibold capitalize {{ $statusClass }}">
+                        <span class="inline-block px-3 py-1 rounded-full text-xs font-semibold {{ $statusClass }}">
                             {{ $laporan->status ?? '-' }}
                         </span>
                     </div>
@@ -53,7 +67,7 @@
                 <dl class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-5 px-6 pb-6 text-sm">
                     <div>
                         <dt class="text-xs text-gray-500">Pelapor</dt>
-                        <dd class="mt-1 font-semibold text-gray-700">{{ $laporan->nama_pelapor ?? '-' }}</dd>
+                        <dd class="mt-1 font-semibold text-gray-700">{{ $laporan->nama_pelapor ?? optional($laporan->user)->name ?? '-' }}</dd>
                     </div>
                     <div>
                         <dt class="text-xs text-gray-500">Jenis Laporan</dt>
@@ -84,11 +98,11 @@
                     </div>
                     <div>
                         <dt class="text-xs text-gray-500">Kecamatan</dt>
-                        <dd class="mt-1 font-semibold text-gray-700">{{ $laporan->kecamatan ?? '-' }}</dd>
+                        <dd class="mt-1 font-semibold text-gray-700">{{ $laporan->kecamatan ?: '-' }}</dd>
                     </div>
                     <div>
                         <dt class="text-xs text-gray-500">Alamat</dt>
-                        <dd class="mt-1 font-semibold text-gray-700">{{ $laporan->alamat ?? '-' }}</dd>
+                        <dd class="mt-1 font-semibold text-gray-700">{{ $laporan->alamat ?: '-' }}</dd>
                     </div>
                     <div class="md:col-span-2">
                         <dt class="text-xs text-gray-500">Koordinat</dt>
@@ -104,6 +118,29 @@
                         </dd>
                     </div>
                 </dl>
+            </div>
+
+            {{-- Verifikasi cepat (controller: verify) --}}
+            <div class="bg-white rounded-2xl shadow overflow-hidden">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h2 class="font-bold text-gray-800">Ubah Status</h2>
+                </div>
+                <form method="POST" action="{{ route('super_admin.laporan.verify', $laporan->id) }}"
+                      class="flex flex-wrap items-center gap-3 px-6 py-5">
+                    @csrf
+                    @method('PATCH')
+                    <select name="status" required
+                            class="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-800 focus:border-cyan-4 focus:outline-none">
+                        @foreach ($opsiVerifikasi as $s)
+                            <option value="{{ $s }}" {{ old('status', $laporan->status) === $s ? 'selected' : '' }}>{{ $s }}</option>
+                        @endforeach
+                    </select>
+                    <button type="submit"
+                            class="px-5 py-2 rounded-lg bg-cyan-4 hover:bg-cyan-6 text-white text-sm font-bold transition">
+                        Simpan Status
+                    </button>
+                    <p class="text-xs text-gray-500">Pemverifikasi akan tercatat atas nama Anda.</p>
+                </form>
             </div>
 
             {{-- Foto & lampiran --}}

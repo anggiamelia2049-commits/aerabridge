@@ -128,7 +128,12 @@ class LaporanController extends Controller
 
         if ($pathUntukAi) {
             try {
-                (new AiDetectionService())->detectAndSave($laporan->id, storage_path('app/public/' . $pathUntukAi));
+                (new AiDetectionService())->detectAndSave(
+                    $laporan->id,
+                    storage_path('app/public/' . $pathUntukAi),
+                    $request->deskripsi
+                );            
+                    
             } catch (\Exception $e) {
                 // Kalau AI service gagal, laporan tetap tersimpan
                 Log::error('AI Detection gagal untuk laporan #' . $laporan->id . ': ' . $e->getMessage());

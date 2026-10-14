@@ -15,10 +15,10 @@ class LaporanController extends Controller
     /**
      * Pemetaan filter dari sidebar (?status=...) ke status asli di database.
      * key   = nilai ?status= di URL
-     * value = [status di DB, judul halaman]
+     * value = [status di DB (string atau array), judul halaman]
      */
     private const FILTER_STATUS = [
-        'menunggu_verifikasi' => ['Menunggu',     'Verifikasi Laporan'],
+        'menunggu_verifikasi' => [['Menunggu', 'Terverifikasi AI'], 'Verifikasi Laporan'],
         'disposisi'           => ['Diverifikasi', 'Disposisi Laporan'],
         'diproses'            => ['Diproses',     'Tindak Lanjut'],
         'selesai'             => ['Selesai',      'Laporan Selesai'],
@@ -36,7 +36,7 @@ class LaporanController extends Controller
             'instansi',
             'diverifikasiOleh'
         ])
-        ->when($filter, fn ($q) => $q->where('status', $filter[0]))
+        ->when($filter, fn ($q) => $q->whereIn('status', (array) $filter[0]))
         ->latest()
         ->paginate(10)
         ->withQueryString();
@@ -72,7 +72,7 @@ class LaporanController extends Controller
             'longitude' => 'required|numeric|between:-180,180',
             'alamat' => 'nullable|string',
             'tingkat_prioritas' => 'nullable|in:Kritis,Sedang,Rendah',
-            'status' => 'nullable|in:Menunggu,Diverifikasi,Diproses,Selesai,Ditolak',
+            'status' => 'nullable|in:Menunggu,Terverifikasi AI,Diverifikasi,Diproses,Selesai,Ditolak',
         ]);
 
         $foto = null;
@@ -112,7 +112,8 @@ class LaporanController extends Controller
             'user',
             'kategori',
             'instansi',
-            'diverifikasiOleh'
+            'diverifikasiOleh',
+            'deteksiAi'
         ])
         ->findOrFail($id);
 
@@ -149,7 +150,7 @@ class LaporanController extends Controller
             'longitude' => 'required|numeric|between:-180,180',
             'alamat' => 'nullable|string',
             'tingkat_prioritas' => 'nullable|in:Kritis,Sedang,Rendah',
-            'status' => 'nullable|in:Menunggu,Diverifikasi,Diproses,Selesai,Ditolak',
+            'status' => 'nullable|in:Menunggu,Terverifikasi AI,Diverifikasi,Diproses,Selesai,Ditolak',
         ]);
 
         $foto = $laporan->foto;
@@ -169,7 +170,7 @@ class LaporanController extends Controller
         if ($statusBaru !== $laporan->status) {
             if (in_array($statusBaru, ['Diverifikasi', 'Diproses', 'Selesai', 'Ditolak'])) {
                 $diverifikasiOleh = Auth::id();
-            } elseif ($statusBaru === 'Menunggu') {
+            } elseif (in_array($statusBaru, ['Menunggu', 'Terverifikasi AI'])) {
                 $diverifikasiOleh = null;
             }
         }
