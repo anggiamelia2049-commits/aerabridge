@@ -48,10 +48,9 @@ class Laporan extends Model
         return $kode;
     }
 
-    // Pakai ini di semua dashboard: {{ $laporan->nama_pelapor }}
     public function getNamaPelaporAttribute(): string
     {
-    return ($this->is_anonim ? null : $this->user?->nama) ?? 'Anonim';
+        return $this->is_anonim || ! $this->user ? 'Anonim' : $this->user->nama;
     }
 
     // User yang membuat laporan

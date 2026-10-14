@@ -42,23 +42,16 @@ class AiDetectionService
             'response_llm' => $result['response_llm'],
         ]);
 
-        // Update laporan berdasarkan hasil AI
+        // Update laporan berdasarkan hasil AI — HANYA prioritas yang diubah otomatis.
+        // Status laporan TETAP "Menunggu" sampai instansi melakukan verifikasi manual
+        // (sesuai flowchart proposal: AI kasih rekomendasi, keputusan akhir di instansi).
         $laporan = Laporan::find($laporanId);
 
         if ($laporan) {
-            $update = [];
-
             $prioritas = ucfirst(strtolower($result['estimasi_prioritas'] ?? ''));
+
             if (in_array($prioritas, ['Kritis', 'Sedang', 'Rendah'])) {
-                $update['tingkat_prioritas'] = $prioritas;
-            }
-
-            if (($result['hasil_validasi'] ?? '') === 'valid') {
-                $update['status'] = 'Terverifikasi AI';
-            }
-
-            if ($update) {
-                $laporan->update($update);
+                $laporan->update(['tingkat_prioritas' => $prioritas]);
             }
         }
 

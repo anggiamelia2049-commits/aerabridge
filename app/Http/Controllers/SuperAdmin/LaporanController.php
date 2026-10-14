@@ -25,9 +25,6 @@ class LaporanController extends Controller
         'ditolak'             => ['Ditolak',      'Laporan Ditolak'],
     ];
 
-    /**
-     * Display a listing of the resource.
-     */
     public function index(Request $request)
     {
         // Kalau ?status= kosong atau tidak dikenal, tampilkan semua laporan
@@ -49,9 +46,6 @@ class LaporanController extends Controller
         return view('SuperAdmin.laporan.index', compact('laporan', 'judulHalaman'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         $kategoris = KategoriKerusakan::all();
@@ -63,9 +57,6 @@ class LaporanController extends Controller
         );
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $request->validate([
@@ -115,9 +106,6 @@ class LaporanController extends Controller
             ->with('success', 'Laporan berhasil dibuat');
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
         $laporan = Laporan::with([
@@ -131,9 +119,6 @@ class LaporanController extends Controller
         return view('SuperAdmin.laporan.show', compact('laporan'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(string $id)
     {
         $laporan = Laporan::findOrFail($id);
@@ -147,21 +132,18 @@ class LaporanController extends Controller
         );
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
         $laporan = Laporan::findOrFail($id);
 
+        // jenis_laporan, tanggal_kejadian, dan kecamatan SENGAJA tidak divalidasi
+        // dan tidak diupdate: form edit hanya menampilkannya sebagai teks,
+        // sehingga datanya tidak boleh tertimpa null.
         $request->validate([
             'kategori_id' => 'required|exists:kategori_kerusakan,id',
             'instansi_id' => 'required|exists:instansi,id',
-            'jenis_laporan' => 'nullable|string|max:50',
             'judul' => 'required|string|max:255',
             'deskripsi' => 'required|string',
-            'tanggal_kejadian' => 'nullable|date',
-            'kecamatan' => 'nullable|string|max:100',
             'foto' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'latitude' => 'required|numeric|between:-90,90',
             'longitude' => 'required|numeric|between:-180,180',
@@ -182,7 +164,7 @@ class LaporanController extends Controller
         // Catat pemverifikasi HANYA saat status benar-benar berubah,
         // supaya edit biasa tidak menimpa admin yang memverifikasi sebelumnya.
         $diverifikasiOleh = $laporan->diverifikasi_oleh;
-        $statusBaru = $request->status ?? 'Menunggu';
+        $statusBaru = $request->status ?? $laporan->status;
 
         if ($statusBaru !== $laporan->status) {
             if (in_array($statusBaru, ['Diverifikasi', 'Diproses', 'Selesai', 'Ditolak'])) {
@@ -192,20 +174,17 @@ class LaporanController extends Controller
             }
         }
 
-        // kode_lacak sengaja tidak diubah saat edit (kode unik milik pelapor)
+        // kode_lacak, jenis_laporan, tanggal_kejadian, kecamatan tidak diubah saat edit
         $laporan->update([
             'kategori_id' => $request->kategori_id,
             'instansi_id' => $request->instansi_id,
-            'jenis_laporan' => $request->jenis_laporan,
             'judul' => $request->judul,
             'deskripsi' => $request->deskripsi,
-            'tanggal_kejadian' => $request->tanggal_kejadian,
-            'kecamatan' => $request->kecamatan,
             'foto' => $foto,
             'latitude' => $request->latitude,
             'longitude' => $request->longitude,
             'alamat' => $request->alamat,
-            'tingkat_prioritas' => $request->tingkat_prioritas ?? 'Sedang',
+            'tingkat_prioritas' => $request->tingkat_prioritas ?? $laporan->tingkat_prioritas,
             'status' => $statusBaru,
             'diverifikasi_oleh' => $diverifikasiOleh,
         ]);
@@ -215,9 +194,6 @@ class LaporanController extends Controller
             ->with('success', 'Laporan berhasil diperbarui');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
         $laporan = Laporan::findOrFail($id);
@@ -233,9 +209,6 @@ class LaporanController extends Controller
             ->with('success', 'Laporan berhasil dihapus');
     }
 
-    /**
-     * Verify laporan.
-     */
     public function verify(Request $request, string $id)
     {
         $laporan = Laporan::findOrFail($id);
@@ -243,6 +216,11 @@ class LaporanController extends Controller
         $request->validate([
             'status' => 'required|in:Diverifikasi,Diproses,Selesai,Ditolak',
         ]);
+
+        // Laporan yang sudah selesai tidak boleh diubah lagi lewat tombol cepat
+        if ($laporan->status === 'Selesai') {
+            return back()->with('error', 'Laporan yang sudah selesai tidak dapat diubah statusnya.');
+        }
 
         $laporan->update([
             'status' => $request->status,

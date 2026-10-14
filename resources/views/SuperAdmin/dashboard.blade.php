@@ -92,7 +92,20 @@
                     @endphp
                     <tr class="hover:bg-gray-50 transition-colors">
                         <td class="px-4 py-3 font-medium text-gray-800">{{ $laporan->judul }}</td>
-                        <td class="px-4 py-3 text-gray-600">{{ $laporan->lokasi }}</td>
+                        <td class="px-4 py-3 text-gray-600">
+                            @if (!empty($laporan->alamat))
+                                {{ $laporan->alamat }}
+                            @elseif (
+                                !is_null($laporan->latitude) &&
+                                !is_null($laporan->longitude)
+                            )
+                                {{ $laporan->latitude }}, {{ $laporan->longitude }}
+                            @else
+                                <span class="text-gray-400">
+                                    Lokasi belum tersedia
+                                </span>
+                            @endif
+                        </td>
                         <td class="px-4 py-3 text-gray-600">{{ $laporan->created_at->translatedFormat('d M Y') }}</td>
                         <td class="px-4 py-3 text-center">
                             <span class="inline-block min-w-[64px] rounded-md px-3 py-1 text-xs font-semibold {{ $kelas }}">
