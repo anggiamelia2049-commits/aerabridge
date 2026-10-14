@@ -22,13 +22,13 @@
 {{-- ==================== FILTER ==================== --}}
 <div class="mb-5 grid grid-cols-1 gap-3 rounded-2xl bg-white p-4 shadow sm:grid-cols-2 lg:grid-cols-[1fr_1fr_1fr_auto]">
     <label class="text-xs text-abu-tua">Kategori
-        <select id="filter-kategori" class="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-cyan-6">
+        <select id="filter-kategori" class="mt-1 w-full rounded-lg border border-gray-300 py-2 pl-3 pr-10 text-sm text-cyan-6">
             <option value="">Semua kategori</option>
         </select>
     </label>
 
     <label class="text-xs text-abu-tua">Status
-        <select id="filter-status" class="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-cyan-6">
+        <select id="filter-status" class="mt-1 w-full rounded-lg border border-gray-300 py-2 pl-3 pr-10 text-sm text-cyan-6">
             <option value="">Semua status</option>
             <option value="menunggu">Menunggu Verifikasi</option>
             <option value="diverifikasi">Diverifikasi</option>
@@ -38,7 +38,7 @@
     </label>
 
     <label class="text-xs text-abu-tua">Prioritas AI
-        <select id="filter-prioritas" class="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-cyan-6">
+        <select id="filter-prioritas" class="mt-1 w-full rounded-lg border border-gray-300 py-2 pl-3 pr-10 text-sm text-cyan-6">
             <option value="">Semua prioritas</option>
             <option value="kritis">Kritis</option>
             <option value="sedang">Sedang</option>
@@ -75,7 +75,7 @@
 <div class="grid grid-cols-1 gap-5 lg:grid-cols-[2.4fr_1fr]">
 
     <div class="rounded-2xl bg-white p-5 shadow">
-        <div class="relative">
+        <div class="relative isolate">
             <div id="peta-kerusakan" class="h-[520px] w-full rounded-xl"></div>
 
             {{-- Legenda mode titik --}}
@@ -196,7 +196,7 @@ document.addEventListener('DOMContentLoaded', function () {
         badge.style.cssText = 'display:inline-block;margin:4px 0;padding:1px 8px;border-radius:4px;font-size:11px;color:#fff;background:' + WARNA[t.prioritas];
         box.appendChild(el('div', '')).appendChild(badge);
 
-        box.appendChild(el('p', '', t.kategori + ' · ' + (STATUS[t.status] ?? '-')));
+        box.appendChild(el('p', '', t.kategori + ' · ' + (STATUS[t.status] ?? t.status ?? '-')));
         box.appendChild(el('p', '', t.alamat ?? '-'));
         if (t.dilaporkan) box.appendChild(el('p', '', 'Dilaporkan ' + t.dilaporkan));
 

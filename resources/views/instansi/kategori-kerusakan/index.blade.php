@@ -32,7 +32,6 @@
                     <th class="w-16 py-3 pr-3 font-medium">No</th>
                     <th class="py-3 pr-3 font-medium">Nama Kategori</th>
                     <th class="py-3 pr-3 font-medium">Deskripsi</th>
-                    <th class="py-3 text-right font-medium">Jumlah Laporan</th>
                 </tr>
             </thead>
             <tbody>
@@ -53,7 +52,6 @@
                         <td class="py-3 pr-3 text-abu-tua">{{ $kategori->firstItem() + $loop->index }}</td>
                         <td class="py-3 pr-3 font-semibold text-cyan-6">{{ $item->nama_kategori }}</td>
                         <td class="py-3 pr-3 text-abu-tua">{{ $deskripsi }}</td>
-                        <td class="py-3 text-right font-semibold text-cyan-6">{{ $item->laporan_count ?? '-' }}</td>
                     </tr>
                 @empty
                     <tr>

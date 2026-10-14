@@ -87,7 +87,7 @@
     <div class="rounded-2xl bg-white p-5 shadow">
         <h2 class="mb-3 text-sm font-bold text-cyan-6">Peta sebaran kerusakan</h2>
 
-        <div class="relative">
+        <div class="relative isolate">
             <div id="peta-instansi" class="h-72 w-full rounded-xl"></div>
 
             {{-- Legenda Prioritas --}}

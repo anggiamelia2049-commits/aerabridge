@@ -37,13 +37,12 @@
     <input type="text" name="q" value="{{ request('q') }}" placeholder="Cari nama tim atau ketua..."
            class="flex-1 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-cyan-4 focus:ring-cyan-4">
     <select name="status" onchange="this.form.submit()"
-            class="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-cyan-4 focus:ring-cyan-4">
+            class="rounded-lg border border-gray-300 bg-white py-2 pl-3 pr-10 text-sm focus:border-cyan-4 focus:ring-cyan-4">
         <option value="">Semua Status</option>
         <option value="aktif" @selected(request('status') === 'aktif')>Aktif</option>
         <option value="nonaktif" @selected(request('status') === 'nonaktif')>Nonaktif</option>
     </select>
 </form>
-
 <div class="overflow-x-auto rounded-lg bg-white shadow">
     <table class="w-full text-left text-sm">
         <thead class="bg-gray-100">

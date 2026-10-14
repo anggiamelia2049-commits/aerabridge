@@ -29,22 +29,22 @@
 {{-- Filter hanya tampil di halaman Semua Laporan --}}
 @unless (request()->routeIs('instansi.verifikasi.index'))
     <form method="GET" class="mb-4 flex flex-wrap gap-2">
-        <select name="status" onchange="this.form.submit()" class="rounded-lg border border-abu-muda px-3 py-1.5 text-sm">
-            <option value="">Semua status</option>
-            <option value="Menunggu" {{ $status === 'Menunggu' ? 'selected' : '' }}>Menunggu</option>
-            <option value="Diverifikasi" {{ $status === 'Diverifikasi' ? 'selected' : '' }}>Diverifikasi</option>
-            <option value="Diproses" {{ $status === 'Diproses' ? 'selected' : '' }}>Diproses</option>
-            <option value="Selesai" {{ $status === 'Selesai' ? 'selected' : '' }}>Selesai</option>
-            <option value="Ditolak" {{ $status === 'Ditolak' ? 'selected' : '' }}>Ditolak</option>
-        </select>
+    <select name="status" onchange="this.form.submit()" class="rounded-lg border border-abu-muda bg-white py-1.5 pl-3 pr-9 text-sm">
+        <option value="">Semua status</option>
+        <option value="Menunggu" {{ $status === 'Menunggu' ? 'selected' : '' }}>Menunggu</option>
+        <option value="Diverifikasi" {{ $status === 'Diverifikasi' ? 'selected' : '' }}>Diverifikasi</option>
+        <option value="Diproses" {{ $status === 'Diproses' ? 'selected' : '' }}>Diproses</option>
+        <option value="Selesai" {{ $status === 'Selesai' ? 'selected' : '' }}>Selesai</option>
+        <option value="Ditolak" {{ $status === 'Ditolak' ? 'selected' : '' }}>Ditolak</option>
+    </select>
 
-        <select name="prioritas" onchange="this.form.submit()" class="rounded-lg border border-abu-muda px-3 py-1.5 text-sm">
-            <option value="">Semua prioritas</option>
-            <option value="Kritis" {{ $prioritas === 'Kritis' ? 'selected' : '' }}>Kritis</option>
-            <option value="Sedang" {{ $prioritas === 'Sedang' ? 'selected' : '' }}>Sedang</option>
-            <option value="Rendah" {{ $prioritas === 'Rendah' ? 'selected' : '' }}>Rendah</option>
-        </select>
-    </form>
+    <select name="prioritas" onchange="this.form.submit()" class="rounded-lg border border-abu-muda bg-white py-1.5 pl-3 pr-9 text-sm">
+        <option value="">Semua prioritas</option>
+        <option value="Kritis" {{ $prioritas === 'Kritis' ? 'selected' : '' }}>Kritis</option>
+        <option value="Sedang" {{ $prioritas === 'Sedang' ? 'selected' : '' }}>Sedang</option>
+        <option value="Rendah" {{ $prioritas === 'Rendah' ? 'selected' : '' }}>Rendah</option>
+    </select>
+</form>
 @endunless
 
 <div class="bg-white rounded-lg shadow overflow-x-auto">
