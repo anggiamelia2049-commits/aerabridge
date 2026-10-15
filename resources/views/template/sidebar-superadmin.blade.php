@@ -149,7 +149,7 @@
                     </li>
                     <li>
                         <a href="{{ route('super_admin.hadiah.index') }}"
-                            class="block rounded-lg px-3 py-2 transition {{ request()->routeIs('super_admin.hadiah.*') ? 'bg-white/10 text-white' : 'text-cyan-muda hover:bg-white/5 hover:text-white' }}">
+                            class="block rounded-lg px-3 py-2 transition {{ request()->routeIs('super_admin.deteksiAi.*') ? 'bg-white/10 text-white' : 'text-cyan-muda hover:bg-white/5 hover:text-white' }}">
                             Tenggat Perbaikan
                         </a>
                     </li>

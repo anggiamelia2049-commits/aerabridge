@@ -8,76 +8,101 @@ use App\Models\PoinKontribusiLog;
 use App\Models\UserEdukasiProgress;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class UserEdukasiProgressController extends Controller
 {
     /**
-     * Tampilkan daftar konten edukasi & progress baca milik warga yang login.
+     * Tampilkan daftar konten edukasi dan progress warga.
      */
     public function index()
     {
         $user = Auth::user();
 
-        // Semua konten edukasi, digabung dengan progress milik user (kalau ada)
-        $kontenList = KontenEdukasi::with(['progress' => function ($query) use ($user) {
-            $query->where('user_id', $user->id);
-        }])->get();
+        $kontenList = KontenEdukasi::with([
+            'progress' => function ($query) use ($user) {
+                $query->where('user_id', $user->id);
+            }
+        ])->get();
 
         return view('warga.userEdukasi.index', compact('kontenList'));
     }
 
     /**
-     * Tampilkan detail 1 konten edukasi untuk dibaca warga.
+     * Tampilkan detail konten edukasi.
      */
-    public function show(string $kontenId)
+    public function show(string $user_edukasi)
     {
-        $konten = KontenEdukasi::findOrFail($kontenId);
+        $konten = KontenEdukasi::findOrFail($user_edukasi);
 
         $progress = UserEdukasiProgress::firstOrCreate(
-            ['user_id' => Auth::id(), 'konten_id' => $kontenId],
-            ['status' => 'belum_dibaca', 'progress' => 0]
+            [
+                'user_id' => Auth::id(),
+                'konten_id' => $konten->id,
+            ],
+            [
+                'status' => 'belum_dibaca',
+                'progress' => 0,
+            ]
         );
 
         return view('warga.userEdukasi.show', compact('konten', 'progress'));
     }
 
     /**
-     * Tandai konten selesai dibaca oleh warga, otomatis dapat +10 poin
-     * (sesuai proposal 6.B.5: "+10 (baca edukasi)").
+     * Tandai konten selesai dan berikan 10 poin kontribusi.
      */
-    public function tandaiSelesai(Request $request, string $kontenId)
+    public function tandaiSelesai(Request $request, string $user_edukasi)
     {
         $user = Auth::user();
+        $konten = KontenEdukasi::findOrFail($user_edukasi);
 
-        $progress = UserEdukasiProgress::firstOrCreate(
-            ['user_id' => $user->id, 'konten_id' => $kontenId],
-            ['status' => 'belum_dibaca', 'progress' => 0]
-        );
+        $sudahSelesai = DB::transaction(function () use ($user, $konten) {
+            // firstOrCreate agar tidak error kalau baris progress belum ada
+            $progress = UserEdukasiProgress::firstOrCreate(
+                [
+                    'user_id' => $user->id,
+                    'konten_id' => $konten->id,
+                ],
+                [
+                    'status' => 'belum_dibaca',
+                    'progress' => 0,
+                ]
+            );
 
-        // Cegah dapat poin berkali-kali untuk konten yang sama
-        if ($progress->status === 'selesai') {
+            // Kunci baris agar tidak terjadi double klik / race condition
+            $progress = UserEdukasiProgress::whereKey($progress->id)
+                ->lockForUpdate()
+                ->first();
+
+            // Jangan berikan poin dua kali untuk konten yang sama.
+            if ($progress->status === 'selesai') {
+                return true;
+            }
+
+            $progress->update([
+                'status' => 'selesai',
+                'progress' => 100,
+                'selesai_pada' => now(),
+            ]);
+
+            PoinKontribusiLog::create([
+                'user_id' => $user->id,
+                'laporan_id' => null,
+                'jenis_aktivitas' => 'baca_edukasi',
+                'poin' => 10,
+                'keterangan' => 'Menyelesaikan konten edukasi: ' . $konten->judul,
+            ]);
+
+            return false;
+        });
+
+        if ($sudahSelesai) {
             return back()->with('info', 'Konten ini sudah pernah kamu selesaikan.');
         }
 
-        $progress->update([
-            'status' => 'selesai',
-            'progress' => 100,
-            'selesai_pada' => now(),
-        ]);
-
-        PoinKontribusiLog::create([
-            'user_id' => $user->id,
-            'laporan_id' => null,
-            'jenis_aktivitas' => 'baca_edukasi',
-            'poin' => 10,
-            'keterangan' => 'Menyelesaikan konten edukasi: ' . $progress->konten->judul,
-        ]);
-
-        return redirect()->route('warga.user-edukasi.index')
-            ->with('success', 'Selamat! Kamu mendapat 10 poin kontribusi.');
+        return redirect()
+            ->route('warga.user-edukasi.show', $konten->id)
+            ->with('success', 'Konten edukasi berhasil diselesaikan (+10 poin).');
     }
-
-    // create(), store(), edit(), update(), destroy() generik TIDAK ADA.
-    // Progress dibuat otomatis saat warga membuka konten (lihat show()),
-    // dan diselesaikan lewat method tandaiSelesai(), bukan form CRUD manual.
 }

@@ -95,15 +95,26 @@ Route::middleware('auth')->group(function () {
     });
 
     // ==== Khusus Warga ====
-    Route::name('warga.')->prefix('warga')->middleware('role:warga')->group(function () {
-        Route::get('/dashboard', [WargaDashboardController::class, 'index'])->name('dashboard');
+    Route::name('warga.')
+        ->prefix('warga')
+        ->middleware('role:warga')
+        ->group(function () {
+            Route::get('/dashboard', [WargaDashboardController::class, 'index'])
+                ->name('dashboard');
 
-        Route::resource('laporan', WargaLaporanController::class);
-        Route::resource('notifikasi', WargaNotifikasiController::class);
-        Route::resource('poin', WargaPoinKontribusiController::class)->only(['index']);
-        Route::resource('aeraPay', WargaAeraPayController::class)->only(['index', 'show', 'create', 'store']);
-        Route::resource('user-edukasi', WargaUserEdukasiProgressController::class);
-    });
+            Route::resource('laporan', WargaLaporanController::class);
+            Route::resource('notifikasi', WargaNotifikasiController::class);
+            Route::resource('poin', WargaPoinKontribusiController::class)->only(['index']);
+            Route::resource('aeraPay', WargaAeraPayController::class)->only(['index', 'show', 'create', 'store']);
+
+            // Edukasi: controller hanya punya index & show
+            Route::resource('user-edukasi', WargaUserEdukasiProgressController::class)
+                ->only(['index', 'show']);
+
+            // Tandai konten edukasi selesai
+            Route::put('/user-edukasi/{user_edukasi}/selesai', [WargaUserEdukasiProgressController::class, 'tandaiSelesai'])
+                ->name('user-edukasi.selesai');
+        });
 
     // ==== Khusus Petugas ====
     Route::name('petugas.')->prefix('petugas')->middleware('role:petugas')->group(function () {

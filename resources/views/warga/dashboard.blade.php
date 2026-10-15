@@ -41,6 +41,7 @@
 {{-- ===== Kartu Statistik ===== --}}
 <section class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
     @foreach ($cards as $c)
+    
         <div class="bg-white rounded-xl shadow-sm px-6 py-6 flex items-center gap-4">
             <span class="w-14 h-14 shrink-0 rounded-full bg-gray-100 flex items-center justify-center text-gray-700">
                 <svg fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" style="width:26px;height:26px;">
