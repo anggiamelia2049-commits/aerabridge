@@ -15,11 +15,13 @@ class AiDetectionService
         $this->aiServiceUrl = config('services.ai.url');
     }
 
-    public function detectAndSave($laporanId, $fotoPath)
+    public function detectAndSave($laporanId, $fotoPath, $deskripsi = '')
     {
-        $response = Http::timeout(30)
+        $response = Http::timeout(40)
             ->attach('file', file_get_contents($fotoPath), basename($fotoPath))
-            ->post("{$this->aiServiceUrl}/api/ai/detect");
+            ->post("{$this->aiServiceUrl}/api/ai/detect", [
+                'deskripsi' => (string) $deskripsi,
+            ]);
 
         if (!$response->successful()) {
             throw new \Exception('AI service error, status ' . $response->status());
@@ -42,23 +44,16 @@ class AiDetectionService
             'response_llm' => $result['response_llm'],
         ]);
 
-        // Update laporan berdasarkan hasil AI
+        // Update laporan berdasarkan hasil AI — HANYA prioritas yang diubah otomatis.
+        // Status laporan TETAP "Menunggu" sampai instansi melakukan verifikasi manual
+        // (sesuai flowchart proposal: AI kasih rekomendasi, keputusan akhir di instansi).
         $laporan = Laporan::find($laporanId);
 
         if ($laporan) {
-            $update = [];
-
             $prioritas = ucfirst(strtolower($result['estimasi_prioritas'] ?? ''));
+
             if (in_array($prioritas, ['Kritis', 'Sedang', 'Rendah'])) {
-                $update['tingkat_prioritas'] = $prioritas;
-            }
-
-            if (($result['hasil_validasi'] ?? '') === 'valid') {
-                $update['status'] = 'Terverifikasi AI';
-            }
-
-            if ($update) {
-                $laporan->update($update);
+                $laporan->update(['tingkat_prioritas' => $prioritas]);
             }
         }
 

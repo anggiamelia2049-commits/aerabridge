@@ -1,129 +1,141 @@
 @extends('template.layout')
 
-@section('title', request()->routeIs('instansi.verifikasi.index') ? 'Verifikasi Laporan' : 'Semua Laporan')
+@php
+    $isVerifikasi = request()->routeIs('instansi.verifikasi.index');
+    $judulHalaman = $isVerifikasi ? 'Verifikasi Laporan' : 'Semua Laporan';
+    $adaRouteVerifikasi = \Illuminate\Support\Facades\Route::has('instansi.verifikasi.index');
+@endphp
+
+@section('title', $judulHalaman)
 
 @section('content')
+<div class="p-6">
+    <div class="bg-white rounded-2xl shadow overflow-hidden">
 
-<div class="mb-5 flex items-center justify-between">
-    <h1 class="text-3xl font-bold text-cyan-6">
-        {{ request()->routeIs('instansi.verifikasi.index') ? 'Verifikasi Laporan' : 'Semua Laporan' }}
-    </h1>
+        <div class="flex flex-wrap items-center justify-between gap-4 px-6 py-5">
+            <p class="text-sm text-gray-600">
+                {{ $isVerifikasi ? 'Laporan yang menunggu verifikasi instansi.' : 'Semua laporan yang ditujukan ke instansi kamu.' }}
+            </p>
 
-    @if (request()->routeIs('instansi.verifikasi.index'))
-        <a href="{{ route('instansi.laporan.index') }}" class="text-sm font-medium text-cyan-4 hover:text-cyan-6">
-            Lihat semua laporan &rarr;
-        </a>
-    @else
-        <a href="{{ route('instansi.verifikasi.index') }}" class="text-sm font-medium text-cyan-4 hover:text-cyan-6">
-            Lihat yang perlu diverifikasi &rarr;
-        </a>
-    @endif
-</div>
+            <div class="flex flex-wrap items-center gap-2">
+                @unless ($isVerifikasi)
+                    <form method="GET" class="flex flex-wrap gap-2">
+                        <select name="status" onchange="this.form.submit()"
+                                class="h-10 rounded-lg border border-abu-muda bg-white pl-3 pr-9 text-sm">
+                            <option value="">Semua status</option>
+                            @foreach (['Menunggu', 'Diverifikasi', 'Diproses', 'Selesai', 'Ditolak'] as $s)
+                                <option value="{{ $s }}" @selected($status === $s)>{{ $s }}</option>
+                            @endforeach
+                        </select>
 
-@if (session('success'))
-    <div class="mb-4 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
-        {{ session('success') }}
+                        <select name="prioritas" onchange="this.form.submit()"
+                                class="h-10 rounded-lg border border-abu-muda bg-white pl-3 pr-9 text-sm">
+                            <option value="">Semua prioritas</option>
+                            @foreach (['Kritis', 'Sedang', 'Rendah'] as $p)
+                                <option value="{{ $p }}" @selected($prioritas === $p)>{{ $p }}</option>
+                            @endforeach
+                        </select>
+                    </form>
+                @endunless
+
+                @if ($adaRouteVerifikasi)
+                    <a href="{{ $isVerifikasi ? route('instansi.laporan.index') : route('instansi.verifikasi.index') }}"
+                       class="text-sm font-semibold text-cyan-4 hover:underline">
+                        {{ $isVerifikasi ? 'Lihat semua laporan →' : 'Lihat yang perlu diverifikasi →' }}
+                    </a>
+                @endif
+            </div>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm text-left">
+                <thead class="bg-cyan-6 text-white">
+                    <tr>
+                        <th class="px-4 py-3.5 font-semibold">No</th>
+                        <th class="px-4 py-3.5 font-semibold">Pelapor</th>
+                        <th class="px-4 py-3.5 font-semibold">Kategori</th>
+                        <th class="px-4 py-3.5 font-semibold">Judul</th>
+                        <th class="px-4 py-3.5 font-semibold">Foto</th>
+                        <th class="px-4 py-3.5 font-semibold">Kecamatan</th>
+                        <th class="px-4 py-3.5 font-semibold">Prioritas</th>
+                        <th class="px-4 py-3.5 font-semibold">Status</th>
+                        <th class="px-4 py-3.5 font-semibold text-center">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200 text-gray-700">
+                    @forelse ($laporan as $v)
+                        @php
+                            $gambar = $v->foto;
+                            if (! $gambar && $v->lampiran
+                                && in_array(strtolower(pathinfo($v->lampiran, PATHINFO_EXTENSION)), ['jpg', 'jpeg', 'png'])) {
+                                $gambar = $v->lampiran;
+                            }
+                        @endphp
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-4 py-3.5">{{ $loop->iteration }}</td>
+                            <td class="px-4 py-3.5">{{ $v->nama_pelapor }}</td>
+                            <td class="px-4 py-3.5">{{ $v->kategori->nama_kategori ?? '-' }}</td>
+                            <td class="px-4 py-3.5 font-semibold">{{ $v->judul }}</td>
+                            <td class="px-4 py-3.5">
+                                @if ($gambar)
+                                    <img src="{{ asset('storage/' . $gambar) }}" alt="Foto laporan"
+                                         class="w-14 h-14 object-cover rounded-lg border border-abu-muda">
+                                @else
+                                    <div class="w-14 h-14 rounded-lg bg-gray-100 border border-abu-muda flex items-center justify-center text-[10px] text-gray-400">Tidak ada</div>
+                                @endif
+                            </td>
+                            <td class="px-4 py-3.5">{{ $v->kecamatan ?: '-' }}</td>
+                            <td class="px-4 py-3.5">
+                                <span @class([
+                                    'inline-block px-3 py-1 rounded-full text-xs font-semibold',
+                                    'bg-merah/10 text-merah' => $v->tingkat_prioritas === 'Kritis',
+                                    'bg-oranye/10 text-oranye' => $v->tingkat_prioritas === 'Sedang',
+                                    'bg-kuning/20 text-abu-tua' => $v->tingkat_prioritas === 'Rendah',
+                                ])>{{ $v->tingkat_prioritas }}</span>
+                            </td>
+                            <td class="px-4 py-3.5">
+                                <span @class([
+                                    'inline-block px-3 py-1 rounded-full text-xs font-semibold',
+                                    'bg-abu-muda text-abu-tua' => $v->status === 'Menunggu',
+                                    'bg-cyan-3/20 text-cyan-6' => $v->status === 'Diverifikasi',
+                                    'bg-oranye/10 text-oranye' => $v->status === 'Diproses',
+                                    'bg-hijau/10 text-hijau' => $v->status === 'Selesai',
+                                    'bg-merah/10 text-merah' => $v->status === 'Ditolak',
+                                ])>{{ $v->status }}</span>
+                            </td>
+                            <td class="px-4 py-3.5">
+                                <div class="flex items-center justify-center gap-4 text-sm font-semibold whitespace-nowrap">
+                                    <a href="{{ route('instansi.laporan.show', $v->id) }}" class="text-cyan-4 hover:underline">Tinjau</a>
+
+                                    @if ($v->status === 'Menunggu')
+                                        <form action="{{ route('instansi.laporan.verify', $v->id) }}" method="POST">
+                                            @csrf
+                                            @method('PUT')
+                                            <input type="hidden" name="status" value="Diverifikasi">
+                                            <button type="submit" class="text-hijau hover:underline">Setujui</button>
+                                        </form>
+
+                                        <form action="{{ route('instansi.laporan.verify', $v->id) }}" method="POST"
+                                              onsubmit="return confirm('Tolak laporan ini?')">
+                                            @csrf
+                                            @method('PUT')
+                                            <input type="hidden" name="status" value="Ditolak">
+                                            <button type="submit" class="text-merah hover:underline">Tolak</button>
+                                        </form>
+                                    @endif
+                                </div>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="9" class="px-4 py-10 text-center text-gray-400">
+                                {{ $isVerifikasi ? 'Tidak ada laporan yang perlu diverifikasi saat ini.' : 'Belum ada data laporan.' }}
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
     </div>
-@endif
-
-{{-- Filter hanya tampil di halaman Semua Laporan --}}
-@unless (request()->routeIs('instansi.verifikasi.index'))
-    <form method="GET" class="mb-4 flex flex-wrap gap-2">
-    <select name="status" onchange="this.form.submit()" class="rounded-lg border border-abu-muda bg-white py-1.5 pl-3 pr-9 text-sm">
-        <option value="">Semua status</option>
-        <option value="Menunggu" {{ $status === 'Menunggu' ? 'selected' : '' }}>Menunggu</option>
-        <option value="Diverifikasi" {{ $status === 'Diverifikasi' ? 'selected' : '' }}>Diverifikasi</option>
-        <option value="Diproses" {{ $status === 'Diproses' ? 'selected' : '' }}>Diproses</option>
-        <option value="Selesai" {{ $status === 'Selesai' ? 'selected' : '' }}>Selesai</option>
-        <option value="Ditolak" {{ $status === 'Ditolak' ? 'selected' : '' }}>Ditolak</option>
-    </select>
-
-    <select name="prioritas" onchange="this.form.submit()" class="rounded-lg border border-abu-muda bg-white py-1.5 pl-3 pr-9 text-sm">
-        <option value="">Semua prioritas</option>
-        <option value="Kritis" {{ $prioritas === 'Kritis' ? 'selected' : '' }}>Kritis</option>
-        <option value="Sedang" {{ $prioritas === 'Sedang' ? 'selected' : '' }}>Sedang</option>
-        <option value="Rendah" {{ $prioritas === 'Rendah' ? 'selected' : '' }}>Rendah</option>
-    </select>
-</form>
-@endunless
-
-<div class="bg-white rounded-lg shadow overflow-x-auto">
-    <table class="w-full text-sm text-left">
-        <thead class="bg-gray-100">
-            <tr>
-                <th class="px-4 py-3">No</th>
-                <th class="px-4 py-3">User</th>
-                <th class="px-4 py-3">Kategori</th>
-                <th class="px-4 py-3">Judul</th>
-                <th class="px-4 py-3">Foto</th>
-                <th class="px-4 py-3">Alamat</th>
-                <th class="px-4 py-3">Prioritas</th>
-                <th class="px-4 py-3">Status</th>
-                <th class="px-4 py-3">Aksi</th>
-            </tr>
-        </thead>
-        <tbody>
-            @forelse ($laporan as $v)
-                @php
-                    $prioritasClass = match ($v->tingkat_prioritas) {
-                        'Kritis' => 'bg-merah/10 text-merah',
-                        'Sedang' => 'bg-oranye/10 text-oranye',
-                        default => 'bg-kuning/20 text-yellow-700',
-                    };
-                @endphp
-                <tr class="border-b">
-                    <td class="px-4 py-3">{{ $loop->iteration }}</td>
-                    <td class="px-4 py-3">{{ $v->user->nama ?? '-' }}</td>
-                    <td class="px-4 py-3">{{ $v->kategori->nama_kategori ?? '-' }}</td>
-                    <td class="px-4 py-3">{{ $v->judul }}</td>
-                    <td class="px-4 py-3">
-                        @if ($v->foto)
-                            <img src="{{ asset('storage/' . $v->foto) }}" width="60" class="rounded object-cover">
-                        @else
-                            <span class="text-gray-500">Tidak ada foto</span>
-                        @endif
-                    </td>
-                    <td class="px-4 py-3">{{ $v->alamat }}</td>
-                    <td class="px-4 py-3">
-                        <span class="rounded-full px-2.5 py-1 text-xs font-medium {{ $prioritasClass }}">
-                            {{ $v->tingkat_prioritas }}
-                        </span>
-                    </td>
-                    <td class="px-4 py-3">{{ $v->status }}</td>
-                    <td class="px-4 py-3 whitespace-nowrap">
-                        <a href="{{ route('instansi.laporan.show', $v->id) }}" class="text-cyan-4 hover:underline">
-                            Tinjau
-                        </a>
-
-                        @if ($v->status === 'Menunggu')
-                            <form action="{{ route('instansi.laporan.verify', $v->id) }}" method="POST" class="mt-1 inline-flex gap-2">
-                                @csrf
-                                <input type="hidden" name="status" value="Diverifikasi">
-                                <button type="submit" class="text-hijau hover:underline">Setujui</button>
-                            </form>
-
-                            <form action="{{ route('instansi.laporan.verify', $v->id) }}" method="POST" class="mt-1 inline-flex gap-2"
-                                  onsubmit="return confirm('Tolak laporan ini?')">
-                                @csrf
-                                <input type="hidden" name="status" value="Ditolak">
-                                <button type="submit" class="text-merah hover:underline">Tolak</button>
-                            </form>
-                        @endif
-                    </td>
-                </tr>
-            @empty
-                <tr>
-                    <td colspan="9" class="px-4 py-6 text-center">
-                        @if (request()->routeIs('instansi.verifikasi.index'))
-                            Tidak ada laporan yang perlu diverifikasi saat ini.
-                        @else
-                            Belum ada data laporan.
-                        @endif
-                    </td>
-                </tr>
-            @endforelse
-        </tbody>
-    </table>
 </div>
-
 @endsection
