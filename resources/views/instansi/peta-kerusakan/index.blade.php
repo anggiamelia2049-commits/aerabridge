@@ -46,9 +46,6 @@
         </select>
     </label>
 
-    <button type="button" id="filter-reset" class="self-end rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-cyan-6 hover:bg-gray-50">
-        Atur ulang
-    </button>
 </div>
 
 {{-- ==================== RINGKASAN ==================== --}}

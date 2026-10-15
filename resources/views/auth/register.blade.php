@@ -13,8 +13,8 @@
                 Laman Layanan Publik
             </p>
 
-            <h1 class="text-[22px] font-bold leading-[1.05] mb-4.5">
-                Satu akun untuk semua layanan anda
+            <h1 class="text-[28px] font-bold leading-[1.07] whitespace-nowrap mb-4.5">
+                Satu akun untuk semua<br>layanan anda
             </h1>
 
             <p class="text-[14px] leading-relaxed text-[#D9D9D9]">
@@ -23,22 +23,22 @@
 
             <div class="w-full h-px bg-white/20 my-5"></div>
 
-            <div class="space-y-2 text-[13px] text-[#D9D9D9]">
-                <p class="flex gap-2">
-                    <span class="text-white font-semibold">1.</span>
+            <ol class="space-y-3 text-[13px] leading-snug text-[#D9D9D9]">
+                <li class="flex items-start gap-3">
+                    <span class="w-5 shrink-0 font-semibold tabular-nums text-white">1.</span>
                     <span>Isi data kependudukan &amp; kontak</span>
-                </p>
+                </li>
 
-                <p class="flex gap-2">
-                    <span class="text-white font-semibold">2.</span>
+                <li class="flex items-start gap-3">
+                    <span class="w-5 shrink-0 font-semibold tabular-nums text-white">2.</span>
                     <span>Buat nama pengguna dan kata sandi</span>
-                </p>
+                </li>
 
-                <p class="flex gap-2">
-                    <span class="text-white font-semibold">3.</span>
+                <li class="flex items-start gap-3">
+                    <span class="w-5 shrink-0 font-semibold tabular-nums text-white">3.</span>
                     <span>Konfirmasi email untuk mulai</span>
-                </p>
-            </div>
+                </li>
+            </ol>
         </div>
     </div>
 
