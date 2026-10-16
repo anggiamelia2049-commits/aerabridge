@@ -122,7 +122,7 @@
 
                         <tr>
                             <th class="table-light">Diverifikasi Oleh</th>
-                            <td>{{ $laporan->diverifikasiOleh->nama ?? '-' }}</td>
+                            <td>{{ $laporan->diverifikasiOleh->name ?? '-' }}</td>
                         </tr>
                     </tbody>
                 </table>

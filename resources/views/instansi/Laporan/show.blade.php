@@ -43,7 +43,7 @@
                            class="ml-2 text-cyan-4 hover:underline">Buka peta</a>
                     </p>
                 </div>
-                <div><p class="text-xs text-gray-500">Diverifikasi Oleh</p><p class="font-semibold">{{ $laporan->diverifikasiOleh->nama ?? '-' }}</p></div>
+                <div><p class="text-xs text-gray-500">Diverifikasi Oleh</p><p class="font-semibold">{{ $laporan->diverifikasiOleh->name ?? '-' }}</p></div>
             </div>
 
             <div>
@@ -103,7 +103,7 @@
                 <form action="{{ route('instansi.laporan.verify', $laporan->id) }}" method="POST"
                       class="rounded-xl border border-abu-muda bg-gray-50 p-4 space-y-4">
                     @csrf
-                    @method('PUT')
+
 
                     <div class="max-w-xs">
                         <label for="tingkat_prioritas" class="block text-sm font-semibold text-cyan-6 mb-1.5">Tingkat Prioritas</label>
