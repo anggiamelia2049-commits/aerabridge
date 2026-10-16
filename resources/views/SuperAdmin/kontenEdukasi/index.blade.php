@@ -5,91 +5,131 @@
 @section('content')
 @php
     $badge = [
-        'publish'  => 'bg-[#4CAF50]/15 text-[#2e7d32]',
-        'draft'    => 'bg-[#FFC107]/20 text-[#8a6500]',
-        'nonaktif' => 'bg-gray-200 text-gray-600',
+        'publish'  => 'bg-hijau/10 text-hijau',
+        'draft'    => 'bg-yellow-100 text-yellow-700',
+        'nonaktif' => 'bg-abu-muda text-abu-tua',
     ];
 @endphp
 
-<div class="flex flex-wrap items-center justify-between gap-3 mb-6">
-    <div>
-        <h1 class="text-2xl font-bold text-[#0C343D]">Konten Edukasi</h1>
-        <p class="text-sm text-[#4A4A4A]">Kelola materi edukasi perawatan fasilitas publik.</p>
-    </div>
-    <a href="{{ route('super_admin.konten-edukasi.create') }}"
-        class="px-4 py-2.5 text-sm font-semibold text-white rounded-lg bg-[#45818E] hover:bg-[#0C343D]">
-        + Tambah Konten
-    </a>
-</div>
+<div class="p-6">
+    @if (session('success'))
+        <div class="mb-4 rounded-lg border border-green-300 bg-green-50 px-4 py-3 text-sm font-medium text-hijau">
+            {{ session('success') }}
+        </div>
+    @endif
 
-@if (session('success'))
-    <div class="p-4 mb-5 text-sm rounded-lg border border-[#4CAF50]/30 bg-[#4CAF50]/10 text-[#2e7d32]">
-        {{ session('success') }}
-    </div>
-@endif
+    <div class="bg-white rounded-2xl shadow overflow-hidden">
+        {{-- Header --}}
+        <div class="flex items-center justify-between gap-4 px-6 py-5">
+            <p class="text-sm text-gray-600">
+                Kelola materi edukasi perawatan fasilitas publik.
+            </p>
 
-<div class="bg-white rounded-xl border border-[#D9D9D9] overflow-hidden">
-    <div class="overflow-x-auto">
-        <table class="w-full text-sm text-left text-[#4A4A4A]">
-            <thead class="text-xs uppercase bg-[#0C343D] text-white">
-                <tr>
-                    <th class="px-4 py-3">No</th>
-                    <th class="px-4 py-3">Thumbnail</th>
-                    <th class="px-4 py-3">Judul</th>
-                    <th class="px-4 py-3">Kategori</th>
-                    <th class="px-4 py-3">Penulis</th>
-                    <th class="px-4 py-3">Status</th>
-                    <th class="px-4 py-3 text-center">Aksi</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-[#D9D9D9]">
-                @forelse ($konten as $v)
-                    <tr class="hover:bg-[#A9D6DD]/20">
-                        <td class="px-4 py-3">{{ $loop->iteration }}</td>
-                        <td class="px-4 py-3">
-                            @if ($v->thumbnail)
-                                <img src="{{ asset('storage/' . $v->thumbnail) }}" alt="Thumbnail {{ $v->judul }}"
-                                    class="object-cover w-16 h-16 rounded-lg border border-[#D9D9D9]">
-                            @else
-                                <span class="flex items-center justify-center w-16 h-16 text-[10px] text-gray-400 rounded-lg bg-gray-100 border border-[#D9D9D9]">Tidak ada</span>
-                            @endif
-                        </td>
-                        <td class="px-4 py-3 max-w-xs">
-                            <div class="font-semibold text-[#0C343D]">{{ $v->judul }}</div>
-                            <div class="mt-0.5 text-xs text-gray-500">{{ \Illuminate\Support\Str::limit(strip_tags($v->isi), 80) }}</div>
-                        </td>
-                        <td class="px-4 py-3">
-                            <span class="px-2.5 py-1 text-xs font-medium rounded-full bg-[#A9D6DD]/60 text-[#0C343D]">{{ $v->kategori }}</span>
-                        </td>
-                        <td class="px-4 py-3">{{ $v->penulisUser->nama ?? '-' }}</td>
-                        <td class="px-4 py-3">
-                            <span class="px-2.5 py-1 text-xs font-semibold rounded-full {{ $badge[$v->status] ?? 'bg-gray-200 text-gray-600' }}">
-                                {{ ucfirst($v->status) }}
-                            </span>
-                        </td>
-                        <td class="px-4 py-3">
-                            <div class="flex items-center justify-center gap-2">
-                                <a href="{{ route('super_admin.konten-edukasi.show', $v->id) }}"
-                                    class="px-3 py-1.5 text-xs font-medium rounded-lg border border-[#D9D9D9] hover:bg-gray-50">Detail</a>
-                                <a href="{{ route('super_admin.konten-edukasi.edit', $v->id) }}"
-                                    class="px-3 py-1.5 text-xs font-medium text-white rounded-lg bg-[#45818E] hover:bg-[#0C343D]">Edit</a>
-                                <form action="{{ route('super_admin.konten-edukasi.destroy', $v->id) }}" method="POST" class="inline">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit"
-                                        onclick="return confirm('Apakah Anda yakin ingin menghapus konten ini?')"
-                                        class="px-3 py-1.5 text-xs font-medium text-white rounded-lg bg-[#E53935] hover:bg-[#c62828]">Hapus</button>
-                                </form>
-                            </div>
-                        </td>
-                    </tr>
-                @empty
+            <a href="{{ route('super_admin.konten-edukasi.create') }}"
+               class="shrink-0 px-5 py-2.5 rounded-lg bg-cyan-4 hover:bg-cyan-6 text-white text-sm font-bold transition">
+                + Tambah Konten
+            </a>
+        </div>
+
+        {{-- Tabel --}}
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm text-left">
+                <thead class="bg-cyan-6 text-white">
                     <tr>
-                        <td colspan="7" class="px-4 py-10 text-center text-gray-500">Belum ada konten edukasi.</td>
+                        <th class="px-4 py-3.5 font-semibold">No</th>
+                        <th class="px-4 py-3.5 font-semibold">Thumbnail</th>
+                        <th class="px-4 py-3.5 font-semibold">Judul</th>
+                        <th class="px-4 py-3.5 font-semibold">Kategori</th>
+                        <th class="px-4 py-3.5 font-semibold">Penulis</th>
+                        <th class="px-4 py-3.5 font-semibold">Status</th>
+                        <th class="px-4 py-3.5 font-semibold text-center">Aksi</th>
                     </tr>
-                @endforelse
-            </tbody>
-        </table>
+                </thead>
+
+                <tbody class="divide-y divide-gray-200 text-gray-700">
+                    @forelse ($konten as $v)
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-4 py-3.5">
+                                {{ $loop->iteration }}
+                            </td>
+
+                            <td class="px-4 py-3.5">
+                                @if ($v->thumbnail)
+                                    <img
+                                        src="{{ asset('storage/' . $v->thumbnail) }}"
+                                        alt="Thumbnail {{ $v->judul }}"
+                                        class="w-12 h-12 object-cover rounded-lg border border-abu-muda"
+                                    >
+                                @else
+                                    <div class="w-12 h-12 rounded-lg bg-gray-100 border border-abu-muda flex items-center justify-center text-[10px] text-gray-400">
+                                        Tidak ada
+                                    </div>
+                                @endif
+                            </td>
+
+                            <td class="px-4 py-3.5 max-w-xs">
+                                <div class="font-semibold">
+                                    {{ $v->judul }}
+                                </div>
+                                <div class="mt-1 text-xs text-gray-500">
+                                    {{ \Illuminate\Support\Str::limit(strip_tags($v->isi), 80) }}
+                                </div>
+                            </td>
+
+                            <td class="px-4 py-3.5">
+                                <span class="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-cyan-3/20 text-cyan-6">
+                                    {{ $v->kategori }}
+                                </span>
+                            </td>
+
+                            <td class="px-4 py-3.5 whitespace-nowrap">
+                                {{ $v->penulisUser->nama ?? '-' }}
+                            </td>
+
+                            <td class="px-4 py-3.5">
+                                <span @class([
+                                    'inline-block px-3 py-1 rounded-full text-xs font-semibold',
+                                    $badge[$v->status] ?? 'bg-abu-muda text-abu-tua',
+                                ])>
+                                    {{ ucfirst($v->status) }}
+                                </span>
+                            </td>
+
+                            <td class="px-4 py-3.5">
+                                <div class="flex items-center justify-center gap-4 text-sm font-semibold">
+                                    <a href="{{ route('super_admin.konten-edukasi.show', $v->id) }}"
+                                       class="text-cyan-4 hover:underline">
+                                        Detail
+                                    </a>
+
+                                    <a href="{{ route('super_admin.konten-edukasi.edit', $v->id) }}"
+                                       class="text-oranye hover:underline">
+                                        Edit
+                                    </a>
+
+                                    <form action="{{ route('super_admin.konten-edukasi.destroy', $v->id) }}"
+                                          method="POST"
+                                          onsubmit="return confirm('Yakin ingin menghapus konten ini?')">
+                                        @csrf
+                                        @method('DELETE')
+
+                                        <button type="submit" class="text-merah hover:underline">
+                                            Hapus
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="7" class="px-4 py-10 text-center text-gray-400">
+                                Belum ada konten edukasi.
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 @endsection

@@ -12,6 +12,7 @@ use App\Http\Controllers\SuperAdmin\KontenEdukasiController as SuperAdminKontenE
 use App\Http\Controllers\SuperAdmin\NotifikasiController as SuperAdminNotifikasiController;
 use App\Http\Controllers\SuperAdmin\PenugasanController as SuperAdminPenugasanController;
 use App\Http\Controllers\SuperAdmin\SlaKonfigurasiController as SuperAdminSlaKonfigurasiController;
+use App\Http\Controllers\SuperAdmin\TenggatPerbaikanController;
 use App\Http\Controllers\SuperAdmin\TemplatePesanController as SuperAdminTemplatePesanController;
 use App\Http\Controllers\SuperAdmin\TimSatgasController as SuperAdminTimSatgasController;
 use App\Http\Controllers\SuperAdmin\LaporanController as SuperAdminLaporanController;
@@ -77,6 +78,7 @@ Route::middleware('auth')->group(function () {
         Route::resource('kategori', SuperAdminKategoriKerusakanController::class);
         Route::resource('tim-satgas', SuperAdminTimSatgasController::class);
         Route::resource('sla-konfigurasi', SuperAdminSlaKonfigurasiController::class);
+        Route::resource('tenggat-perbaikan', TenggatPerbaikanController::class);
         Route::resource('template-pesan', SuperAdminTemplatePesanController::class);
         Route::resource('hadiah', SuperAdminHadiahController::class);
         Route::resource('konten-edukasi', SuperAdminKontenEdukasiController::class);

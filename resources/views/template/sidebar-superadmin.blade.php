@@ -1,8 +1,19 @@
 {{-- resources/views/template/sidebar-superadmin.blade.php --}}
+<style>
+    [x-cloak] { display: none !important; }
+    .sidebar-root a, .sidebar-root button {
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+    }
+    .sidebar-root a:focus-visible, .sidebar-root button:focus-visible {
+        outline: 2px solid rgba(255,255,255,.9);
+        outline-offset: 2px;
+    }
+</style>
 <div x-data="{
     kelolaLaporan: {{ request()->routeIs('super_admin.laporan.*') ? 'true' : 'false' }},
-    konfigurasi: {{ request()->routeIs('super_admin.kategori.*', 'super_admin.sla-konfigurasi.*', 'super_admin.template-pesan.*', 'super_admin.hadiah.*', 'super_admin.konten-edukasi.*') ? 'true' : 'false' }}
-}" class="sidebar-root flex h-full w-64 flex-col bg-cyan-6 text-white">
+    konfigurasi: {{ request()->routeIs('super_admin.kategori.*', 'super_admin.sla-konfigurasi.*', 'super_admin.template-pesan.*', 'super_admin.hadiah.*', 'super_admin.tenggat-perbaikan.*', 'super_admin.konten-edukasi.*') ? 'true' : 'false' }}
+}" class="sidebar-root relative z-30 flex h-full w-64 min-w-64 flex-col bg-cyan-6 text-white" style="pointer-events: auto;">
 
     {{-- Logo --}}
     <div class="px-4 pt-4 pb-4">
@@ -59,7 +70,7 @@
 
             {{-- Kelola Laporan (dropdown) → satu controller super_admin.laporan.*, sub-item pakai filter status --}}
             <li>
-                <button @click="kelolaLaporan = !kelolaLaporan"
+                <button type="button" @click="kelolaLaporan = !kelolaLaporan" :aria-expanded="kelolaLaporan.toString()" aria-controls="submenu-laporan"
                     class="flex w-full items-center justify-between gap-3 rounded-lg px-3 py-2.5 text-left font-medium text-cyan-muda transition hover:bg-white/5 hover:text-white">
                     <span class="flex items-center gap-3">
                         <svg class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"
@@ -75,7 +86,7 @@
                     </svg>
                 </button>
 
-                <ul x-show="kelolaLaporan" x-collapse class="mt-1 space-y-1 pl-11 text-cyan-muda">
+                <ul id="submenu-laporan" x-cloak x-show="kelolaLaporan" x-transition.opacity.duration.150ms class="mt-1 space-y-1 pl-11 text-cyan-muda">
                     <li>
                         <a href="{{ route('super_admin.laporan.index', ['status' => 'menunggu_verifikasi']) }}"
                             class="block rounded-lg px-3 py-2 transition {{ request('status') === 'menunggu_verifikasi' ? 'bg-white/10 text-white' : 'text-cyan-muda hover:bg-white/5 hover:text-white' }}">
@@ -111,7 +122,7 @@
 
             {{-- Konfigurasi (dropdown) → kategori, sla-konfigurasi, template-pesan, hadiah, konten-edukasi --}}
             <li>
-                <button @click="konfigurasi = !konfigurasi"
+                <button type="button" @click="konfigurasi = !konfigurasi" :aria-expanded="konfigurasi.toString()" aria-controls="submenu-konfigurasi"
                     class="flex w-full items-center justify-between gap-3 rounded-lg px-3 py-2.5 text-left font-medium text-cyan-muda transition hover:bg-white/5 hover:text-white">
                     <span class="flex items-center gap-3">
                         <svg class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"
@@ -128,7 +139,7 @@
                     </svg>
                 </button>
 
-                <ul x-show="konfigurasi" x-collapse class="mt-1 space-y-1 pl-11 text-cyan-muda">
+                <ul id="submenu-konfigurasi" x-cloak x-show="konfigurasi" x-transition.opacity.duration.150ms class="mt-1 space-y-1 pl-11 text-cyan-muda">
                     <li>
                         <a href="{{ route('super_admin.kategori.index') }}"
                             class="block rounded-lg px-3 py-2 transition {{ request()->routeIs('super_admin.kategori.*') ? 'bg-white/10 text-white' : 'text-cyan-muda hover:bg-white/5 hover:text-white' }}">
@@ -148,8 +159,8 @@
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route('super_admin.hadiah.index') }}"
-                            class="block rounded-lg px-3 py-2 transition {{ request()->routeIs('super_admin.deteksiAi.*') ? 'bg-white/10 text-white' : 'text-cyan-muda hover:bg-white/5 hover:text-white' }}">
+                        <a href="{{ route('super_admin.tenggat-perbaikan.index') }}"
+                            class="block rounded-lg px-3 py-2 transition {{ request()->routeIs('super_admin.tenggat-perbaikan.*') ? 'bg-white/10 text-white' : 'text-cyan-muda hover:bg-white/5 hover:text-white' }}">
                             Tenggat Perbaikan
                         </a>
                     </li>

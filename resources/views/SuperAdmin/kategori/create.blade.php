@@ -1,107 +1,89 @@
+
 @extends('template.layout')
 
-@section('title', 'Tambah Kategori Kerusakan')
-
 @section('content')
+<div class="p-6">
+    <div class="bg-white rounded-2xl shadow overflow-hidden">
 
-<form action="{{ route('super_admin.kategori.store') }}" method="POST">
+        <div class="px-6 py-5">
+            <p class="text-sm text-gray-600">
+                Tambahkan kategori kerusakan baru untuk laporan warga.
+            </p>
+        </div>
 
-    @csrf
+        <form action="{{ route('super_admin.kategori.store') }}" method="POST">
+            @csrf
 
-    Nama Kategori :
-    <input
-        type="text"
-        name="nama_kategori"
-        value="{{ old('nama_kategori') }}"
-        required
-    >
+            <div class="px-6 pb-6 space-y-5">
+                @if ($errors->any())
+                    <div class="rounded-lg border border-red-300 bg-red-50 px-4 py-3 text-sm text-merah">
+                        <ul class="list-disc list-inside">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
 
-    @if ($errors->has('nama_kategori'))
-        <span>{{ $errors->first('nama_kategori') }}</span>
-    @endif
+                <div>
+                    <label for="nama_kategori" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Nama Kategori
+                    </label>
+                    <input type="text" id="nama_kategori" name="nama_kategori"
+                           value="{{ old('nama_kategori') }}" required
+                           class="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-cyan-4 focus:ring-2 focus:ring-cyan-4/20 outline-none">
+                </div>
 
-    <br><br>
+                <div>
+                    <label for="icon" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Icon
+                    </label>
+                    <input type="text" id="icon" name="icon"
+                           value="{{ old('icon') }}" placeholder="Contoh: 🕳️" required
+                           class="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-cyan-4 focus:ring-2 focus:ring-cyan-4/20 outline-none">
+                </div>
 
+                <div>
+                    <label for="deskripsi" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Deskripsi
+                    </label>
+                    <textarea id="deskripsi" name="deskripsi" rows="4" required
+                              class="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-cyan-4 focus:ring-2 focus:ring-cyan-4/20 outline-none">{{ old('deskripsi') }}</textarea>
+                </div>
 
-    Icon :
-    <input
-        type="text"
-        name="icon"
-        value="{{ old('icon') }}"
-        placeholder="Contoh: 🕳️"
-        required
-    >
+                <div>
+                    <label for="warna_marker" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Warna Marker
+                    </label>
+                    <input type="text" id="warna_marker" name="warna_marker"
+                           value="{{ old('warna_marker') }}" placeholder="#FF0000" required
+                           class="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-cyan-4 focus:ring-2 focus:ring-cyan-4/20 outline-none">
+                </div>
 
-    @if ($errors->has('icon'))
-        <span>{{ $errors->first('icon') }}</span>
-    @endif
+                <div>
+                    <label for="status" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Status
+                    </label>
+                    <select id="status" name="status" required
+                            class="w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm focus:border-cyan-4 focus:ring-2 focus:ring-cyan-4/20 outline-none">
+                        <option value="Aktif" {{ old('status', 'Aktif') === 'Aktif' ? 'selected' : '' }}>Aktif</option>
+                        <option value="Nonaktif" {{ old('status') === 'Nonaktif' ? 'selected' : '' }}>Nonaktif</option>
+                    </select>
+                </div>
+            </div>
 
-    <br><br>
+            <div class="flex items-center gap-4 border-t border-gray-200 px-6 py-5">
+                <button type="submit"
+                        class="px-5 py-2.5 rounded-lg bg-cyan-4 hover:bg-cyan-6 text-white text-sm font-bold transition">
+                    Simpan
+                </button>
 
-
-    Deskripsi :
-    <textarea
-        name="deskripsi"
-        required
-    >{{ old('deskripsi') }}</textarea>
-
-    @if ($errors->has('deskripsi'))
-        <span>{{ $errors->first('deskripsi') }}</span>
-    @endif
-
-    <br><br>
-
-
-    Warna Marker :
-    <input
-        type="text"
-        name="warna_marker"
-        value="{{ old('warna_marker') }}"
-        placeholder="Contoh: #FF0000"
-        required
-    >
-
-    @if ($errors->has('warna_marker'))
-        <span>{{ $errors->first('warna_marker') }}</span>
-    @endif
-
-    <br><br>
-
-
-    Status :
-    <select name="status" required>
-
-        <option
-            value="Aktif"
-            {{ old('status', 'Aktif') == 'Aktif' ? 'selected' : '' }}
-        >
-            Aktif
-        </option>
-
-        <option
-            value="Nonaktif"
-            {{ old('status') == 'Nonaktif' ? 'selected' : '' }}
-        >
-            Nonaktif
-        </option>
-
-    </select>
-
-    @if ($errors->has('status'))
-        <span>{{ $errors->first('status') }}</span>
-    @endif
-
-    <br><br>
-
-
-    <button type="submit">
-        Save
-    </button>
-
-    <a href="{{ route('super_admin.kategori.index') }}">
-        Back
-    </a>
-
-</form>
-
+                <a href="{{ route('super_admin.kategori.index') }}"
+                   class="text-sm font-semibold text-gray-600 hover:underline">
+                    Batal
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
 @endsection
