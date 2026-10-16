@@ -3,140 +3,60 @@
 @section('title', 'Detail Laporan')
 
 @section('content')
-<div class="container-fluid px-0">
+<div class="p-6">
+    <div class="max-w-4xl mx-auto bg-white rounded-2xl shadow overflow-hidden">
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h3 class="fw-bold text-dark mb-1">Detail Laporan</h3>
-            <p class="text-muted small mb-0">Informasi lengkap laporan masyarakat.</p>
+        <div class="px-6 py-5">
+            <h2 class="text-lg font-bold text-cyan-6">{{ $laporan->judul }}</h2>
+            <p class="text-sm text-gray-600">Informasi lengkap laporan masyarakat.</p>
         </div>
 
-        <a href="{{ route('petugas.laporan.index') }}"
-           class="btn btn-outline-secondary btn-sm">
-            &larr; Kembali
-        </a>
-    </div>
+        <div class="px-6 pb-6 flex flex-col sm:flex-row gap-6 text-sm text-gray-700">
 
-    <div class="card border-0 shadow-sm">
-        <div class="card-body p-3">
-
-            <h5 class="fw-bold text-dark mb-3">
-                {{ $laporan->judul }}
-            </h5>
-
-            <div class="table-responsive">
-                <table class="table table-bordered align-middle mb-0">
-                    <tbody>
-                        <tr>
-                            <th class="table-light" style="width: 200px;">Pelapor</th>
-                            <td>{{ $laporan->user->nama ?? '-' }}</td>
-                        </tr>
-
-                        <tr>
-                            <th class="table-light">Kategori</th>
-                            <td>{{ $laporan->kategori->nama_kategori ?? '-' }}</td>
-                        </tr>
-
-                        <tr>
-                            <th class="table-light">Instansi</th>
-                            <td>{{ $laporan->instansi->nama_instansi ?? '-' }}</td>
-                        </tr>
-
-                        <tr>
-                            <th class="table-light">Judul</th>
-                            <td>{{ $laporan->judul ?? '-' }}</td>
-                        </tr>
-
-                        <tr>
-                            <th class="table-light">Deskripsi</th>
-                            <td style="white-space: pre-line;">{{ $laporan->deskripsi ?? '-' }}</td>
-                        </tr>
-
-                        <tr>
-                            <th class="table-light">Foto Laporan</th>
-                            <td>
-                                @if ($laporan->foto)
-                                    <a href="{{ asset('storage/' . $laporan->foto) }}"
-                                       target="_blank">
-                                        <img src="{{ asset('storage/' . $laporan->foto) }}"
-                                             alt="Foto laporan"
-                                             class="rounded border"
-                                             style="width: 200px; max-height: 200px; object-fit: cover;">
-                                    </a>
-                                @else
-                                    <span class="text-muted">Tidak ada foto</span>
-                                @endif
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <th class="table-light">Latitude</th>
-                            <td>{{ $laporan->latitude ?? '-' }}</td>
-                        </tr>
-
-                        <tr>
-                            <th class="table-light">Longitude</th>
-                            <td>{{ $laporan->longitude ?? '-' }}</td>
-                        </tr>
-
-                        <tr>
-                            <th class="table-light">Alamat</th>
-                            <td>{{ $laporan->alamat ?? '-' }}</td>
-                        </tr>
-
-                        <tr>
-                            <th class="table-light">Tingkat Prioritas</th>
-                            <td>
-                                @if ($laporan->tingkat_prioritas == 'Krisis')
-                                    <span class="badge bg-danger fw-normal">Krisis</span>
-                                @elseif ($laporan->tingkat_prioritas == 'Sedang')
-                                    <span class="badge bg-warning text-dark fw-normal">Sedang</span>
-                                @elseif ($laporan->tingkat_prioritas == 'Rendah')
-                                    <span class="badge bg-success fw-normal">Rendah</span>
-                                @else
-                                    <span class="badge bg-secondary fw-normal">
-                                        {{ $laporan->tingkat_prioritas ?? '-' }}
-                                    </span>
-                                @endif
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <th class="table-light">Status</th>
-                            <td>
-                                @if ($laporan->status == 'Selesai')
-                                    <span class="badge bg-success fw-normal">Selesai</span>
-                                @elseif ($laporan->status == 'Diproses')
-                                    <span class="badge bg-primary fw-normal">Diproses</span>
-                                @elseif ($laporan->status == 'Diverifikasi')
-                                    <span class="badge bg-info text-dark fw-normal">Diverifikasi</span>
-                                @elseif ($laporan->status == 'Ditolak')
-                                    <span class="badge bg-danger fw-normal">Ditolak</span>
-                                @else
-                                    <span class="badge bg-secondary fw-normal">
-                                        {{ $laporan->status ?? 'Menunggu' }}
-                                    </span>
-                                @endif
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <th class="table-light">Diverifikasi Oleh</th>
-                            <td>{{ $laporan->diverifikasiOleh->name ?? '-' }}</td>
-                        </tr>
-                    </tbody>
-                </table>
+            <div class="shrink-0">
+                @if ($laporan->foto)
+                    <a href="{{ asset('storage/' . $laporan->foto) }}" target="_blank" rel="noopener">
+                        <img src="{{ asset('storage/' . $laporan->foto) }}" alt="Foto laporan"
+                             class="w-48 h-48 rounded-xl object-cover border border-abu-muda">
+                    </a>
+                @else
+                    <div class="w-48 h-48 rounded-xl bg-gray-100 border border-abu-muda flex items-center justify-center text-xs text-gray-400 text-center px-2">Tidak ada foto</div>
+                @endif
             </div>
 
-            <div class="mt-3">
-                <a href="{{ route('petugas.laporan.index') }}"
-                   class="btn btn-outline-secondary btn-sm">
-                    &larr; Kembali ke Daftar Laporan
-                </a>
-            </div>
+            <div class="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
+                <div><p class="text-xs text-gray-500">Pelapor</p><p class="font-semibold">{{ $laporan->user->nama ?? '-' }}</p></div>
+                <div><p class="text-xs text-gray-500">Kategori</p><p class="font-semibold">{{ $laporan->kategori->nama_kategori ?? '-' }}</p></div>
+                <div><p class="text-xs text-gray-500">Instansi</p><p class="font-semibold">{{ $laporan->instansi->nama_instansi ?? '-' }}</p></div>
+                <div><p class="text-xs text-gray-500">Diverifikasi oleh</p><p class="font-semibold">{{ $laporan->diverifikasiOleh->nama ?? '-' }}</p></div>
 
+                <div>
+                    <p class="text-xs text-gray-500 mb-0.5">Tingkat prioritas</p>
+                    <span class="inline-block whitespace-nowrap rounded-full px-3 py-1 text-xs font-semibold {{ match ((string) ($laporan->tingkat_prioritas)) { 'Kritis' => 'bg-merah/10 text-merah', 'Sedang' => 'bg-oranye/10 text-oranye', 'Rendah' => 'bg-hijau/10 text-hijau', default => 'bg-abu-muda text-abu-tua' } }}">{{ ($laporan->tingkat_prioritas) ?: '-' }}</span>
+                </div>
+                <div>
+                    <p class="text-xs text-gray-500 mb-0.5">Status</p>
+                    <span class="inline-block whitespace-nowrap rounded-full px-3 py-1 text-xs font-semibold {{ match (strtolower((string) ($laporan->status ?? 'Menunggu'))) { 'selesai' => 'bg-hijau/10 text-hijau', 'dalam_proses', 'diproses' => 'bg-oranye/10 text-oranye', 'ditugaskan', 'diverifikasi' => 'bg-cyan-3/20 text-cyan-6', 'dibatalkan', 'ditolak' => 'bg-merah/10 text-merah', default => 'bg-abu-muda text-abu-tua' } }}">{{ ucfirst(str_replace('_', ' ', ($laporan->status ?? 'Menunggu'))) }}</span>
+                </div>
+
+                <div><p class="text-xs text-gray-500">Latitude</p><p class="font-semibold">{{ $laporan->latitude ?? '-' }}</p></div>
+                <div><p class="text-xs text-gray-500">Longitude</p><p class="font-semibold">{{ $laporan->longitude ?? '-' }}</p></div>
+
+                <div class="sm:col-span-2">
+                    <p class="text-xs text-gray-500">Alamat</p>
+                    <p class="font-semibold">{{ $laporan->alamat ?: '-' }}</p>
+                </div>
+
+                <div class="sm:col-span-2">
+                    <p class="text-xs text-gray-500 mb-1">Deskripsi</p>
+                    <div class="rounded-lg border border-abu-muda bg-gray-50 p-4 whitespace-pre-line">{{ $laporan->deskripsi ?: '-' }}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="px-6 pb-6">
+            <a href="{{ route('petugas.laporan.index') }}" class="text-sm text-gray-500 hover:underline">← Kembali ke daftar laporan</a>
         </div>
     </div>
-
 </div>
 @endsection

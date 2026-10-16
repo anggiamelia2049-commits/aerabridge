@@ -1,131 +1,95 @@
-```blade
 @extends('template.layout')
 
 @section('title', 'Penugasan')
 
 @section('content')
-<div class="container-fluid px-0">
+@php
+    $tabs = ['semua' => 'Semua', 'aktif' => 'Aktif', 'prioritas' => 'Prioritas', 'selesai' => 'Selesai'];
+@endphp
 
-    <div class="mb-4">
-        <h3 class="fw-bold text-dark mb-1">Daftar Penugasan</h3>
-        <p class="text-muted small mb-0">Pantau tugas penanganan laporan yang diberikan kepada kamu.</p>
-    </div>
+<div class="p-6">
+    @if (session('success'))
+    <div class="mb-4 rounded-lg border border-hijau/30 bg-hijau/10 px-4 py-3 text-sm font-medium text-hijau" role="status">{{ session('success') }}</div>
+@endif
+@if (session('error'))
+    <div class="mb-4 rounded-lg border border-merah/30 bg-merah/10 px-4 py-3 text-sm font-medium text-merah" role="alert">{{ session('error') }}</div>
+@endif
 
-    @php
-        $tabs = [
-            'semua' => 'Semua',
-            'aktif' => 'Aktif',
-            'prioritas' => 'Prioritas',
-            'selesai' => 'Selesai',
-        ];
-    @endphp
+    <div class="bg-white rounded-2xl shadow overflow-hidden">
 
-    <div class="d-flex flex-wrap gap-2 mb-3">
-        @foreach ($tabs as $key => $label)
-            <a href="{{ route('petugas.penugasan.index', $key === 'semua' ? [] : ['filter' => $key]) }}"
-               class="btn btn-sm {{ $filter === $key ? 'btn-primary' : 'btn-outline-secondary' }}">
-                {{ $label }}
-            </a>
-        @endforeach
-    </div>
+        <div class="flex flex-col gap-4 px-6 py-5 sm:flex-row sm:items-center sm:justify-between">
+            <p class="text-sm text-gray-600">Pantau tugas penanganan laporan yang diberikan kepada kamu.</p>
 
-    <div class="card border-0 shadow-sm">
-        <div class="card-body p-0">
-            <div class="table-responsive">
+            <nav class="flex flex-wrap gap-2" aria-label="Filter penugasan">
+                @foreach ($tabs as $key => $label)
+                    <a href="{{ route('petugas.penugasan.index', $key === 'semua' ? [] : ['filter' => $key]) }}"
+                       @if ($filter === $key) aria-current="page" @endif
+                       class="px-4 py-2 rounded-lg text-sm font-semibold transition
+                              {{ $filter === $key ? 'bg-cyan-4 text-white' : 'border border-gray-300 text-gray-700 hover:bg-gray-50' }}">
+                        {{ $label }}
+                    </a>
+                @endforeach
+            </nav>
+        </div>
 
-                <table class="table table-hover align-middle mb-0">
-                    <thead class="table-light">
-                        <tr>
-                            <th class="px-3 py-3">No</th>
-                            <th class="py-3">Laporan</th>
-                            <th class="py-3">Prioritas</th>
-                            <th class="py-3">Status</th>
-                            <th class="py-3">Tanggal Penugasan</th>
-                            <th class="py-3">SLA</th>
-                            <th class="text-center py-3 pe-3">Aksi</th>
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm text-left">
+                <thead class="bg-cyan-6 text-white">
+                    <tr>
+                        <th class="px-4 py-3.5 font-semibold">No</th>
+                        <th class="px-4 py-3.5 font-semibold">Laporan</th>
+                        <th class="px-4 py-3.5 font-semibold">Prioritas</th>
+                        <th class="px-4 py-3.5 font-semibold">Status</th>
+                        <th class="px-4 py-3.5 font-semibold">Tanggal Penugasan</th>
+                        <th class="px-4 py-3.5 font-semibold">SLA</th>
+                        <th class="px-4 py-3.5 font-semibold text-center">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200 text-gray-700">
+                    @forelse ($penugasan as $item)
+                        @php $terlambat = $item->isOverdue(); @endphp
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-4 py-3.5">{{ $loop->iteration }}</td>
+
+                            <td class="px-4 py-3.5 min-w-[200px] font-semibold">
+                                {{ $item->laporan->judul ?? '-' }}
+                            </td>
+
+                            <td class="px-4 py-3.5">
+                                <span class="inline-block whitespace-nowrap rounded-full px-3 py-1 text-xs font-semibold {{ match ((string) ($item->laporan->tingkat_prioritas ?? null)) { 'Kritis' => 'bg-merah/10 text-merah', 'Sedang' => 'bg-oranye/10 text-oranye', 'Rendah' => 'bg-hijau/10 text-hijau', default => 'bg-abu-muda text-abu-tua' } }}">{{ ($item->laporan->tingkat_prioritas ?? null) ?: '-' }}</span>
+                            </td>
+
+                            <td class="px-4 py-3.5">
+                                <span class="inline-block whitespace-nowrap rounded-full px-3 py-1 text-xs font-semibold {{ match (strtolower((string) ($item->status))) { 'selesai' => 'bg-hijau/10 text-hijau', 'dalam_proses', 'diproses' => 'bg-oranye/10 text-oranye', 'ditugaskan', 'diverifikasi' => 'bg-cyan-3/20 text-cyan-6', 'dibatalkan', 'ditolak' => 'bg-merah/10 text-merah', default => 'bg-abu-muda text-abu-tua' } }}">{{ $item->labelStatus() }}</span>
+                            </td>
+
+                            <td class="px-4 py-3.5 whitespace-nowrap">
+                                {{ $item->tanggal_penugasan ? $item->tanggal_penugasan->format('d-m-Y H:i') : '-' }}
+                            </td>
+
+                            <td class="px-4 py-3.5">
+                                <span class="{{ $terlambat ? 'font-semibold text-merah' : 'text-gray-600' }}">{{ $item->teksSla() }}</span>
+                                @if ($terlambat)
+                                    <span class="block text-xs text-merah">Melewati batas waktu</span>
+                                @endif
+                            </td>
+
+                            <td class="px-4 py-3.5">
+                                <div class="flex items-center justify-center text-sm font-semibold">
+                                    <a href="{{ route('petugas.penugasan.show', $item->id) }}" class="text-cyan-4 hover:underline">Detail</a>
+                                </div>
+                            </td>
                         </tr>
-                    </thead>
-
-                    <tbody>
-                        @forelse ($penugasan as $item)
-                            <tr>
-                                <td class="px-3 text-muted">{{ $loop->iteration }}</td>
-
-                                <td style="min-width: 200px;">
-                                    <span class="fw-semibold text-dark">
-                                        {{ $item->laporan->judul ?? '-' }}
-                                    </span>
-                                </td>
-
-                                <td>
-                                    @if (($item->laporan->tingkat_prioritas ?? '') == 'Krisis')
-                                        <span class="badge bg-danger fw-normal">Krisis</span>
-                                    @elseif (($item->laporan->tingkat_prioritas ?? '') == 'Sedang')
-                                        <span class="badge bg-warning text-dark fw-normal">Sedang</span>
-                                    @elseif (($item->laporan->tingkat_prioritas ?? '') == 'Rendah')
-                                        <span class="badge bg-success fw-normal">Rendah</span>
-                                    @else
-                                        <span class="badge bg-secondary fw-normal">
-                                            {{ $item->laporan->tingkat_prioritas ?? '-' }}
-                                        </span>
-                                    @endif
-                                </td>
-
-                                <td>
-                                    @php
-                                        $status = $item->labelStatus();
-                                    @endphp
-
-                                    @if ($status == 'Selesai' || $status == 'selesai')
-                                        <span class="badge bg-success fw-normal">{{ $status }}</span>
-                                    @elseif ($status == 'Dalam Proses' || $status == 'dalam_proses')
-                                        <span class="badge bg-primary fw-normal">Dalam Proses</span>
-                                    @elseif ($status == 'Dibatalkan' || $status == 'dibatalkan')
-                                        <span class="badge bg-danger fw-normal">Dibatalkan</span>
-                                    @else
-                                        <span class="badge bg-secondary fw-normal">{{ $status }}</span>
-                                    @endif
-                                </td>
-
-                                <td>
-                                    {{ $item->tanggal_penugasan
-                                        ? $item->tanggal_penugasan->format('d-m-Y H:i')
-                                        : '-' }}
-                                </td>
-
-                                <td>
-                                    <span class="{{ $item->isOverdue() ? 'text-danger fw-semibold' : 'text-muted' }}">
-                                        {{ $item->teksSla() }}
-                                    </span>
-                                    @if ($item->isOverdue())
-                                        <small class="text-danger d-block">Melewati batas waktu</small>
-                                    @endif
-                                </td>
-
-                                <td class="text-center pe-3">
-                                    <a href="{{ route('petugas.penugasan.show', $item->id) }}"
-                                       class="btn btn-sm btn-outline-primary">
-                                        Detail
-                                    </a>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="7" class="text-center py-5">
-                                    <p class="text-muted mb-1">Belum ada penugasan.</p>
-                                    <small class="text-muted">
-                                        Penugasan akan muncul di sini saat tersedia.
-                                    </small>
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-
-            </div>
+                    @empty
+                        <tr>
+                            <td colspan="7" class="px-4 py-10 text-center text-gray-400">
+                                Belum ada penugasan{{ $filter !== 'semua' ? ' di tab ini' : '' }}. Tugas baru akan muncul di sini.
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
         </div>
     </div>
-
 </div>
 @endsection
-```

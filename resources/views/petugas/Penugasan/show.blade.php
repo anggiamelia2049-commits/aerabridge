@@ -5,255 +5,138 @@
 @section('content')
 @php
     $laporan = $penugasan->laporan;
-    $adaKoordinat = $laporan->latitude !== null
-        && $laporan->longitude !== null
-        && $laporan->latitude !== ''
-        && $laporan->longitude !== '';
-
-    $status = $penugasan->labelStatus();
+    $adaKoordinat = filled($laporan->latitude) && filled($laporan->longitude);
 @endphp
 
-<div class="container-fluid px-0">
+<div class="p-6">
+    <div class="max-w-4xl mx-auto">
+        @if (session('success'))
+    <div class="mb-4 rounded-lg border border-hijau/30 bg-hijau/10 px-4 py-3 text-sm font-medium text-hijau" role="status">{{ session('success') }}</div>
+@endif
+@if (session('error'))
+    <div class="mb-4 rounded-lg border border-merah/30 bg-merah/10 px-4 py-3 text-sm font-medium text-merah" role="alert">{{ session('error') }}</div>
+@endif
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h3 class="fw-bold text-dark mb-1">Detail Penugasan</h3>
-            <p class="text-muted small mb-0">
-                Informasi tugas dan penanganan laporan masyarakat.
-            </p>
-        </div>
+        <div class="bg-white rounded-2xl shadow overflow-hidden">
 
-        <a href="{{ route('petugas.penugasan.index') }}"
-           class="btn btn-outline-secondary btn-sm">
-            &larr; Kembali
-        </a>
-    </div>
-
-    <div class="card border-0 shadow-sm mb-4">
-        <div class="card-body p-4">
-
-            <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
-                <div>
-                    <h5 class="fw-bold text-dark mb-2">
-                        {{ $laporan->judul ?? 'Tanpa Judul' }}
-                    </h5>
-
-                    <span class="text-muted small">
-                        {{ $laporan->kategori->nama_kategori ?? '-' }}
-                    </span>
+            <div class="flex flex-col gap-3 px-6 py-5 sm:flex-row sm:items-start sm:justify-between">
+                <div class="min-w-0">
+                    <h2 class="text-lg font-bold text-cyan-6">{{ $laporan->judul ?? 'Tanpa judul' }}</h2>
+                    <p class="text-sm text-gray-600">{{ $laporan->kategori->nama_kategori ?? '-' }}</p>
                 </div>
-
-                <div class="d-flex flex-wrap gap-2">
-                    @if ($laporan->tingkat_prioritas == 'Krisis')
-                        <span class="badge bg-danger fw-normal">Krisis</span>
-                    @elseif ($laporan->tingkat_prioritas == 'Sedang')
-                        <span class="badge bg-warning text-dark fw-normal">Sedang</span>
-                    @elseif ($laporan->tingkat_prioritas == 'Rendah')
-                        <span class="badge bg-success fw-normal">Rendah</span>
-                    @else
-                        <span class="badge bg-secondary fw-normal">
-                            {{ $laporan->tingkat_prioritas ?? '-' }}
-                        </span>
-                    @endif
-
-                    @if ($penugasan->status === 'selesai')
-                        <span class="badge bg-success fw-normal">Selesai</span>
-                    @elseif ($penugasan->status === 'dalam_proses')
-                        <span class="badge bg-primary fw-normal">Dalam Proses</span>
-                    @elseif ($penugasan->status === 'dibatalkan')
-                        <span class="badge bg-danger fw-normal">Dibatalkan</span>
-                    @else
-                        <span class="badge bg-secondary fw-normal">
-                            {{ $status }}
-                        </span>
-                    @endif
+                <div class="flex shrink-0 flex-wrap gap-2">
+                    <span class="inline-block whitespace-nowrap rounded-full px-3 py-1 text-xs font-semibold {{ match ((string) ($laporan->tingkat_prioritas)) { 'Kritis' => 'bg-merah/10 text-merah', 'Sedang' => 'bg-oranye/10 text-oranye', 'Rendah' => 'bg-hijau/10 text-hijau', default => 'bg-abu-muda text-abu-tua' } }}">{{ ($laporan->tingkat_prioritas) ?: '-' }}</span>
+                    <span class="inline-block whitespace-nowrap rounded-full px-3 py-1 text-xs font-semibold {{ match (strtolower((string) ($penugasan->status))) { 'selesai' => 'bg-hijau/10 text-hijau', 'dalam_proses', 'diproses' => 'bg-oranye/10 text-oranye', 'ditugaskan', 'diverifikasi' => 'bg-cyan-3/20 text-cyan-6', 'dibatalkan', 'ditolak' => 'bg-merah/10 text-merah', default => 'bg-abu-muda text-abu-tua' } }}">{{ $penugasan->labelStatus() }}</span>
                 </div>
             </div>
 
-            <h6 class="fw-bold mb-3">Informasi Laporan</h6>
+            <div class="px-6 pb-6 text-sm text-gray-700">
 
-            <div class="table-responsive">
-                <table class="table table-bordered align-middle mb-4">
-                    <tbody>
-                        <tr>
-                            <th class="table-light" style="width: 220px;">Kategori</th>
-                            <td>{{ $laporan->kategori->nama_kategori ?? '-' }}</td>
-                        </tr>
+                <h3 class="mb-3 text-sm font-semibold text-cyan-6">Informasi laporan</h3>
+                <div class="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2">
+                    <div><p class="text-xs text-gray-500">Kategori</p><p class="font-semibold">{{ $laporan->kategori->nama_kategori ?? '-' }}</p></div>
+                    <div><p class="text-xs text-gray-500">Instansi</p><p class="font-semibold">{{ $laporan->instansi->nama_instansi ?? '-' }}</p></div>
+                    <div><p class="text-xs text-gray-500">Latitude</p><p class="font-semibold">{{ $laporan->latitude ?? '-' }}</p></div>
+                    <div><p class="text-xs text-gray-500">Longitude</p><p class="font-semibold">{{ $laporan->longitude ?? '-' }}</p></div>
 
-                        <tr>
-                            <th class="table-light">Instansi</th>
-                            <td>{{ $laporan->instansi->nama_instansi ?? '-' }}</td>
-                        </tr>
+                    <div class="sm:col-span-2">
+                        <p class="text-xs text-gray-500">Alamat</p>
+                        <p class="font-semibold">{{ $laporan->alamat ?: '-' }}</p>
+                    </div>
 
-                        <tr>
-                            <th class="table-light">Deskripsi</th>
-                            <td style="white-space: pre-line;">{{ $laporan->deskripsi ?? '-' }}</td>
-                        </tr>
-
-                        <tr>
-                            <th class="table-light">Alamat</th>
-                            <td>{{ $laporan->alamat ?: '-' }}</td>
-                        </tr>
-
-                        <tr>
-                            <th class="table-light">Latitude</th>
-                            <td>{{ $laporan->latitude ?? '-' }}</td>
-                        </tr>
-
-                        <tr>
-                            <th class="table-light">Longitude</th>
-                            <td>{{ $laporan->longitude ?? '-' }}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <h6 class="fw-bold mb-3">Informasi Penugasan</h6>
-
-            <div class="table-responsive">
-                <table class="table table-bordered align-middle mb-0">
-                    <tbody>
-                        <tr>
-                            <th class="table-light" style="width: 220px;">Status Tugas</th>
-                            <td>{{ $status }}</td>
-                        </tr>
-
-                        <tr>
-                            <th class="table-light">Catatan dari Instansi</th>
-                            <td style="white-space: pre-line;">{{ $penugasan->catatan ?: '-' }}</td>
-                        </tr>
-
-                        <tr>
-                            <th class="table-light">Tanggal Penugasan</th>
-                            <td>
-                                {{ $penugasan->tanggal_penugasan
-                                    ? $penugasan->tanggal_penugasan->format('d-m-Y H:i')
-                                    : '-' }}
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <th class="table-light">Batas SLA</th>
-                            <td>
-                                {{ $batasSla ? $batasSla->format('d-m-Y H:i') : '-' }}
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <th class="table-light">Sisa Waktu</th>
-                            <td>
-                                <span class="{{ $overdue ? 'text-danger fw-semibold' : 'text-dark' }}">
-                                    {{ $penugasan->teksSla() }}
-                                </span>
-
-                                @if ($overdue)
-                                    <small class="text-danger d-block">
-                                        Melewati batas waktu penanganan.
-                                    </small>
-                                @endif
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-        </div>
-    </div>
-
-    <div class="row g-4 mb-4">
-
-        <div class="col-md-6">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body p-4">
-                    <h6 class="fw-bold mb-3">Foto Laporan</h6>
-
-                    @if ($laporan->foto)
-                        <a href="{{ asset('storage/' . $laporan->foto) }}"
-                           target="_blank" rel="noopener">
-                            <img src="{{ asset('storage/' . $laporan->foto) }}"
-                                 alt="Foto laporan"
-                                 class="img-fluid rounded border"
-                                 style="max-height: 280px; width: 100%; object-fit: contain;">
-                        </a>
-                    @else
-                        <p class="text-muted small mb-0">Tidak ada foto laporan.</p>
-                    @endif
-                </div>
-            </div>
-        </div>
-
-        @if ($penugasan->status === 'selesai')
-            <div class="col-md-6">
-                <div class="card border-0 shadow-sm h-100">
-                    <div class="card-body p-4">
-                        <h6 class="fw-bold mb-3">Hasil Perbaikan</h6>
-
-                        @if ($penugasan->foto_hasil)
-                            <a href="{{ asset('storage/' . $penugasan->foto_hasil) }}"
-                               target="_blank" rel="noopener">
-                                <img src="{{ asset('storage/' . $penugasan->foto_hasil) }}"
-                                     alt="Foto hasil perbaikan"
-                                     class="img-fluid rounded border mb-3"
-                                     style="max-height: 280px; width: 100%; object-fit: contain;">
-                            </a>
-                        @else
-                            <p class="text-muted small">Tidak ada foto hasil perbaikan.</p>
-                        @endif
-
-                        <p class="text-dark mb-2" style="white-space: pre-line;">{{ $penugasan->catatan_penyelesaian ?: '-' }}</p>
-
-                        @if ($penugasan->tanggal_selesai)
-                            <small class="text-muted">
-                                Dikirim pada
-                                {{ $penugasan->tanggal_selesai->format('d-m-Y H:i') }}
-                            </small>
-                        @endif
+                    <div class="sm:col-span-2">
+                        <p class="mb-1 text-xs text-gray-500">Deskripsi</p>
+                        <div class="rounded-lg border border-abu-muda bg-gray-50 p-4 whitespace-pre-line">{{ $laporan->deskripsi ?: '-' }}</div>
                     </div>
                 </div>
+
+                <h3 class="mb-3 mt-8 border-t border-gray-200 pt-6 text-sm font-semibold text-cyan-6">Informasi penugasan</h3>
+                <div class="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2">
+                    <div><p class="text-xs text-gray-500">Status tugas</p><p class="font-semibold">{{ $penugasan->labelStatus() }}</p></div>
+                    <div>
+                        <p class="text-xs text-gray-500">Tanggal penugasan</p>
+                        <p class="font-semibold">{{ $penugasan->tanggal_penugasan ? $penugasan->tanggal_penugasan->format('d-m-Y H:i') : '-' }}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-500">Batas SLA</p>
+                        <p class="font-semibold">{{ $batasSla ? $batasSla->format('d-m-Y H:i') : '-' }}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-500">Sisa waktu</p>
+                        <p class="font-semibold {{ $overdue ? 'text-merah' : '' }}">{{ $penugasan->teksSla() }}</p>
+                        @if ($overdue)
+                            <p class="text-xs text-merah">Melewati batas waktu penanganan.</p>
+                        @endif
+                    </div>
+
+                    <div class="sm:col-span-2">
+                        <p class="mb-1 text-xs text-gray-500">Catatan dari instansi</p>
+                        <div class="rounded-lg border border-abu-muda bg-gray-50 p-4 whitespace-pre-line">{{ $penugasan->catatan ?: '-' }}</div>
+                    </div>
+                </div>
+
+                <div class="mt-8 grid grid-cols-1 gap-6 border-t border-gray-200 pt-6 {{ $penugasan->status === 'selesai' ? 'md:grid-cols-2' : '' }}">
+                    <div>
+                        <h3 class="mb-3 text-sm font-semibold text-cyan-6">Foto laporan</h3>
+                        @if ($laporan->foto)
+                            <a href="{{ asset('storage/' . $laporan->foto) }}" target="_blank" rel="noopener">
+                                <img src="{{ asset('storage/' . $laporan->foto) }}" alt="Foto laporan"
+                                     class="w-full max-h-72 rounded-xl border border-abu-muda bg-gray-50 object-contain">
+                            </a>
+                        @else
+                            <p class="text-gray-400">Tidak ada foto laporan.</p>
+                        @endif
+                    </div>
+
+                    @if ($penugasan->status === 'selesai')
+                        <div>
+                            <h3 class="mb-3 text-sm font-semibold text-cyan-6">Hasil perbaikan</h3>
+                            @if ($penugasan->foto_hasil)
+                                <a href="{{ asset('storage/' . $penugasan->foto_hasil) }}" target="_blank" rel="noopener">
+                                    <img src="{{ asset('storage/' . $penugasan->foto_hasil) }}" alt="Foto hasil perbaikan"
+                                         class="mb-3 w-full max-h-72 rounded-xl border border-abu-muda bg-gray-50 object-contain">
+                                </a>
+                            @else
+                                <p class="mb-3 text-gray-400">Tidak ada foto hasil perbaikan.</p>
+                            @endif
+                            <div class="rounded-lg border border-abu-muda bg-gray-50 p-4 whitespace-pre-line">{{ $penugasan->catatan_penyelesaian ?: '-' }}</div>
+                            @if ($penugasan->tanggal_selesai)
+                                <p class="mt-2 text-xs text-gray-500">Dikirim pada {{ $penugasan->tanggal_selesai->format('d-m-Y H:i') }}</p>
+                            @endif
+                        </div>
+                    @endif
+                </div>
             </div>
-        @endif
 
+            <div class="flex flex-wrap items-center justify-end gap-3 border-t border-gray-200 px-6 py-5">
+                <a href="{{ route('petugas.penugasan.index') }}"
+                   class="mr-auto text-sm text-gray-500 hover:underline">← Kembali ke daftar</a>
+
+                @if ($adaKoordinat)
+                    <a href="https://www.google.com/maps/dir/?api=1&destination={{ $laporan->latitude }},{{ $laporan->longitude }}"
+                       target="_blank" rel="noopener"
+                       class="px-5 py-2.5 rounded-lg border border-cyan-4 text-sm font-semibold text-cyan-4 hover:bg-cyan-4 hover:text-white transition">
+                        Buka rute di Google Maps
+                    </a>
+                @endif
+
+                @if ($penugasan->status === 'ditugaskan')
+                    <form action="{{ route('petugas.penugasan.update', $penugasan->id) }}" method="POST"
+                          onsubmit="return confirm('Mulai tugas ini sekarang?')">
+                        @csrf
+                        @method('PUT')
+                        <input type="hidden" name="status" value="dalam_proses">
+                        <button type="submit"
+                                class="px-6 py-2.5 rounded-lg bg-cyan-4 hover:bg-cyan-6 text-white text-sm font-bold transition">Mulai tugas</button>
+                    </form>
+                @endif
+
+                @if ($penugasan->status === 'dalam_proses')
+                    <a href="{{ route('petugas.penugasan.edit', $penugasan->id) }}"
+                       class="px-6 py-2.5 rounded-lg bg-cyan-4 hover:bg-cyan-6 text-white text-sm font-bold transition">Isi closing report</a>
+                @endif
+            </div>
+        </div>
     </div>
-
-    <div class="d-flex flex-wrap align-items-center gap-2 mb-4">
-
-        @if ($adaKoordinat)
-            <a href="https://www.google.com/maps/dir/?api=1&destination={{ $laporan->latitude }},{{ $laporan->longitude }}"
-               target="_blank"
-               rel="noopener"
-               class="btn btn-outline-primary btn-sm">
-                Buka Rute di Google Maps
-            </a>
-        @endif
-
-        @if ($penugasan->status === 'ditugaskan')
-            <form action="{{ route('petugas.penugasan.update', $penugasan->id) }}"
-                  method="POST"
-                  onsubmit="return confirm('Mulai tugas ini sekarang?')">
-                @csrf
-                @method('PUT')
-
-                <input type="hidden" name="status" value="dalam_proses">
-
-                <button type="submit" class="btn btn-primary btn-sm">
-                    Mulai Tugas
-                </button>
-            </form>
-        @endif
-
-        @if ($penugasan->status === 'dalam_proses')
-            <a href="{{ route('petugas.penugasan.edit', $penugasan->id) }}"
-               class="btn btn-success btn-sm">
-                Isi Closing Report
-            </a>
-        @endif
-
-        <a href="{{ route('petugas.penugasan.index') }}"
-           class="btn btn-outline-secondary btn-sm">
-            Kembali ke Daftar
-        </a>
-
-    </div>
-
 </div>
 @endsection
