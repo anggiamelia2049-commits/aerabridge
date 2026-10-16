@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('thumbnail')->nullable();
             $table->text('isi');
             $table->string('kategori');
-            $table->foreignId('super_admin')->constrained('users');
+            $table->foreignId('penulis')->constrained('users');
             $table->enum('status', ['draft','publish','nonaktif'])->default('draft');
             $table->timestamps();
         });

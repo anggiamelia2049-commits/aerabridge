@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Laporan;
 use App\Models\KategoriKerusakan;
 use App\Models\Instansi;
+use App\Services\PoinLaporanService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;

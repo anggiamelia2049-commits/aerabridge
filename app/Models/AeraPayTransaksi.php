@@ -13,6 +13,7 @@ class AeraPayTransaksi extends Model
         'laporan_id',
         'jenis_transaksi',
         'nominal',
+        'poin_ditukar',
         'saldo_sebelum',
         'saldo_sesudah',
         'status'

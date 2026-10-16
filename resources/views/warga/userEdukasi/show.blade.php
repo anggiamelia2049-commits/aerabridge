@@ -19,10 +19,10 @@
     </p>
 @else
     <form action="{{ route('warga.user-edukasi.selesai', $konten->id) }}" method="POST">
-        {{ csrf_field() }}
+        @csrf
         @method('PUT')
 
-        <button type="submit">Tandai Selesai (+10 Poin)</button>
+        <button type="submit">Tandai Selesai</button>
     </form>
 @endif
 
