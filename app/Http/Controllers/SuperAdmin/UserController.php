@@ -10,6 +10,9 @@ use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
+
+    private const ROLE_BUTUH_INSTANSI = ['instansi', 'petugas'];
+
     public function index()
     {
         $users = User::with('instansi')->get();
@@ -40,10 +43,10 @@ class UserController extends Controller
             'penyandang_disabilitas' => 'required|in:Ya,Tidak',
             'foto' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'role' => 'required|in:super_admin,warga,instansi,petugas',
-            'instansi_id' => 'required_if:role,instansi|nullable|exists:instansi,id',
+            'instansi_id' => 'required_if:role,instansi,petugas|nullable|exists:instansi,id',
             'status' => 'required|in:Aktif,Nonaktif',
         ], [
-            'instansi_id.required_if' => 'Instansi wajib dipilih untuk akun dengan role instansi.',
+            'instansi_id.required_if' => 'Instansi wajib dipilih untuk akun dengan role instansi atau petugas.',
         ]);
 
         $foto = null;
@@ -66,7 +69,7 @@ class UserController extends Controller
             'penyandang_disabilitas' => $request->penyandang_disabilitas,
             'foto' => $foto,
             'role' => $request->role,
-            'instansi_id' => $request->role === 'instansi' ? $request->instansi_id : null,
+            'instansi_id' => in_array($request->role, self::ROLE_BUTUH_INSTANSI, true) ? $request->instansi_id : null,
             'status' => $request->status,
         ]);
 
@@ -108,10 +111,10 @@ class UserController extends Controller
             'penyandang_disabilitas' => 'required|in:Ya,Tidak',
             'foto' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'role' => 'required|in:super_admin,warga,instansi,petugas',
-            'instansi_id' => 'required_if:role,instansi|nullable|exists:instansi,id',
+            'instansi_id' => 'required_if:role,instansi,petugas|nullable|exists:instansi,id',
             'status' => 'required|in:Aktif,Nonaktif',
         ], [
-            'instansi_id.required_if' => 'Instansi wajib dipilih untuk akun dengan role instansi.',
+            'instansi_id.required_if' => 'Instansi wajib dipilih untuk akun dengan role instansi atau petugas.',
         ]);
 
         $data = [
@@ -126,7 +129,7 @@ class UserController extends Controller
             'tanggal_lahir' => $request->tanggal_lahir,
             'penyandang_disabilitas' => $request->penyandang_disabilitas,
             'role' => $request->role,
-            'instansi_id' => $request->role === 'instansi' ? $request->instansi_id : null,
+            'instansi_id' => in_array($request->role, self::ROLE_BUTUH_INSTANSI, true) ? $request->instansi_id : null,
             'status' => $request->status,
         ];
 

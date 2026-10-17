@@ -101,18 +101,6 @@
                     @error('role') <p class="text-xs text-merah mt-1">{{ $message }}</p> @enderror
                 </div>
 
-                {{-- Instansi: hanya muncul untuk role instansi --}}
-                <div id="boxInstansi" class="hidden">
-                    <label for="instansi_id" class="{{ $label }}">Instansi <span class="text-merah">*</span></label>
-                    <select id="instansi_id" name="instansi_id" class="{{ $field }}">
-                        <option value="">Pilih instansi</option>
-                        @foreach ($instansis as $i)
-                            <option value="{{ $i->id }}" @selected(old('instansi_id', $u->instansi_id) == $i->id)>{{ $i->nama_instansi }}</option>
-                        @endforeach
-                    </select>
-                    @error('instansi_id') <p class="text-xs text-merah mt-1">{{ $message }}</p> @enderror
-                </div>
-
                 <div>
                     <label for="status" class="{{ $label }}">Status <span class="text-merah">*</span></label>
                     <select id="status" name="status" class="{{ $field }}" required>
@@ -121,6 +109,18 @@
                         @endforeach
                     </select>
                     @error('status') <p class="text-xs text-merah mt-1">{{ $message }}</p> @enderror
+                </div>
+
+                {{-- Instansi: muncul di bawah Role & Status, hanya untuk role instansi / petugas --}}
+                <div id="boxInstansi" class="hidden md:col-span-2">
+                    <label for="instansi_id" class="{{ $label }}">Instansi <span class="text-merah">*</span></label>
+                    <select id="instansi_id" name="instansi_id" class="{{ $field }}">
+                        <option value="">Pilih instansi</option>
+                        @foreach ($instansis as $i)
+                            <option value="{{ $i->id }}" @selected(old('instansi_id', $u->instansi_id) == $i->id)>{{ $i->nama_instansi }}</option>
+                        @endforeach
+                    </select>
+                    @error('instansi_id') <p class="text-xs text-merah mt-1">{{ $message }}</p> @enderror
                 </div>
 
                 <div class="md:col-span-2">
@@ -158,8 +158,11 @@
     const boxInstansi = document.getElementById('boxInstansi');
     const instansiEl = document.getElementById('instansi_id');
 
+    // Role yang wajib punya instansi
+    const roleButuhInstansi = ['instansi', 'petugas'];
+
     function syncInstansi() {
-        const tampil = roleEl.value === 'instansi';
+        const tampil = roleButuhInstansi.includes(roleEl.value);
         boxInstansi.classList.toggle('hidden', !tampil);
         instansiEl.required = tampil;
         if (!tampil) instansiEl.value = '';
