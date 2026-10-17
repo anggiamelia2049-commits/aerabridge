@@ -1,31 +1,45 @@
-<h2>{{ $konten->judul }}</h2>
+@extends('template.layout')
 
-<p><small>Kategori: {{ $konten->kategori }}</small></p>
+@section('title', $konten->judul)
 
-@if ($konten->thumbnail)
-    <img src="{{ asset('storage/' . $konten->thumbnail) }}" width="300">
-@endif
+@section('content')
+<div class="p-6">
+    <div class="max-w-3xl mx-auto bg-white rounded-2xl shadow overflow-hidden">
 
-<div>
-    {{ $konten->isi }}
+        <div class="flex items-center justify-between gap-4 px-6 py-5">
+            <span class="text-xs text-gray-500">{{ $konten->kategori ?: 'Umum' }}</span>
+            <a href="{{ route('warga.user-edukasi.index') }}" class="text-sm text-gray-500 hover:underline">← Kembali</a>
+        </div>
+
+        <div class="px-6 pb-6 space-y-5">
+            <h1 class="text-2xl font-bold text-cyan-6">{{ $konten->judul }}</h1>
+
+            @if ($konten->thumbnail)
+                <img src="{{ asset('storage/' . $konten->thumbnail) }}" alt="{{ $konten->judul }}"
+                     class="w-full max-h-80 object-cover rounded-xl border border-abu-muda">
+            @endif
+
+            <div class="text-sm text-gray-700 leading-relaxed whitespace-pre-line">{{ $konten->isi }}</div>
+
+            <div class="pt-5 border-t border-gray-200">
+                @if ($progress->status === 'selesai')
+                    <p class="text-sm font-semibold text-hijau">
+                        ✓ Kamu sudah menyelesaikan konten ini
+                        @if ($progress->selesai_pada)
+                            pada {{ $progress->selesai_pada->translatedFormat('d M Y, H:i') }}
+                        @endif
+                    </p>
+                @else
+                    <form action="{{ route('warga.user-edukasi.selesai', $konten->id) }}" method="POST">
+                        @csrf
+                        <button type="submit"
+                                class="px-6 py-2.5 rounded-lg bg-cyan-4 hover:bg-cyan-6 text-white text-sm font-bold transition">
+                            Tandai Selesai (+10 poin)
+                        </button>
+                    </form>
+                @endif
+            </div>
+        </div>
+    </div>
 </div>
-
-<hr>
-
-@if ($progress->status === 'selesai')
-    <p>
-        Kamu sudah menyelesaikan konten ini pada
-        {{ $progress->selesai_pada ? \Carbon\Carbon::parse($progress->selesai_pada)->format('d-m-Y H:i') : '-' }}.
-    </p>
-@else
-    <form action="{{ route('warga.user-edukasi.selesai', $konten->id) }}" method="POST">
-        @csrf
-        @method('PUT')
-
-        <button type="submit">Tandai Selesai</button>
-    </form>
-@endif
-
-<br>
-
-<a href="{{ route('warga.user-edukasi.index') }}">Kembali</a>
+@endsection

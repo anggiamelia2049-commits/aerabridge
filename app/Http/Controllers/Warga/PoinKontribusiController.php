@@ -12,20 +12,13 @@ class PoinKontribusiController extends Controller
     {
         $user = Auth::user();
 
-        // Ambil seluruh riwayat poin milik user yang sedang login
         $riwayatPoin = PoinKontribusiLog::where('user_id', $user->id)
             ->with('laporan')
-            ->latest()
+            ->latest('id')
             ->get();
 
-        // Hitung total poin
-        $totalPoin = PoinKontribusiLog::where('user_id', $user->id)
-            ->sum('poin');
+        $totalPoin = (int) $user->total_poin;
 
-        return view('warga.poinKontribusi.index', compact(
-            'user',
-            'riwayatPoin',
-            'totalPoin'
-        ));
+        return view('warga.poinKontribusi.index', compact('user', 'riwayatPoin', 'totalPoin'));
     }
 }

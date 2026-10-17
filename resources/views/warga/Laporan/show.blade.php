@@ -81,8 +81,24 @@
                         </p>
                     </div>
                     <div>
-                        <span class="text-abu-tua/70">Alamat</span>
-                        <p class="font-medium text-abu-tua">{{ $laporan->alamat ?? '-' }}</p>
+                        <span class="text-abu-tua/70">Lokasi</span>
+                        <p class="font-medium text-abu-tua">
+                            {{ $laporan->kecamatan ? 'Kecamatan ' . $laporan->kecamatan : ($laporan->alamat ?: '-') }}
+                        </p>
+                    </div>
+                    <div>
+                        <span class="text-abu-tua/70">Kode Lacak</span>
+                        <p class="font-mono font-medium text-abu-tua">{{ $laporan->kode_lacak ?? '-' }}</p>
+                    </div>
+                    <div>
+                        <span class="text-abu-tua/70">Jenis Laporan</span>
+                        <p class="font-medium text-abu-tua">{{ $laporan->jenis_laporan ?? '-' }}</p>
+                    </div>
+                    <div>
+                        <span class="text-abu-tua/70">Tanggal Kejadian</span>
+                        <p class="font-medium text-abu-tua">
+                            {{ $laporan->tanggal_kejadian ? \Carbon\Carbon::parse($laporan->tanggal_kejadian)->translatedFormat('d M Y') : '-' }}
+                        </p>
                     </div>
                     <div>
                         <span class="text-abu-tua/70">Diverifikasi Oleh</span>
