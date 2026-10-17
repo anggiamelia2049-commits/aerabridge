@@ -6,7 +6,7 @@ use App\Models\Laporan;
 use App\Models\Notifikasi;
 use App\Models\PoinKontribusiLog;
 
-class PoinLaporanService
+class PoinLaporanServices
 {
     /**
      * +50 saat laporan diverifikasi.

@@ -67,7 +67,7 @@
                 <dl class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-5 px-6 pb-6 text-sm">
                     <div>
                         <dt class="text-xs text-gray-500">Pelapor</dt>
-                        <dd class="mt-1 font-semibold text-gray-700">{{ $laporan->nama_pelapor ?? optional($laporan->user)->name ?? '-' }}</dd>
+                        <dd class="mt-1 font-semibold text-gray-700">{{ $laporan->nama_pelapor ?? optional($laporan->user)->nama ?? '-' }}</dd>
                     </div>
                     <div>
                         <dt class="text-xs text-gray-500">Jenis Laporan</dt>
@@ -128,7 +128,7 @@
                 <form method="POST" action="{{ route('super_admin.laporan.verify', $laporan->id) }}"
                       class="flex flex-wrap items-center gap-3 px-6 py-5">
                     @csrf
-                    @method('PATCH')
+                    @method('PUT')
                     <select name="status" required
                             class="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-800 focus:border-cyan-4 focus:outline-none">
                         @foreach ($opsiVerifikasi as $s)

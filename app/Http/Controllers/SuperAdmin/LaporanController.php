@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Laporan;
 use App\Models\KategoriKerusakan;
 use App\Models\Instansi;
-use App\Services\PoinLaporanService;
+use App\Services\PoinLaporanServices;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -28,19 +28,13 @@ class LaporanController extends Controller
 
     public function index(Request $request)
     {
-        // Kalau ?status= kosong atau tidak dikenal, tampilkan semua laporan
         $filter = self::FILTER_STATUS[$request->query('status')] ?? null;
 
-        $laporan = Laporan::with([
-            'user',
-            'kategori',
-            'instansi',
-            'diverifikasiOleh'
-        ])
-        ->when($filter, fn ($q) => $q->whereIn('status', (array) $filter[0]))
-        ->latest()
-        ->paginate(10)
-        ->withQueryString();
+        $laporan = Laporan::with(['user', 'kategori', 'instansi', 'diverifikasiOleh'])
+            ->when($filter, fn ($q) => $q->whereIn('status', (array) $filter[0]))
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
 
         $judulHalaman = $filter[1] ?? 'Semua Laporan';
 
@@ -52,10 +46,7 @@ class LaporanController extends Controller
         $kategoris = KategoriKerusakan::all();
         $instansis = Instansi::all();
 
-        return view(
-            'SuperAdmin.laporan.create',
-            compact('kategoris', 'instansis')
-        );
+        return view('SuperAdmin.laporan.create', compact('kategoris', 'instansis'));
     }
 
     public function store(Request $request)
@@ -79,8 +70,7 @@ class LaporanController extends Controller
         $foto = null;
 
         if ($request->hasFile('foto')) {
-            $foto = $request->file('foto')
-                ->store('laporan', 'public');
+            $foto = $request->file('foto')->store('laporan', 'public');
         }
 
         Laporan::create([
@@ -109,14 +99,8 @@ class LaporanController extends Controller
 
     public function show(string $id)
     {
-        $laporan = Laporan::with([
-            'user',
-            'kategori',
-            'instansi',
-            'diverifikasiOleh',
-            'deteksiAi'
-        ])
-        ->findOrFail($id);
+        $laporan = Laporan::with(['user', 'kategori', 'instansi', 'diverifikasiOleh'])
+            ->findOrFail($id);
 
         return view('SuperAdmin.laporan.show', compact('laporan'));
     }
@@ -128,24 +112,23 @@ class LaporanController extends Controller
         $kategoris = KategoriKerusakan::all();
         $instansis = Instansi::all();
 
-        return view(
-            'SuperAdmin.laporan.edit',
-            compact('laporan', 'kategoris', 'instansis')
-        );
+        return view('SuperAdmin.laporan.edit', compact('laporan', 'kategoris', 'instansis'));
     }
 
     public function update(Request $request, string $id)
     {
         $laporan = Laporan::findOrFail($id);
+        $statusLama = $laporan->status;
 
-        // jenis_laporan, tanggal_kejadian, dan kecamatan SENGAJA tidak divalidasi
-        // dan tidak diupdate: form edit hanya menampilkannya sebagai teks,
-        // sehingga datanya tidak boleh tertimpa null.
+        // Form edit mengirim jenis_laporan, tanggal_kejadian, dan kecamatan sebagai input
         $request->validate([
             'kategori_id' => 'required|exists:kategori_kerusakan,id',
             'instansi_id' => 'required|exists:instansi,id',
+            'jenis_laporan' => 'nullable|string|max:50',
             'judul' => 'required|string|max:255',
             'deskripsi' => 'required|string',
+            'tanggal_kejadian' => 'nullable|date',
+            'kecamatan' => 'nullable|string|max:100',
             'foto' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'latitude' => 'required|numeric|between:-90,90',
             'longitude' => 'required|numeric|between:-180,180',
@@ -163,25 +146,27 @@ class LaporanController extends Controller
             $foto = $request->file('foto')->store('laporan', 'public');
         }
 
-        // Catat pemverifikasi HANYA saat status benar-benar berubah,
-        // supaya edit biasa tidak menimpa admin yang memverifikasi sebelumnya.
+        // Catat pemverifikasi HANYA saat status benar-benar berubah
         $diverifikasiOleh = $laporan->diverifikasi_oleh;
         $statusBaru = $request->status ?? $laporan->status;
 
-        if ($statusBaru !== $laporan->status) {
-            if (in_array($statusBaru, ['Diverifikasi', 'Diproses', 'Selesai', 'Ditolak'])) {
+        if ($statusBaru !== $statusLama) {
+            if (in_array($statusBaru, ['Diverifikasi', 'Diproses', 'Selesai', 'Ditolak'], true)) {
                 $diverifikasiOleh = Auth::id();
-            } elseif (in_array($statusBaru, ['Menunggu', 'Terverifikasi AI'])) {
+            } elseif (in_array($statusBaru, ['Menunggu', 'Terverifikasi AI'], true)) {
                 $diverifikasiOleh = null;
             }
         }
 
-        // kode_lacak, jenis_laporan, tanggal_kejadian, kecamatan tidak diubah saat edit
+        // kode_lacak tidak diubah saat edit
         $laporan->update([
             'kategori_id' => $request->kategori_id,
             'instansi_id' => $request->instansi_id,
+            'jenis_laporan' => $request->jenis_laporan,
             'judul' => $request->judul,
             'deskripsi' => $request->deskripsi,
+            'tanggal_kejadian' => $request->tanggal_kejadian,
+            'kecamatan' => $request->kecamatan,
             'foto' => $foto,
             'latitude' => $request->latitude,
             'longitude' => $request->longitude,
@@ -190,6 +175,15 @@ class LaporanController extends Controller
             'status' => $statusBaru,
             'diverifikasi_oleh' => $diverifikasiOleh,
         ]);
+
+        // Poin kontribusi hanya diproses saat status benar-benar berubah
+        if ($statusBaru !== $statusLama) {
+            if ($statusBaru === 'Diverifikasi') {
+                PoinLaporanServices::verifikasi($laporan->fresh());
+            } elseif ($statusBaru === 'Selesai') {
+                PoinLaporanServices::selesai($laporan->fresh());
+            }
+        }
 
         return redirect()
             ->route('super_admin.laporan.index')
@@ -211,6 +205,10 @@ class LaporanController extends Controller
             ->with('success', 'Laporan berhasil dihapus');
     }
 
+    /**
+     * Ubah status cepat dari halaman detail laporan (tombol "Simpan Status").
+     * Memberi poin kontribusi ke warga lewat PoinLaporanService.
+     */
     public function verify(Request $request, string $id)
     {
         $laporan = Laporan::findOrFail($id);
@@ -229,7 +227,14 @@ class LaporanController extends Controller
             'diverifikasi_oleh' => Auth::id(),
         ]);
 
-        // back() supaya tetap di tab/filter yang sedang dibuka di sidebar
+        // Berikan poin ke warga (anonim otomatis dilewati di dalam service)
+        if ($request->status === 'Diverifikasi') {
+            PoinLaporanServices::verifikasi($laporan);
+        } elseif ($request->status === 'Selesai') {
+            PoinLaporanServices::selesai($laporan);
+        }
+
+        // back() supaya tetap di halaman/filter yang sedang dibuka
         return back()->with('success', 'Status laporan berhasil diperbarui');
     }
 }

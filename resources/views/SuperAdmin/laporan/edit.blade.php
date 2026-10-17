@@ -40,7 +40,7 @@
 
                     <div class="grid grid-cols-1 gap-1 px-6 py-3 sm:grid-cols-3 sm:gap-4">
                         <dt class="font-medium text-gray-500">Pelapor</dt>
-                        <dd class="text-gray-800 sm:col-span-2">{{ $laporan->nama_pelapor ?? optional($laporan->user)->name ?? '-' }}</dd>
+                        <dd class="text-gray-800 sm:col-span-2">{{ $laporan->nama_pelapor ?? optional($laporan->user)->nama ?? '-' }}</dd>
                     </div>
 
                     @if ($laporan->kategori_lainnya)

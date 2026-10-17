@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Instansi;
 
 use App\Http\Controllers\Controller;
 use App\Models\Laporan;
-use App\Services\PoinLaporanService;
+use App\Services\PoinLaporanServices;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -76,7 +76,7 @@ class LaporanController extends Controller
         ]);
 
         if ($request->status === 'Diverifikasi') {
-            PoinLaporanService::verifikasi($laporan);
+            PoinLaporanServices::verifikasi($laporan);
         }
 
         $pesan = $request->status === 'Diverifikasi'

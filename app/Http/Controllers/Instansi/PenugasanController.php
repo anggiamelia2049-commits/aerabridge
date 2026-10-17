@@ -8,6 +8,7 @@ use App\Models\Notifikasi;
 use App\Models\Penugasan;
 use App\Models\TimSatgas;
 use App\Models\User;
+use App\Services\PoinLaporanServices;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -67,7 +68,7 @@ class PenugasanController extends Controller
         // Hanya laporan yang sudah dinyatakan valid yang boleh didisposisikan
         $laporan = Laporan::with('kategori')
             ->where('instansi_id', $instansiId)
-            ->where('status', 'Diverifikasi')
+            ->whereIn('status', ['Diverifikasi', 'Terverifikasi AI'])
             ->whereDoesntHave('penugasan', function ($q) {
                 $q->whereIn('status', ['ditugaskan', 'dalam_proses', 'selesai']);
             })
@@ -120,11 +121,8 @@ class PenugasanController extends Controller
             'Anda tidak memiliki akses ke laporan ini.'
         );
 
-        if ($laporan->status !== 'Diverifikasi') {
-            return back()->with(
-                'error',
-                'Hanya laporan yang sudah diverifikasi yang dapat didisposisikan.'
-            );
+        if (! in_array($laporan->status, ['Diverifikasi', 'Terverifikasi AI'])) {
+            return back()->with('error', 'Laporan belum terverifikasi.');
         }
 
         $this->pastikanTimMilikInstansi($request->tim_satgas_id, $instansiId);
@@ -313,6 +311,9 @@ class PenugasanController extends Controller
 
             $penugasan->laporan->update(['status' => 'Selesai']);
         });
+
+        // Tambahkan poin setelah laporan berhasil divalidasi
+        PoinLaporanServices::selesai($penugasan->laporan);
 
         $this->kirimNotifikasi(
             $penugasan->laporan->user_id,
