@@ -291,49 +291,36 @@ class PenugasanController extends Controller
     /**
      * Closing report valid -> ubah status laporan jadi SELESAI.
      */
+    
     private function validasiClosingReport(Penugasan $penugasan)
     {
+        $penugasan->load('laporan');
+
+        $laporan = $penugasan->laporan;
+
+        if (!$laporan) {
+            return back()->with('error', 'Laporan tidak ditemukan.');
+        }
+
         if ($penugasan->status !== 'selesai') {
-            return back()->with(
-                'error',
-                'Petugas belum mengirimkan closing report untuk tugas ini.'
-            );
+            return back()->with('error', 'Penugasan belum selesai.');
         }
 
-        if ($penugasan->laporan->status === 'Selesai') {
-            return back()->with('error', 'Laporan ini sudah divalidasi sebelumnya.');
+        if ($laporan->status === 'Selesai') {
+            return back()->with('error', 'Laporan sudah selesai divalidasi.');
         }
 
-        DB::transaction(function () use ($penugasan) {
-            if (! $penugasan->tanggal_selesai) {
-                $penugasan->update(['tanggal_selesai' => now()]);
-            }
-
-            $penugasan->laporan->update(['status' => 'Selesai']);
+        DB::transaction(function () use ($laporan) {
+            $laporan->status = 'Selesai';
+            $laporan->save();
         });
 
-        // Tambahkan poin setelah laporan berhasil divalidasi
-        PoinLaporanServices::selesai($penugasan->laporan);
-
-        $this->kirimNotifikasi(
-            $penugasan->laporan->user_id,
-            $penugasan->laporan_id,
-            'Laporan Selesai Ditangani',
-            "Laporan \"{$penugasan->laporan->judul}\" telah selesai ditangani dan diverifikasi oleh instansi.",
-            'informasi'
-        );
-
-        $this->kirimNotifikasi(
-            $penugasan->petugas_id,
-            $penugasan->laporan_id,
-            'Closing Report Disetujui',
-            "Closing report Anda untuk laporan \"{$penugasan->laporan->judul}\" telah disetujui.",
-            'informasi'
-        );
+        // Berikan poin setelah status laporan berhasil disimpan.
+        PoinLaporanServices::selesai($laporan->fresh());
 
         return redirect()
-            ->route('instansi.penugasan.index')
-            ->with('success', 'Closing report divalidasi. Laporan dinyatakan SELESAI.');
+            ->route('instansi.penugasan.index', ['filter' => 'selesai'])
+            ->with('success', 'Closing report berhasil divalidasi.');
     }
 
     /**
