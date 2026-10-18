@@ -21,10 +21,19 @@
 
     // Verifikasi hanya untuk laporan yang belum diverifikasi
     $bisaVerifikasi = in_array($laporan->status, ['Menunggu', 'Terverifikasi AI'], true);
+    $ditolak = $laporan->status === 'Ditolak';
+
+    // Keterangan tahap: [judul, penjelasan, kelas warna]
+    $infoStatus = [
+        'Diverifikasi' => ['Menunggu disposisi', 'Laporan sudah diverifikasi dan menunggu instansi menugaskan tim satgas dan petugas.', 'bg-cyan-3/10 text-cyan-6'],
+        'Diproses'     => ['Sedang ditindaklanjuti', 'Laporan sedang ditangani petugas lapangan.', 'bg-oranye/10 text-oranye'],
+        'Selesai'      => ['Laporan selesai', 'Closing report sudah divalidasi instansi.', 'bg-hijau/10 text-hijau'],
+        'Ditolak'      => ['Laporan ditolak', 'Laporan ini tidak diproses lebih lanjut.', 'bg-merah/10 text-merah'],
+    ][$laporan->status] ?? null;
 
     // Pemverifikasi
     $pemverifikasi = $laporan->diverifikasiOleh;
-    $labelPemverifikasi = $laporan->status === 'Ditolak' ? 'Ditolak Oleh' : 'Diverifikasi Oleh';
+    $labelPemverifikasi = $ditolak ? 'Ditolak Oleh' : 'Diverifikasi Oleh';
 
     // Lampiran: tampil sebagai gambar hanya jika ekstensinya gambar
     $lampiranEkstensi = $laporan->lampiran ? strtolower(pathinfo($laporan->lampiran, PATHINFO_EXTENSION)) : null;
@@ -129,9 +138,9 @@
             </div>
             <div>
                 <dt class="text-xs text-gray-500">Lokasi</dt>
-                    <dd class="mt-1 font-semibold text-gray-700">
-                        {{ $laporan->kecamatan ? 'Kecamatan ' . $laporan->kecamatan : ($laporan->alamat ?: '-') }}
-                    </dd>
+                <dd class="mt-1 font-semibold text-gray-700">
+                    {{ $laporan->kecamatan ? 'Kecamatan ' . $laporan->kecamatan : ($laporan->alamat ?: '-') }}
+                </dd>
             </div>
             <div class="md:col-span-2">
                 <dt class="text-xs text-gray-500">Koordinat</dt>
@@ -148,6 +157,14 @@
             </div>
         </dl>
     </div>
+
+    {{-- Keterangan tahap --}}
+    @if ($infoStatus)
+        <div class="rounded-2xl px-6 py-4 text-sm {{ $infoStatus[2] }}">
+            <p class="font-bold">{{ $infoStatus[0] }}</p>
+            <p class="mt-0.5">{{ $infoStatus[1] }}</p>
+        </div>
+    @endif
 
     {{-- Verifikasi laporan: hanya untuk status Menunggu / Terverifikasi AI --}}
     @if ($bisaVerifikasi)
@@ -248,9 +265,80 @@
         @endif
     </div>
 
+    {{-- Penugasan lapangan: untuk laporan yang sudah lewat verifikasi (bukan ditolak) --}}
+    @if (! $bisaVerifikasi && ! $ditolak)
+        <div class="bg-white rounded-2xl shadow overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h2 class="font-bold text-gray-800">Penugasan Lapangan</h2>
+            </div>
+
+            @forelse ($laporan->penugasan as $p)
+                @php
+                    // Supaya hitung SLA tidak memicu query tambahan
+                    $p->setRelation('laporan', $laporan);
+                    $warnaSla = $p->isOverdue() ? 'text-merah' : 'text-gray-700';
+                @endphp
+                <div class="px-6 py-4 {{ ! $loop->last ? 'border-b border-gray-100' : '' }}">
+                    <dl class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3 text-sm">
+                        <div>
+                            <dt class="text-xs text-gray-500">Tim Satgas</dt>
+                            <dd class="mt-1 font-semibold text-gray-700">{{ optional($p->timSatgas)->nama_tim ?? '-' }}</dd>
+                        </div>
+                        <div>
+                            <dt class="text-xs text-gray-500">Petugas</dt>
+                            <dd class="mt-1 font-semibold text-gray-700">{{ optional($p->petugas)->nama ?? '-' }}</dd>
+                        </div>
+                        <div>
+                            <dt class="text-xs text-gray-500">Status Penugasan</dt>
+                            <dd class="mt-1 font-semibold text-gray-700">{{ $p->labelStatus() }}</dd>
+                        </div>
+                        <div>
+                            <dt class="text-xs text-gray-500">SLA</dt>
+                            <dd class="mt-1 font-semibold {{ $warnaSla }}">{{ $p->teksSla() }}</dd>
+                        </div>
+                        <div>
+                            <dt class="text-xs text-gray-500">Tanggal Penugasan</dt>
+                            <dd class="mt-1 font-semibold text-gray-700">{{ $p->tanggal_penugasan?->translatedFormat('d M Y, H:i') ?? '-' }}</dd>
+                        </div>
+                        <div>
+                            <dt class="text-xs text-gray-500">Tanggal Selesai</dt>
+                            <dd class="mt-1 font-semibold text-gray-700">{{ $p->tanggal_selesai?->translatedFormat('d M Y, H:i') ?? '-' }}</dd>
+                        </div>
+
+                        @if ($p->catatan)
+                            <div class="md:col-span-2">
+                                <dt class="text-xs text-gray-500">Catatan Instansi</dt>
+                                <dd class="mt-1 text-gray-700 whitespace-pre-line">{{ $p->catatan }}</dd>
+                            </div>
+                        @endif
+
+                        @if ($p->catatan_penyelesaian || $p->foto_hasil)
+                            <div class="md:col-span-2">
+                                <dt class="text-xs text-gray-500">Closing Report Petugas</dt>
+                                <dd class="mt-1 space-y-3">
+                                    @if ($p->catatan_penyelesaian)
+                                        <p class="text-gray-700 whitespace-pre-line">{{ $p->catatan_penyelesaian }}</p>
+                                    @endif
+                                    @if ($p->foto_hasil)
+                                        <a href="{{ asset('storage/' . $p->foto_hasil) }}" target="_blank" rel="noopener">
+                                            <img src="{{ asset('storage/' . $p->foto_hasil) }}" alt="Foto hasil"
+                                                 class="w-full max-w-sm rounded-lg border border-gray-200 object-cover">
+                                        </a>
+                                    @endif
+                                </dd>
+                            </div>
+                        @endif
+                    </dl>
+                </div>
+            @empty
+                <p class="px-6 py-8 text-center text-sm text-gray-400">Belum ada penugasan untuk laporan ini.</p>
+            @endforelse
+        </div>
+    @endif
+
     {{-- Aksi --}}
     <div>
-        <a href="{{ route('super_admin.laporan.index') }}"
+        <a href="{{ url()->previous() === url()->current() ? route('super_admin.laporan.index') : url()->previous() }}"
            class="inline-block px-5 py-2.5 rounded-lg border border-gray-300 bg-white hover:bg-gray-50 text-gray-700 text-sm font-bold transition">
             &larr; Kembali
         </a>

@@ -29,23 +29,41 @@ class LaporanController extends Controller
 
     public function index(Request $request)
     {
-        $filter = self::FILTER_STATUS[$request->query('status')] ?? null;
+            $kunciFilter = $request->query('status');
+            $filter = self::FILTER_STATUS[$kunciFilter] ?? null;
 
-        $laporan = Laporan::with(['user', 'kategori', 'instansi', 'diverifikasiOleh'])
-            ->when($filter, fn ($q) => $q->whereIn('status', (array) $filter[0]))
-            ->latest()
-            ->paginate(10)
-            ->withQueryString();
+            $laporan = Laporan::with(['user', 'kategori', 'instansi', 'diverifikasiOleh'])
+                ->when($filter, fn ($q) => $q->whereIn('status', (array) $filter[0]))
+                ->latest()
+                ->paginate(10)
+                ->withQueryString();
+
+            // Jumlah laporan per tahap, untuk badge di tombol pintas
+            $jumlahStatus = Laporan::selectRaw('status, COUNT(*) as total')
+                ->groupBy('status')
+                ->pluck('total', 'status');
+
+            $jumlahTahap = [];
+            foreach (self::FILTER_STATUS as $kunci => [$status, $judul]) {
+                $jumlahTahap[$kunci] = collect((array) $status)->sum(fn ($s) => $jumlahStatus[$s] ?? 0);
+        }
+        $jumlahSemua = $jumlahStatus->sum();
 
         $judulHalaman = $filter[1] ?? 'Semua Laporan';
 
-        return view('SuperAdmin.laporan.index', compact('laporan', 'judulHalaman'));
+            return view('SuperAdmin.laporan.index', compact(
+            'laporan', 'judulHalaman', 'kunciFilter', 'jumlahTahap', 'jumlahSemua'
+        ));
     }
 
     public function show(string $id)
     {
-        $laporan = Laporan::with(['user', 'kategori', 'instansi', 'diverifikasiOleh', 'deteksiAi'])
-            ->findOrFail($id);
+         $laporan = Laporan::with([
+            'user', 'kategori', 'instansi', 'diverifikasiOleh', 'deteksiAi',
+            'penugasan' => fn ($q) => $q->latest('tanggal_penugasan'),
+            'penugasan.timSatgas',
+            'penugasan.petugas',
+        ])->findOrFail($id);
 
         return view('SuperAdmin.laporan.show', compact('laporan'));
     }

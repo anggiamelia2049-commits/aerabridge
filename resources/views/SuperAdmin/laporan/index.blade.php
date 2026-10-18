@@ -15,6 +15,15 @@
         'selesai'          => 'bg-hijau/10 text-hijau',
         'ditolak'          => 'bg-merah/10 text-merah',
     ];
+
+    // Tombol pintas: [kunci ?status=, teks]
+    $tombolPintas = [
+        'menunggu_verifikasi' => 'Verifikasi',
+        'disposisi'           => 'Disposisi',
+        'diproses'            => 'Tindak Lanjut',
+        'selesai'             => 'Selesai',
+        'ditolak'             => 'Ditolak',
+    ];
 @endphp
 
 @section('title', $judulHalaman)
@@ -29,11 +38,45 @@
 
     <div class="bg-white rounded-2xl shadow overflow-hidden">
 
-        <div class="flex items-center justify-between gap-4 px-6 py-5">
+        <div class="flex items-center justify-between gap-4 px-6 pt-4 pb-2">
             <p class="text-sm text-gray-600">
                 Kelola dan pantau seluruh laporan kerusakan infrastruktur dari warga.
                 <span class="text-gray-400">({{ $laporan->total() }} laporan)</span>
             </p>
+        </div>
+
+        {{-- Tombol pintas per tahap --}}
+        <div class="flex flex-wrap items-center gap-1.5 px-6 pb-3">
+            <a href="{{ route('super_admin.laporan.index') }}"
+               @class([
+                   'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold border no-underline transition',
+                   'bg-cyan-4 text-white border-cyan-4' => ! $kunciFilter,
+                   'bg-white text-gray-700 border-gray-300 hover:bg-gray-50' => $kunciFilter,
+               ])>
+                Semua
+                <span @class([
+                    'px-1.5 rounded-full text-[10px] leading-4',
+                    'bg-white/20 text-white' => ! $kunciFilter,
+                    'bg-gray-100 text-gray-600' => $kunciFilter,
+                ])>{{ $jumlahSemua }}</span>
+            </a>
+
+            @foreach ($tombolPintas as $kunci => $teks)
+                @php $aktif = $kunciFilter === $kunci; @endphp
+                <a href="{{ route('super_admin.laporan.index', ['status' => $kunci]) }}"
+                   @class([
+                       'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold border no-underline transition',
+                       'bg-cyan-4 text-white border-cyan-4' => $aktif,
+                       'bg-white text-gray-700 border-gray-300 hover:bg-gray-50' => ! $aktif,
+                   ])>
+                    {{ $teks }}
+                    <span @class([
+                        'px-1.5 rounded-full text-[10px] leading-4',
+                        'bg-white/20 text-white' => $aktif,
+                        'bg-gray-100 text-gray-600' => ! $aktif,
+                    ])>{{ $jumlahTahap[$kunci] ?? 0 }}</span>
+                </a>
+            @endforeach
         </div>
 
         <div class="overflow-x-auto">
@@ -67,7 +110,7 @@
                         <tr class="hover:bg-gray-50">
                             <td class="px-4 py-3.5">{{ $laporan->firstItem() + $loop->index }}</td>
                             <td class="px-4 py-3.5 font-mono text-xs whitespace-nowrap">{{ $v->kode_lacak ?? '-' }}</td>
-                            <td class="px-4 py-3.5 whitespace-nowrap">{{ $v->nama_pelapor ?? optional($v->user)->name ?? '-' }}</td>
+                            <td class="px-4 py-3.5 whitespace-nowrap">{{ $v->nama_pelapor }}</td>
                             <td class="px-4 py-3.5">
                                 {{ optional($v->kategori)->nama_kategori ?? ($v->kategori_lainnya ?: '-') }}
                             </td>
