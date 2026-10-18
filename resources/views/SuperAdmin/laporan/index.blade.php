@@ -94,7 +94,6 @@
                             <td class="px-4 py-3.5">
                                 <div class="flex items-center justify-center gap-4 text-sm font-semibold whitespace-nowrap">
                                     <a href="{{ route('super_admin.laporan.show', $v->id) }}" class="text-cyan-4 hover:underline">Detail</a>
-                                    <a href="{{ route('super_admin.laporan.edit', $v->id) }}" class="text-oranye hover:underline">Edit</a>
                                     <form method="POST" action="{{ route('super_admin.laporan.destroy', $v->id) }}"
                                           onsubmit="return confirm('Hapus laporan ini?')">
                                         @csrf
