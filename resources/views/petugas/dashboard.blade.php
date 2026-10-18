@@ -51,10 +51,10 @@
 
 <div>
     {{-- Sapaan --}}
-    <h2 class="text-[32px] font-bold leading-tight text-black">
+    <h1 class="text-h1 leading-tight">
         Selamat Datang, {{ auth()->user()->nama ?? 'Petugas' }} 👋
-    </h2>
-    <p class="mb-6 mt-1 text-base text-black">Pantau penugasan dan laporkan hasil perbaikan infrastruktur.</p>
+    </h1>
+    <p class="text-subtitle mb-6 mt-1">Pantau penugasan dan laporkan hasil perbaikan infrastruktur.</p>
 
     {{-- Empat kartu angka --}}
     <div class="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">

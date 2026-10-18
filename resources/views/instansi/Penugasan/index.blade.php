@@ -24,13 +24,13 @@
     @endphp
 
     {{-- ==================== JUDUL ==================== --}}
-    <div class="mb-6 flex flex-wrap items-center justify-between gap-3">
+    <div class="mb-6 flex flex-wrap items-end justify-between gap-3">
         <div>
-            <h1 class="text-3xl font-bold text-cyan-6">Penugasan</h1>
-            <p class="mt-1 text-sm text-abu-tua">Pantau disposisi tugas, tim Satgas, dan batas waktu penyelesaian (SLA).</p>
+            <h1 class="text-h1 leading-tight">Penugasan</h1>
+            <p class="text-subtitle mt-1">Pantau disposisi tugas, tim Satgas, dan batas waktu penyelesaian (SLA).</p>
         </div>
         <a href="{{ route('instansi.penugasan.create') }}"
-            class="inline-flex items-center gap-2 rounded-xl bg-cyan-4 px-5 py-2.5 text-sm font-semibold text-white no-underline shadow-sm transition hover:bg-cyan-6">
+            class="inline-flex items-center gap-2 rounded-xl bg-cyan-4 px-5 py-2.5 text-[14px] font-semibold text-white no-underline shadow-sm transition hover:bg-cyan-6">
             <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                 <path stroke-linecap="round" d="M12 5v14M5 12h14" />
             </svg>
@@ -39,12 +39,12 @@
     </div>
 
     @if (session('success'))
-        <div class="mb-4 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
+        <div class="mb-4 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-[14px] text-green-700">
             {{ session('success') }}</div>
     @endif
 
     @if (session('error'))
-        <div class="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{{ session('error') }}
+        <div class="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-[14px] text-red-700">{{ session('error') }}
         </div>
     @endif
 
@@ -54,7 +54,7 @@
             @foreach ($tabs as $tab)
                 @php $aktif = $filterAktif === $tab['filter']; @endphp
                 <a href="{{ route('instansi.penugasan.index', $tab['filter'] ? ['filter' => $tab['filter']] : []) }}"
-                    class="whitespace-nowrap rounded-lg px-4 py-2 text-sm font-medium no-underline transition {{ $aktif ? 'bg-cyan-6 text-white' : 'text-abu-tua hover:bg-gray-100' }}">
+                    class="whitespace-nowrap rounded-lg px-4 py-2 text-[14px] font-medium no-underline transition {{ $aktif ? 'bg-cyan-6 text-white' : 'text-abu-tua hover:bg-gray-100' }}">
                     {{ $tab['label'] }}
                 </a>
             @endforeach
@@ -64,7 +64,7 @@
     {{-- ==================== TABEL ==================== --}}
     <div class="overflow-hidden rounded-2xl bg-white shadow">
         <div class="overflow-x-auto">
-            <table class="w-full text-left text-sm">
+            <table class="w-full text-left text-[14px]">
                 <thead class="bg-gray-100">
                     <tr>
                         <th class="px-4 py-3">No</th>
@@ -122,7 +122,7 @@
                                 <p class="max-w-[260px] font-semibold text-cyan-6">{{ $v->laporan->judul ?? '-' }}</p>
                                 @if ($prioritas)
                                     <span
-                                        class="mt-1.5 inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium {{ $prioritasClass }}">
+                                        class="mt-1.5 inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-caption {{ $prioritasClass }}">
                                         <span
                                             class="h-1.5 w-1.5 rounded-full {{ $prioritasDot }}"></span>{{ $prioritas }}
                                     </span>
@@ -135,7 +135,7 @@
                                 @if ($namaPetugas)
                                     <div class="flex items-center gap-2">
                                         <span
-                                            class="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-cyan-3/25 text-xs font-bold text-cyan-6">
+                                            class="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-cyan-3/25 text-caption font-bold text-cyan-6">
                                             {{ mb_strtoupper(mb_substr($namaPetugas, 0, 1)) }}
                                         </span>
                                         <span>{{ $namaPetugas }}</span>
@@ -147,7 +147,7 @@
 
                             <td class="whitespace-nowrap px-4 py-4">
                                 <span
-                                    class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium {{ $statusClass }}">
+                                    class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-caption {{ $statusClass }}">
                                     <span class="h-1.5 w-1.5 rounded-full {{ $statusDot }}"></span>
                                     {{ ucfirst(str_replace('_', ' ', $v->status)) }}
                                 </span>
@@ -156,21 +156,21 @@
                             <td class="min-w-[170px] px-4 py-4">
                                 @if ($overdue)
                                     <span
-                                        class="rounded-full bg-merah/10 px-2.5 py-1 text-xs font-semibold text-merah">Overdue</span>
+                                        class="rounded-full bg-merah/10 px-2.5 py-1 text-caption font-semibold text-merah">Overdue</span>
                                     @if ($sisa !== null)
-                                        <p class="mt-1.5 text-xs text-merah">Lewat {{ $formatMenit($sisa) }}</p>
+                                        <p class="mt-1.5 text-caption text-merah">Lewat {{ $formatMenit($sisa) }}</p>
                                     @endif
                                     <div class="mt-2 h-1.5 w-full rounded-full bg-merah/20">
                                         <div class="h-1.5 w-full rounded-full bg-merah"></div>
                                     </div>
                                 @elseif ($batas)
-                                    <p class="text-xs text-abu-tua">{{ $batas->format('d M Y H:i') }}</p>
+                                    <p class="text-caption text-abu-tua">{{ $batas->format('d M Y H:i') }}</p>
                                     <div class="mt-1.5 h-1.5 w-full rounded-full bg-gray-200">
                                         <div class="h-1.5 rounded-full {{ $mendekati ? 'bg-yellow-500' : 'bg-hijau' }}"
                                             style="width: {{ $persen }}%"></div>
                                     </div>
                                     <p
-                                        class="mt-1 text-xs font-medium {{ $mendekati ? 'text-yellow-700' : 'text-hijau' }}">
+                                        class="mt-1 text-caption {{ $mendekati ? 'text-yellow-700' : 'text-hijau' }}">
                                         {{ $mendekati ? 'Mendekati batas · ' : '' }}Sisa {{ $formatMenit($sisa) }}
                                     </p>
                                 @else
@@ -184,10 +184,10 @@
                             <td class="whitespace-nowrap px-4 py-4">
                                 <div class="flex items-center gap-2">
                                     <a href="{{ route('instansi.penugasan.show', $v->id) }}"
-                                        class="rounded-lg border border-cyan-4 px-3 py-1.5 text-xs font-semibold text-cyan-4 no-underline transition hover:bg-cyan-4 hover:text-white">Detail</a>
+                                        class="rounded-lg border border-cyan-4 px-3 py-1.5 text-caption font-semibold text-cyan-4 no-underline transition hover:bg-cyan-4 hover:text-white">Detail</a>
                                     @if ($berjalan)
                                         <a href="{{ route('instansi.penugasan.edit', $v->id) }}"
-                                            class="rounded-lg bg-gray-100 px-3 py-1.5 text-xs font-semibold text-cyan-6 no-underline transition hover:bg-gray-200">Alihkan</a>
+                                            class="rounded-lg bg-gray-100 px-3 py-1.5 text-caption font-semibold text-cyan-6 no-underline transition hover:bg-gray-200">Alihkan</a>
                                     @endif
                                 </div>
                             </td>
@@ -203,8 +203,8 @@
                                             d="M9 12h6M9 16h6M9 8h2M7 3h10a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z" />
                                     </svg>
                                 </div>
-                                <p class="text-sm font-medium text-cyan-6">Belum ada data penugasan</p>
-                                <p class="mt-1 text-xs text-abu-tua">Disposisikan laporan ke tim Satgas untuk memulai
+                                <p class="text-[14px] font-medium text-cyan-6">Belum ada data penugasan</p>
+                                <p class="mt-1 text-caption text-abu-tua">Disposisikan laporan ke tim Satgas untuk memulai
                                     penanganan.</p>
                             </td>
                         </tr>

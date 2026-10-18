@@ -5,8 +5,10 @@
 @section('content')
 <div class="p-6">
     <div class="mb-6">
-        <h1 class="text-xl font-semibold text-slate-800">Kategori kerusakan</h1>
-        <p class="text-sm text-slate-500">Jenis kerusakan yang dipakai untuk mengelompokkan laporan. Perubahan kategori dilakukan oleh Super Admin.</p>
+    <h1 class="text-h1 font-bold ">Kategori Kerusakan</h1>
+    <p class="text-body text-abu-tua">
+        Jenis kerusakan yang dipakai untuk mengelompokkan laporan.
+    </p>
     </div>
 
     <div class="overflow-x-auto rounded-xl border border-slate-200 bg-white">

@@ -14,8 +14,10 @@
 @endphp
 
 <div class="mb-5">
-    <h1 class="text-3xl font-bold text-gray-900">Data Kategori</h1>
-    <p class="mt-1 text-base text-gray-900">Kategori kerusakan infrastruktur yang dapat dilaporkan dan dideteksi oleh sistem AI</p>
+    <h1 class="text-h1">Data Kategori</h1>
+    <p class="text-subtitle">
+        Kategori kerusakan infrastruktur yang dapat dilaporkan dan dideteksi oleh sistem AI
+    </p>
 </div>
 
 {{-- ==================== DAFTAR KATEGORI ==================== --}}
@@ -52,6 +54,7 @@
                         <td class="py-3 pr-3 text-abu-tua">{{ $kategori->firstItem() + $loop->index }}</td>
                         <td class="py-3 pr-3 font-semibold text-cyan-6">{{ $item->nama_kategori }}</td>
                         <td class="py-3 pr-3 text-abu-tua">{{ $deskripsi }}</td>
+
                     </tr>
                 @empty
                     <tr>

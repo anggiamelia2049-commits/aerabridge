@@ -9,8 +9,8 @@
 {{-- ==================== JUDUL + MODE PETA ==================== --}}
 <div class="mb-5 flex flex-wrap items-end justify-between gap-3">
     <div>
-        <h1 class="text-3xl font-bold text-gray-900">Peta Kerusakan</h1>
-        <p class="mt-1 text-base text-gray-900">Pantau persebaran kerusakan infrastruktur di Kota Depok berdasarkan kategori, status, dan prioritas AI</p>
+        <h1 class="text-h1 leading-tight">Peta Kerusakan</h1>
+        <p class="text-subtitle mt-1">Pantau persebaran kerusakan infrastruktur di Kota Depok berdasarkan kategori, status, dan prioritas AI</p>
     </div>
 
     <div class="inline-flex rounded-xl bg-white p-1 shadow" role="group" aria-label="Mode tampilan peta">
@@ -323,7 +323,7 @@ document.addEventListener('DOMContentLoaded', function () {
     [fKategori, fStatus, fPrioritas].forEach(function (f) {
         f.addEventListener('change', function () { render(true); });
     });
-    document.getElementById('filter-reset').addEventListener('click', function () {
+    document.getElementById('filter-reset')?.addEventListener('click', function () {
         fKategori.value = fStatus.value = fPrioritas.value = '';
         render(true);
     });

@@ -3,10 +3,10 @@
 @section('title', 'Statistik')
 
 @section('content')
-<div class="p-6">
+<div>
     <div class="mb-6">
-        <h1 class="text-3xl font-bold text-slate-800">Statistik</h1>
-        <p class="text-sm text-slate-500">Ringkasan laporan dan penugasan di instansi Anda.</p>
+        <h1 class="text-h1 leading-tight">Statistik</h1>
+        <p class="text-subtitle mt-1">Ringkasan laporan dan penugasan di instansi Anda.</p>
     </div>
 
     {{-- Ringkasan --}}
@@ -18,9 +18,9 @@
             ['Selesai', $laporanSelesai],
             ['Penugasan aktif', $penugasanAktif],
         ] as [$label, $nilai])
-            <div class="rounded-xl border border-slate-200 bg-white p-4">
-                <p class="text-sm text-slate-500">{{ $label }}</p>
-                <p class="mt-1 text-2xl font-semibold text-slate-800">{{ $nilai }}</p>
+            <div class="rounded-lg bg-white p-4 shadow">
+                <p class="text-caption text-abu-tua">{{ $label }}</p>
+                <p class="mt-1 text-[24px] font-bold text-cyan-6">{{ $nilai }}</p>
             </div>
         @endforeach
     </div>
@@ -33,22 +33,22 @@
             ['Laporan menurut kategori', $grafikKategori],
         ] as [$judul, $data])
             @php $maks = max($data->max('jumlah'), 1); @endphp
-            <div class="rounded-xl border border-slate-200 bg-white p-5">
-                <h2 class="mb-4 text-sm font-semibold text-slate-800">{{ $judul }}</h2>
+            <div class="rounded-lg bg-white p-5 shadow">
+                <h2 class="mb-4 text-[18px] font-semibold text-cyan-6">{{ $judul }}</h2>
 
                 @forelse ($data as $baris)
                     <div class="mb-3">
-                        <div class="mb-1 flex justify-between text-sm">
-                            <span class="text-slate-600">{{ $baris['label'] }}</span>
-                            <span class="font-medium text-slate-800">{{ $baris['jumlah'] }}</span>
+                        <div class="mb-1 flex justify-between text-[14px]">
+                            <span class="text-abu-tua">{{ $baris['label'] }}</span>
+                            <span class="font-medium text-cyan-6">{{ $baris['jumlah'] }}</span>
                         </div>
-                        <div class="h-2 rounded-full bg-slate-100">
+                        <div class="h-2 rounded-full bg-gray-100">
                             <div class="h-2 rounded-full"
                                  style="width: {{ round($baris['jumlah'] / $maks * 100) }}%; background-color: {{ $baris['warna'] }}"></div>
                         </div>
                     </div>
                 @empty
-                    <p class="text-sm text-slate-500">Belum ada data.</p>
+                    <p class="text-[14px] text-abu-tua">Belum ada data.</p>
                 @endforelse
             </div>
         @endforeach
