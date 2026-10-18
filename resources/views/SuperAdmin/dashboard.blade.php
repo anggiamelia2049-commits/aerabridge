@@ -15,13 +15,13 @@
             'label' => 'Belum Direspon',
             'value' => $stats['belum_direspon'],
             'note'  => 'Direspon: ' . number_format($stats['direspon'], 0, ',', '.'),
-            'icon'  => '<circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/>',
+            'icon'  => '<path d="M14 9a2 2 0 0 1-2 2H6l-4 4V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2z"/><path d="M18 9h2a2 2 0 0 1 2 2v11l-4-4h-6a2 2 0 0 1-2-2v-1"/>',
         ],
         [
             'label' => 'Dalam Progress',
             'value' => $stats['dalam_progress'],
             'note'  => 'Perbaikan Infrastruktur',
-            'icon'  => '<path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>',
+            'icon'  => '<circle cx="12" cy="12" r="9" stroke-dasharray="2 3"/><path d="M12 7v5l3 2"/>',
         ],
         [
             'label' => 'Selesai',
@@ -31,91 +31,85 @@
         ],
     ];
 
+    // [teks, kelas] sesuai warna pada desain Figma
     $badge = [
-        'Kritis' => ['Kritis', 'bg-[#f45b5b] text-white'],
-        'Sedang' => ['Sedang', 'bg-[#f99d3a] text-white'],
-        'Rendah' => ['Rendah', 'bg-[#f9d63a] text-gray-900'],
+        'Kritis' => ['Kritis', 'bg-[#ffa8a8] text-gray-900'],
+        'Sedang' => ['Sedang', 'bg-[#ff8c1a] text-white'],
+        'Rendah' => ['Rendah', 'bg-[#ffcc00] text-gray-900'],
     ];
 @endphp
 
-{{-- ===== Kartu Statistik (Horizontal & Compact) ===== --}}
-<section class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+{{-- ===== Kartu Statistik ===== --}}
+<section class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
     @foreach ($cards as $c)
-        <div class="bg-white rounded-lg shadow-sm px-3 py-2.5 flex items-center gap-2.5">
-            {{-- Ikon di kiri (lebih kecil) --}}
-            <span class="w-9 h-9 shrink-0 rounded-full bg-gray-100 flex items-center justify-center text-gray-700">
-                <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" style="width:18px;height:18px;">
+        <div class="bg-white rounded-2xl shadow-md px-4 py-4 flex items-center gap-3">
+            {{-- Ikon di kiri --}}
+            <span class="w-14 h-14 shrink-0 rounded-full bg-gray-200 flex items-center justify-center text-gray-800">
+                <svg fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" style="width:26px;height:26px;">
                     {!! $c['icon'] !!}
                 </svg>
             </span>
 
             {{-- Teks di kanan --}}
             <div class="flex flex-col leading-tight min-w-0">
-                <div class="text-[10px] font-bold text-gray-500 uppercase tracking-wide truncate">{{ $c['label'] }}</div>
-                <div class="text-lg font-extrabold text-gray-800 leading-none mt-0.5">
+                <div class="text-sm font-extrabold text-black uppercase truncate">{{ $c['label'] }}</div>
+                <div class="text-2xl font-extrabold text-black leading-tight">
                     {{ number_format($c['value'], 0, ',', '.') }}
                 </div>
-                <div class="text-[10px] text-gray-400 mt-0.5 truncate">{{ $c['note'] }}</div>
+                <div class="text-xs text-gray-500 truncate">{{ $c['note'] }}</div>
             </div>
         </div>
     @endforeach
 </section>
 
 {{-- ===== Grafik ===== --}}
-<section class="bg-white rounded-xl shadow-sm p-6 mb-6">
-    <h2 class="text-base font-bold text-gray-800 mb-6">Grafik Tren Pengaduan Bulanan</h2>
+<section class="bg-white shadow-sm p-5 mb-6">
+    <h2 class="text-sm font-bold text-black mb-6">Grafik Tren Pengaduan Bulanan</h2>
     <div class="h-[300px]">
         <canvas id="chartPengaduan" aria-label="Grafik pengaduan per prioritas"></canvas>
     </div>
 </section>
 
 {{-- ===== Daftar Laporan Terbaru ===== --}}
-<section class="bg-white rounded-xl shadow-sm p-6">
-    <h2 class="text-base font-bold text-gray-800 mb-4">
-        Daftar Laporan Terbaru <span class="text-gray-400 font-normal">(Berdasarkan Prioritas)</span>
+<section class="bg-white rounded-2xl shadow-md p-5">
+    <h2 class="text-sm font-bold text-black mb-3 px-2">
+        Daftar Laporan Terbaru <span class="text-gray-400 font-bold">(Berdasarkan Prioritas)</span>
     </h2>
 
     <div class="overflow-x-auto max-h-[320px] overflow-y-auto">
-        <table class="w-full text-sm text-left">
-            <thead class="sticky top-0 bg-gray-100 text-gray-600 text-xs uppercase tracking-wider">
+        <table class="w-full text-sm text-left border-separate border-spacing-0">
+            <thead class="sticky top-0 z-10 text-gray-700 text-xs uppercase tracking-wider">
                 <tr>
-                    <th class="px-4 py-3 rounded-l-md">Judul Laporan</th>
-                    <th class="px-4 py-3">Lokasi</th>
-                    <th class="px-4 py-3">Tanggal</th>
-                    <th class="px-4 py-3 rounded-r-md text-center">Prioritas</th>
+                    <th class="px-4 py-3 bg-gray-200 rounded-l-lg text-center w-14">No.</th>
+                    <th class="px-4 py-3 bg-gray-200">ID Laporan</th>
+                    <th class="px-4 py-3 bg-gray-200">Kategori</th>
+                    <th class="px-4 py-3 bg-gray-200">Unit Kerja</th>
+                    <th class="px-4 py-3 bg-gray-200">Tanggal</th>
+                    <th class="px-4 py-3 bg-gray-200 rounded-r-lg text-center">Tingkat Prioritas</th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-gray-100">
+            <tbody>
                 @forelse ($laporanTerbaru as $laporan)
                     @php
                         [$teks, $kelas] = $badge[$laporan->tingkat_prioritas] ?? ['-', 'bg-gray-200 text-gray-700'];
                     @endphp
-                    <tr class="hover:bg-gray-50 transition-colors">
-                        <td class="px-4 py-3 font-medium text-gray-800">{{ $laporan->judul }}</td>
-                        <td class="px-4 py-3 text-gray-600">
-                            @if (!empty($laporan->alamat))
-                                {{ $laporan->alamat }}
-                            @elseif (
-                                !is_null($laporan->latitude) &&
-                                !is_null($laporan->longitude)
-                            )
-                                {{ $laporan->latitude }}, {{ $laporan->longitude }}
-                            @else
-                                <span class="text-gray-400">
-                                    Lokasi belum tersedia
-                                </span>
-                            @endif
+                    <tr class="hover:bg-gray-50 transition-colors border-b border-gray-200">
+                        <td class="px-4 py-3 text-center text-gray-600">{{ $loop->iteration }}</td>
+                        <td class="px-4 py-3 font-medium text-gray-800 whitespace-nowrap">
+                            {{ $laporan->kode_lacak ?? '-' }}
                         </td>
-                        <td class="px-4 py-3 text-gray-600">{{ $laporan->created_at->translatedFormat('d M Y') }}</td>
+                        <td class="px-4 py-3 text-gray-600">{{ $laporan->kategori->nama_kategori ?? '-' }}</td>
+                        <td class="px-4 py-3 text-gray-600">{{ $laporan->instansi->nama_instansi ?? '-' }}</td>
+                        <td class="px-4 py-3 text-gray-600 whitespace-nowrap">{{ $laporan->created_at->translatedFormat('d F Y') }}</td>
                         <td class="px-4 py-3 text-center">
-                            <span class="inline-block min-w-[64px] rounded-md px-3 py-1 text-xs font-semibold {{ $kelas }}">
+                            <span class="inline-block min-w-[88px] rounded-lg px-4 py-1.5 text-xs font-semibold {{ $kelas }}">
                                 {{ $teks }}
                             </span>
                         </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="4" class="px-4 py-8 text-center text-gray-400">
+                        <td colspan="6" class="px-4 py-8 text-center text-gray-400">
                             Belum ada laporan yang perlu ditangani.
                         </td>
                     </tr>
@@ -130,7 +124,29 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
 <script>
     const dataChart = @json($chart);
-    const warna = ['#f45b5b', '#f99d3a', '#f9d63a'];
+    const warna = ['#ff5f64', '#fba04f', '#fdd52f'];
+
+    // Skala Y dinamis (kelipatan 10, 5 langkah) agar batang tetap terlihat
+    // saat data masih kecil. Kalau ingin tetap 0-100 seperti Figma, ganti jadi: const yMax = 100;
+    const nilaiMax = Math.max(...dataChart.data, 0);
+    const yMax = Math.max(10, Math.ceil(nilaiMax / 10) * 10);
+
+    // Latar abu-abu (track) di belakang tiap batang, seperti pada desain
+    const trackPlugin = {
+        id: 'track',
+        beforeDatasetsDraw(chart) {
+            const { ctx, scales: { y } } = chart;
+            const meta = chart.getDatasetMeta(0);
+            const top = y.getPixelForValue(y.max);
+            const bottom = y.getPixelForValue(0);
+            ctx.save();
+            ctx.fillStyle = '#f1f2f7';
+            meta.data.forEach(bar => {
+                ctx.fillRect(bar.x - bar.width / 2, top, bar.width, bottom - top);
+            });
+            ctx.restore();
+        }
+    };
 
     new Chart(document.getElementById('chartPengaduan'), {
         type: 'bar',
@@ -139,10 +155,11 @@
             datasets: [{
                 data: dataChart.data,
                 backgroundColor: warna,
-                barPercentage: 0.8,
+                barPercentage: 1,
                 categoryPercentage: 0.6,
             }]
         },
+        plugins: [trackPlugin],
         options: {
             responsive: true,
             maintainAspectRatio: false,
@@ -157,7 +174,10 @@
                             pointStyle: 'rect',
                         })),
                         usePointStyle: true,
+                        boxWidth: 8,
+                        boxHeight: 8,
                         padding: 20,
+                        font: { size: 11 },
                     }
                 },
                 tooltip: {
@@ -169,12 +189,16 @@
             scales: {
                 y: {
                     beginAtZero: true,
-                    grid: { borderDash: [3, 3], color: '#e5e7eb' },
-                    ticks: { color: '#9ca3af', font: { size: 11 } }
+                    max: yMax,
+                    ticks: { stepSize: yMax / 5, color: '#6b7280', font: { size: 11 } },
+                    grid: { color: '#e5e7eb', borderDash: [3, 3] },
+                    border: { display: false }
                 },
                 x: {
-                    grid: { display: false },
-                    ticks: { color: '#9ca3af', font: { size: 11 } }
+                    // Label kategori disembunyikan, nama ada di legenda (sesuai Figma)
+                    ticks: { display: false },
+                    grid: { color: '#e5e7eb', borderDash: [3, 3] },
+                    border: { color: '#9ca3af' }
                 }
             }
         }

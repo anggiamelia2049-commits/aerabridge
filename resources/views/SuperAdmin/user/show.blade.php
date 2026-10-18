@@ -40,10 +40,14 @@
                     </span>
                 </div>
 
-                @if ($user->role === 'instansi')
+                @if (in_array($user->role, ['instansi', 'petugas'], true))
                     <div>
                         <p class="text-xs text-gray-500">Instansi</p>
-                        <p class="font-semibold">{{ $user->instansi->nama_instansi ?? 'Belum terhubung' }}</p>
+                        @if ($user->instansi)
+                            <p class="font-semibold">{{ $user->instansi->nama_instansi }}</p>
+                        @else
+                            <p class="font-semibold text-merah">Belum terhubung</p>
+                        @endif
                     </div>
                 @endif
 

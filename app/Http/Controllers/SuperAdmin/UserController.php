@@ -13,11 +13,28 @@ class UserController extends Controller
 
     private const ROLE_BUTUH_INSTANSI = ['instansi', 'petugas'];
 
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::with('instansi')->get();
+    $roleValid = ['super_admin', 'warga', 'instansi', 'petugas'];
+    $role = $request->query('role');
 
-        return view('SuperAdmin.user.index', compact('users'));
+    $query = User::with('instansi')->orderBy('id');
+
+    if (in_array($role, $roleValid, true)) {
+        $query->where('role', $role);
+    } else {
+        $role = null; // "Semua"
+    }
+
+    $users = $query->paginate(10)->withQueryString();
+
+    // Jumlah akun per role, untuk badge di tombol filter
+    $jumlahRole = User::selectRaw('role, COUNT(*) as total')
+        ->groupBy('role')
+        ->pluck('total', 'role');
+
+    return view('SuperAdmin.user.index', compact('users', 'role', 'jumlahRole'));
+
     }
 
     public function create()

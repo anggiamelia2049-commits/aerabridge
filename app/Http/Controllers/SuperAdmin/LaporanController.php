@@ -4,8 +4,6 @@ namespace App\Http\Controllers\SuperAdmin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Laporan;
-use App\Models\KategoriKerusakan;
-use App\Models\Instansi;
 use App\Services\PoinLaporanServices;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -26,6 +24,9 @@ class LaporanController extends Controller
         'ditolak'             => ['Ditolak',      'Laporan Ditolak'],
     ];
 
+    /** Status laporan yang masih boleh diverifikasi super admin. */
+    private const STATUS_BISA_DIVERIFIKASI = ['Menunggu', 'Terverifikasi AI'];
+
     public function index(Request $request)
     {
         $filter = self::FILTER_STATUS[$request->query('status')] ?? null;
@@ -41,153 +42,12 @@ class LaporanController extends Controller
         return view('SuperAdmin.laporan.index', compact('laporan', 'judulHalaman'));
     }
 
-    public function create()
-    {
-        $kategoris = KategoriKerusakan::all();
-        $instansis = Instansi::all();
-
-        return view('SuperAdmin.laporan.create', compact('kategoris', 'instansis'));
-    }
-
-    public function store(Request $request)
-    {
-        $request->validate([
-            'kategori_id' => 'required|exists:kategori_kerusakan,id',
-            'instansi_id' => 'required|exists:instansi,id',
-            'jenis_laporan' => 'nullable|string|max:50',
-            'judul' => 'required|string|max:255',
-            'deskripsi' => 'required|string',
-            'tanggal_kejadian' => 'nullable|date',
-            'kecamatan' => 'nullable|string|max:100',
-            'foto' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-            'latitude' => 'required|numeric|between:-90,90',
-            'longitude' => 'required|numeric|between:-180,180',
-            'alamat' => 'nullable|string',
-            'tingkat_prioritas' => 'nullable|in:Kritis,Sedang,Rendah',
-            'status' => 'nullable|in:Menunggu,Terverifikasi AI,Diverifikasi,Diproses,Selesai,Ditolak',
-        ]);
-
-        $foto = null;
-
-        if ($request->hasFile('foto')) {
-            $foto = $request->file('foto')->store('laporan', 'public');
-        }
-
-        Laporan::create([
-            'user_id' => Auth::id(),
-            'kode_lacak' => Laporan::buatKode(),
-            'kategori_id' => $request->kategori_id,
-            'instansi_id' => $request->instansi_id,
-            'jenis_laporan' => $request->jenis_laporan,
-            'judul' => $request->judul,
-            'deskripsi' => $request->deskripsi,
-            'tanggal_kejadian' => $request->tanggal_kejadian,
-            'kecamatan' => $request->kecamatan,
-            'foto' => $foto,
-            'latitude' => $request->latitude,
-            'longitude' => $request->longitude,
-            'alamat' => $request->alamat,
-            'tingkat_prioritas' => $request->tingkat_prioritas ?? 'Sedang',
-            'status' => $request->status ?? 'Menunggu',
-            'diverifikasi_oleh' => null,
-        ]);
-
-        return redirect()
-            ->route('super_admin.laporan.index')
-            ->with('success', 'Laporan berhasil dibuat');
-    }
-
     public function show(string $id)
     {
-        $laporan = Laporan::with(['user', 'kategori', 'instansi', 'diverifikasiOleh'])
+        $laporan = Laporan::with(['user', 'kategori', 'instansi', 'diverifikasiOleh', 'deteksiAi'])
             ->findOrFail($id);
 
         return view('SuperAdmin.laporan.show', compact('laporan'));
-    }
-
-    public function edit(string $id)
-    {
-        $laporan = Laporan::findOrFail($id);
-
-        $kategoris = KategoriKerusakan::all();
-        $instansis = Instansi::all();
-
-        return view('SuperAdmin.laporan.edit', compact('laporan', 'kategoris', 'instansis'));
-    }
-
-    public function update(Request $request, string $id)
-    {
-        $laporan = Laporan::findOrFail($id);
-        $statusLama = $laporan->status;
-
-        // Form edit mengirim jenis_laporan, tanggal_kejadian, dan kecamatan sebagai input
-        $request->validate([
-            'kategori_id' => 'required|exists:kategori_kerusakan,id',
-            'instansi_id' => 'required|exists:instansi,id',
-            'jenis_laporan' => 'nullable|string|max:50',
-            'judul' => 'required|string|max:255',
-            'deskripsi' => 'required|string',
-            'tanggal_kejadian' => 'nullable|date',
-            'kecamatan' => 'nullable|string|max:100',
-            'foto' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-            'latitude' => 'required|numeric|between:-90,90',
-            'longitude' => 'required|numeric|between:-180,180',
-            'alamat' => 'nullable|string',
-            'tingkat_prioritas' => 'nullable|in:Kritis,Sedang,Rendah',
-            'status' => 'nullable|in:Menunggu,Terverifikasi AI,Diverifikasi,Diproses,Selesai,Ditolak',
-        ]);
-
-        $foto = $laporan->foto;
-
-        if ($request->hasFile('foto')) {
-            if ($laporan->foto) {
-                Storage::disk('public')->delete($laporan->foto);
-            }
-            $foto = $request->file('foto')->store('laporan', 'public');
-        }
-
-        // Catat pemverifikasi HANYA saat status benar-benar berubah
-        $diverifikasiOleh = $laporan->diverifikasi_oleh;
-        $statusBaru = $request->status ?? $laporan->status;
-
-        if ($statusBaru !== $statusLama) {
-            if (in_array($statusBaru, ['Diverifikasi', 'Diproses', 'Selesai', 'Ditolak'], true)) {
-                $diverifikasiOleh = Auth::id();
-            } elseif (in_array($statusBaru, ['Menunggu', 'Terverifikasi AI'], true)) {
-                $diverifikasiOleh = null;
-            }
-        }
-
-        // kode_lacak tidak diubah saat edit
-        $laporan->update([
-            'kategori_id' => $request->kategori_id,
-            'instansi_id' => $request->instansi_id,
-            'jenis_laporan' => $request->jenis_laporan,
-            'judul' => $request->judul,
-            'deskripsi' => $request->deskripsi,
-            'tanggal_kejadian' => $request->tanggal_kejadian,
-            'kecamatan' => $request->kecamatan,
-            'foto' => $foto,
-            'latitude' => $request->latitude,
-            'longitude' => $request->longitude,
-            'alamat' => $request->alamat,
-            'tingkat_prioritas' => $request->tingkat_prioritas ?? $laporan->tingkat_prioritas,
-            'status' => $statusBaru,
-            'diverifikasi_oleh' => $diverifikasiOleh,
-        ]);
-
-        // Poin kontribusi hanya diproses saat status benar-benar berubah
-        if ($statusBaru !== $statusLama) {
-            if ($statusBaru === 'Diverifikasi') {
-                PoinLaporanServices::verifikasi($laporan->fresh());
-            } elseif ($statusBaru === 'Selesai') {
-                PoinLaporanServices::selesai($laporan->fresh());
-            }
-        }
-
-        return redirect()
-            ->route('super_admin.laporan.index')
-            ->with('success', 'Laporan berhasil diperbarui');
     }
 
     public function destroy(string $id)
@@ -206,35 +66,37 @@ class LaporanController extends Controller
     }
 
     /**
-     * Ubah status cepat dari halaman detail laporan (tombol "Simpan Status").
-     * Memberi poin kontribusi ke warga lewat PoinLaporanService.
+     * Verifikasi laporan: setujui (Diverifikasi) atau tolak (Ditolak).
+     * Hanya untuk laporan berstatus Menunggu / Terverifikasi AI.
+     * Status berikutnya (Diproses, Selesai) diatur lewat alur disposisi instansi.
      */
     public function verify(Request $request, string $id)
     {
         $laporan = Laporan::findOrFail($id);
 
         $request->validate([
-            'status' => 'required|in:Diverifikasi,Diproses,Selesai,Ditolak',
+            'status' => 'required|in:Diverifikasi,Ditolak',
         ]);
 
-        // Laporan yang sudah selesai tidak boleh diubah lagi lewat tombol cepat
-        if ($laporan->status === 'Selesai') {
-            return back()->with('error', 'Laporan yang sudah selesai tidak dapat diubah statusnya.');
+        if (! in_array($laporan->status, self::STATUS_BISA_DIVERIFIKASI, true)) {
+            return back()->with('error', 'Laporan ini sudah diverifikasi atau sudah diproses, statusnya tidak dapat diubah lagi.');
         }
 
         $laporan->update([
-            'status' => $request->status,
+            'status'            => $request->status,
             'diverifikasi_oleh' => Auth::id(),
         ]);
 
-        // Berikan poin ke warga (anonim otomatis dilewati di dalam service)
+        // Poin kontribusi untuk warga (anonim dilewati di dalam service)
         if ($request->status === 'Diverifikasi') {
-            PoinLaporanServices::verifikasi($laporan);
-        } elseif ($request->status === 'Selesai') {
-            PoinLaporanServices::selesai($laporan);
+            PoinLaporanServices::verifikasi($laporan->fresh());
         }
 
-        // back() supaya tetap di halaman/filter yang sedang dibuka
-        return back()->with('success', 'Status laporan berhasil diperbarui');
+        return back()->with(
+            'success',
+            $request->status === 'Diverifikasi'
+                ? 'Laporan berhasil diverifikasi.'
+                : 'Laporan telah ditolak.'
+        );
     }
 }

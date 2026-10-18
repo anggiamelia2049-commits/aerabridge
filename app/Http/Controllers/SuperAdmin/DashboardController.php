@@ -38,9 +38,10 @@ class DashboardController extends Controller
         ];
 
         // ===== Daftar laporan terbaru (berdasarkan prioritas) =====
-        // Di MySQL, ORDER BY kolom ENUM mengikuti urutan definisi: Kritis, Sedang, Rendah
-        $laporanTerbaru = Laporan::whereNotIn('status', ['Selesai', 'Ditolak'])
-            ->orderBy('tingkat_prioritas')
+        // FIELD() menjamin urutan Kritis > Sedang > Rendah, apa pun tipe kolomnya
+        $laporanTerbaru = Laporan::with(['kategori', 'instansi'])
+            ->whereNotIn('status', ['Selesai', 'Ditolak'])
+            ->orderByRaw("FIELD(tingkat_prioritas, 'Kritis', 'Sedang', 'Rendah')")
             ->latest()
             ->limit(10)
             ->get();

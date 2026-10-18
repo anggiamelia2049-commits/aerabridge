@@ -211,7 +211,7 @@
                                 <p id="ukuranLampiran" class="text-[11px] text-gray-400"></p>
                             </div>
 
-                            <button type="button" id="hapusLampiran" class="text-xs font-semibold text-merah hover:underline">Hapus</button>
+                            <button type="button" id="hapusLampiran" class="text-xs font-semibold text-merah">Hapus</button>
                         </div>
                     </div>
 

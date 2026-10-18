@@ -7,7 +7,7 @@
         <div class="flex items-center justify-between gap-4 px-6 py-5">
             <p class="text-sm text-gray-600">Kelola instansi pemerintah yang menerima dan menangani laporan.</p>
             <a href="{{ route('super_admin.instansi.create') }}"
-               class="shrink-0 px-5 py-2.5 rounded-lg bg-cyan-4 hover:bg-cyan-6 text-white text-sm font-bold transition">
+               class="shrink-0 px-5 py-2.5 rounded-lg bg-cyan-4 hover:bg-cyan-6 text-white text-sm font-bold no-underline hover:no-underline transition">
                 + Tambah Instansi
             </a>
         </div>
@@ -47,13 +47,16 @@
                             </td>
                             <td class="px-4 py-3.5">
                                 <div class="flex items-center justify-center gap-4 text-sm font-semibold">
-                                    <a href="{{ route('super_admin.instansi.show', $item->id) }}" class="text-cyan-4 hover:underline">Detail</a>
-                                    <a href="{{ route('super_admin.instansi.edit', $item->id) }}" class="text-oranye hover:underline">Edit</a>
+                                    <a href="{{ route('super_admin.instansi.show', $item->id) }}"
+                                       class="text-cyan-4 no-underline hover:no-underline hover:opacity-80 transition">Detail</a>
+                                    <a href="{{ route('super_admin.instansi.edit', $item->id) }}"
+                                       class="text-oranye no-underline hover:no-underline hover:opacity-80 transition">Edit</a>
                                     <form method="POST" action="{{ route('super_admin.instansi.destroy', $item->id) }}"
                                           onsubmit="return confirm('Hapus instansi ini? Semua laporan yang terhubung ke instansi ini juga akan ikut terhapus.')">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="text-merah hover:underline">Hapus</button>
+                                        <button type="submit"
+                                                class="text-merah hover:opacity-80 transition">Hapus</button>
                                     </form>
                                 </div>
                             </td>
