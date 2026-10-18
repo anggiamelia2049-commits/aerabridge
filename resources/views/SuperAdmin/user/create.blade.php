@@ -12,12 +12,6 @@
     <div class="p-6">
         <div class="max-w-5xl mx-auto">
 
-            {{-- ===== Judul & subjudul (di luar card) ===== --}}
-            <div class="mb-8">
-                <h1 class="text-h1 mb-0">Tambah User</h1>
-                <p class="text-subtitle mt-2 mb-0">Isi data berikut untuk membuat akun pengguna baru.</p>
-            </div>
-
             <form action="{{ route('super_admin.user.store') }}" method="POST" enctype="multipart/form-data" class="space-y-5">
                 @csrf
 

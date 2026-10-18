@@ -9,7 +9,6 @@
 <div class="p-6">
     <div class="max-w-3xl mx-auto bg-white rounded-2xl shadow overflow-hidden">
         <div class="px-6 py-5">
-            <p class="text-sm text-gray-600">Ubah template pesan otomatis yang dikirim ke pengguna.</p>
         </div>
 
         <form method="POST" action="{{ route('super_admin.template-pesan.update', $templatePesan) }}" class="px-6 pb-6 space-y-5">

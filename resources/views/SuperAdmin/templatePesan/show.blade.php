@@ -3,8 +3,6 @@
 @section('content')
 <div class="p-6">
     <div class="max-w-3xl mx-auto bg-white rounded-2xl shadow overflow-hidden">
-        <div class="flex items-center justify-between gap-4 px-6 py-5">
-            <p class="text-sm text-gray-600">Detail template pesan otomatis.</p>
         </div>
 
         <div class="px-6 pb-6 space-y-5 text-sm text-gray-700">

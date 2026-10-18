@@ -9,9 +9,6 @@
 
 <div class="p-6">
     <div class="max-w-3xl mx-auto bg-white rounded-2xl shadow overflow-hidden">
-        <div class="px-6 py-5">
-            <p class="text-sm text-gray-600">Tambah instansi pemerintah baru.</p>
-        </div>
 
         <form method="POST" action="{{ route('super_admin.instansi.store') }}" enctype="multipart/form-data" class="px-6 pb-6 space-y-5">
             @csrf

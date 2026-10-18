@@ -31,12 +31,6 @@
 
     <div class="p-6 user-page">
 
-        {{-- ===== Judul & subjudul (di luar card) ===== --}}
-        <div class="mb-8">
-            <h1 class="text-h1 mb-0">Manajemen Pengguna</h1>
-            <p class="text-subtitle mt-2 mb-0">Kelola akun pengguna: warga, petugas, instansi, dan super admin</p>
-        </div>
-
         {{-- ===== Toolbar: filter role (kiri) + pencarian & tombol (kanan) ===== --}}
         <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
             <div class="inline-flex flex-wrap gap-1 bg-white rounded-xl p-1 shadow-sm">

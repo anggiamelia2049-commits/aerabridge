@@ -11,10 +11,7 @@
 <div class="p-6">
     <div class="max-w-4xl mx-auto bg-white rounded-2xl shadow overflow-hidden">
 
-        <div class="px-6 py-5">
-            <p class="text-sm text-gray-600">
-                Atur batas waktu respon dan penyelesaian untuk setiap tingkat prioritas laporan.
-            </p>
+        <div class="px-6 py-4">
         </div>
 
         <form action="{{ route('super_admin.sla-konfigurasi.store') }}"

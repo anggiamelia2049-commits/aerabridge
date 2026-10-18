@@ -1,90 +1,65 @@
-
 @extends('template.layout')
 
+@section('title', 'Detail Kategori')
+
 @section('content')
-<div class="p-6">
+<div class="px-6 pb-6 pt-0">
+    @php
+        $warna = (string) $kategori->warna_marker;
+        $isHex = preg_match('/^#([0-9a-f]{3}|[0-9a-f]{6})$/i', $warna);
+        $aktif = in_array(strtolower((string) $kategori->status), ['aktif', 'active', '1', 'true'], true);
+    @endphp
+
     <div class="bg-white rounded-2xl shadow overflow-hidden">
 
-        <div class="px-6 py-5">
-            <p class="text-sm text-gray-600">
-                Perbarui informasi kategori kerusakan.
-            </p>
+        {{-- Banner warna marker + label icon --}}
+        <div class="h-16 flex items-end px-6 {{ $isHex ? '' : 'bg-abu-muda' }}"
+             @if ($isHex) style="background-color: {{ $warna }}" @endif>
+            <span class="-mb-3 inline-block px-2.5 py-0.5 rounded-md bg-white text-xs font-medium text-gray-600 shadow-sm">
+                {{ $kategori->icon ?: '-' }}
+            </span>
         </div>
 
-        <form action="{{ route('super_admin.kategori.update', $kategori->id) }}" method="POST">
-            @csrf
-            @method('PUT')
-
-            <div class="px-6 pb-6 space-y-5">
-                @if ($errors->any())
-                    <div class="rounded-lg border border-red-300 bg-red-50 px-4 py-3 text-sm text-merah">
-                        <ul class="list-disc list-inside">
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                @endif
-
-                <div>
-                    <label for="nama_kategori" class="block text-sm font-semibold text-gray-700 mb-2">
-                        Nama Kategori
-                    </label>
-                    <input type="text" id="nama_kategori" name="nama_kategori"
-                           value="{{ old('nama_kategori', $kategori->nama_kategori) }}" required
-                           class="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-cyan-4 focus:ring-2 focus:ring-cyan-4/20 outline-none">
-                </div>
-
-                <div>
-                    <label for="icon" class="block text-sm font-semibold text-gray-700 mb-2">
-                        Icon
-                    </label>
-                    <input type="text" id="icon" name="icon"
-                           value="{{ old('icon', $kategori->icon) }}" placeholder="Contoh: 🕳️" required
-                           class="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-cyan-4 focus:ring-2 focus:ring-cyan-4/20 outline-none">
-                </div>
-
-                <div>
-                    <label for="deskripsi" class="block text-sm font-semibold text-gray-700 mb-2">
-                        Deskripsi
-                    </label>
-                    <textarea id="deskripsi" name="deskripsi" rows="4" required
-                              class="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-cyan-4 focus:ring-2 focus:ring-cyan-4/20 outline-none">{{ old('deskripsi', $kategori->deskripsi) }}</textarea>
-                </div>
-
-                <div>
-                    <label for="warna_marker" class="block text-sm font-semibold text-gray-700 mb-2">
-                        Warna Marker
-                    </label>
-                    <input type="text" id="warna_marker" name="warna_marker"
-                           value="{{ old('warna_marker', $kategori->warna_marker) }}" placeholder="#FF0000" required
-                           class="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-cyan-4 focus:ring-2 focus:ring-cyan-4/20 outline-none">
-                </div>
-
-                <div>
-                    <label for="status" class="block text-sm font-semibold text-gray-700 mb-2">
-                        Status
-                    </label>
-                    <select id="status" name="status" required
-                            class="w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm focus:border-cyan-4 focus:ring-2 focus:ring-cyan-4/20 outline-none">
-                        <option value="Aktif" {{ old('status', $kategori->status) === 'Aktif' ? 'selected' : '' }}>Aktif</option>
-                        <option value="Nonaktif" {{ old('status', $kategori->status) === 'Nonaktif' ? 'selected' : '' }}>Nonaktif</option>
-                    </select>
-                </div>
+        <div class="px-6 pt-8 pb-6">
+            <div class="flex items-start justify-between gap-3 mb-5">
+                <h2 class="text-base font-semibold text-gray-900">{{ $kategori->nama_kategori }}</h2>
+                <span @class([
+                    'shrink-0 inline-block px-3 py-1 rounded-full text-xs font-semibold',
+                    'bg-hijau/10 text-hijau' => $aktif,
+                    'bg-abu-muda text-abu-tua' => ! $aktif,
+                ])>{{ $kategori->status ?: '-' }}</span>
             </div>
 
-            <div class="flex items-center gap-4 border-t border-gray-200 px-6 py-5">
-                <button type="submit"
-                        class="px-5 py-2.5 rounded-lg bg-cyan-4 hover:bg-cyan-6 text-white text-sm font-bold transition">
-                    Simpan Perubahan
-                </button>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div>
+                    <p class="text-sm font-semibold text-gray-700 mb-1">Warna Marker</p>
+                    <p class="text-sm text-gray-600">{{ $warna ?: '-' }}</p>
+                </div>
 
-                <a href="{{ route('super_admin.kategori.index') }}"
-                   class="text-sm font-semibold text-gray-600 hover:underline">
-                    Batal
-                </a>
+                <div>
+                    <p class="text-sm font-semibold text-gray-700 mb-1">Icon</p>
+                    <p class="text-sm text-gray-600">{{ $kategori->icon ?: '-' }}</p>
+                </div>
+
+                <div class="sm:col-span-2">
+                    <p class="text-sm font-semibold text-gray-700 mb-1">Deskripsi</p>
+                    <p class="text-sm text-gray-600">{{ $kategori->deskripsi ?: '-' }}</p>
+                </div>
             </div>
-        </form>
+        </div>
+
+        {{-- Tombol aksi: pojok bawah kanan --}}
+        <div class="flex items-center justify-end gap-3 px-6 pb-6">
+            <a href="{{ route('super_admin.kategori.index') }}"
+               class="px-5 py-2.5 rounded-lg border border-gray-300 bg-white text-sm font-semibold text-gray-700 no-underline hover:no-underline hover:bg-gray-50 transition">
+                Batal
+            </a>
+
+            <a href="{{ route('super_admin.kategori.edit', $kategori->id) }}"
+               class="px-5 py-2.5 rounded-lg bg-cyan-4 hover:bg-cyan-6 text-white text-sm font-bold no-underline hover:no-underline transition">
+                Edit
+            </a>
+        </div>
     </div>
 </div>
 @endsection

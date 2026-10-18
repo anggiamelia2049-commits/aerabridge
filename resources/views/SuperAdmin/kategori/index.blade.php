@@ -1,109 +1,80 @@
-
 @extends('template.layout')
 
+@section('title', 'Kategori Laporan')
+
 @section('content')
-<div class="p-6">
-    <div class="bg-white rounded-2xl shadow overflow-hidden">
+<div class="px-6 pb-6 pt-0">
 
-        <div class="flex items-center justify-between gap-4 px-6 py-5">
-            <p class="text-sm text-gray-600">
-                Kelola kategori kerusakan yang digunakan warga saat membuat laporan.
-            </p>
+    {{-- ===== Tombol tambah ===== --}}
+    <div class="mb-3 flex justify-end">
+        <a href="{{ route('super_admin.kategori.create') }}"
+           class="shrink-0 px-5 py-2.5 rounded-lg bg-cyan-4 hover:bg-cyan-6 text-white text-sm font-bold no-underline hover:no-underline transition">
+            + Tambah Kategori
+        </a>
+    </div>
 
-            <a href="{{ route('super_admin.kategori.create') }}"
-               class="shrink-0 px-5 py-2.5 rounded-lg bg-cyan-4 hover:bg-cyan-6 text-white text-sm font-bold transition">
-                + Tambah Kategori
-            </a>
-        </div>
+    {{-- ===== Kartu kategori ===== --}}
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+        @forelse ($kategoris as $v)
+            @php
+                $warna = (string) $v->warna_marker;
+                $isHex = preg_match('/^#([0-9a-f]{3}|[0-9a-f]{6})$/i', $warna);
+                $aktif = in_array(strtolower((string) $v->status), ['aktif', 'active', '1', 'true'], true);
+            @endphp
 
-        <div class="overflow-x-auto">
-            <table class="w-full text-sm text-left">
-                <thead class="bg-cyan-6 text-white">
-                    <tr>
-                        <th class="px-4 py-3.5 font-semibold">No</th>
-                        <th class="px-4 py-3.5 font-semibold">Nama Kategori</th>
-                        <th class="px-4 py-3.5 font-semibold">Icon</th>
-                        <th class="px-4 py-3.5 font-semibold">Deskripsi</th>
-                        <th class="px-4 py-3.5 font-semibold whitespace-nowrap">Warna Marker</th>
-                        <th class="px-4 py-3.5 font-semibold">Status</th>
-                        <th class="px-4 py-3.5 font-semibold text-center">Aksi</th>
-                    </tr>
-                </thead>
+            <div class="bg-white rounded-2xl shadow overflow-hidden flex flex-col">
 
-                <tbody class="divide-y divide-gray-200 text-gray-700">
-                    @forelse ($kategoris as $v)
-                        @php
-                            $warna = (string) $v->warna_marker;
-                            $isHex = preg_match('/^#([0-9a-f]{3}|[0-9a-f]{6})$/i', $warna);
-                            $aktif = in_array(strtolower((string) $v->status), ['aktif', 'active', '1', 'true'], true);
-                        @endphp
+                {{-- Banner warna marker + label icon --}}
+                <div class="h-16 flex items-end px-5 {{ $isHex ? '' : 'bg-abu-muda' }}"
+                     @if ($isHex) style="background-color: {{ $warna }}" @endif>
+                    <span class="-mb-3 inline-block px-2.5 py-0.5 rounded-md bg-white text-xs font-medium text-gray-600 shadow-sm">
+                        {{ $v->icon ?: '-' }}
+                    </span>
+                </div>
 
-                        <tr class="hover:bg-gray-50">
-                            <td class="px-4 py-3.5">{{ $loop->iteration }}</td>
+                <div class="px-5 pt-7 pb-5 flex flex-col flex-1">
+                    <div class="flex items-start justify-between gap-3">
+                        <h2 class="text-base font-semibold text-gray-900">{{ $v->nama_kategori }}</h2>
+                        <span @class([
+                            'shrink-0 inline-block px-3 py-1 rounded-full text-xs font-semibold',
+                            'bg-hijau/10 text-hijau' => $aktif,
+                            'bg-abu-muda text-abu-tua' => ! $aktif,
+                        ])>{{ $v->status ?: '-' }}</span>
+                    </div>
 
-                            <td class="px-4 py-3.5 font-semibold whitespace-nowrap">
-                                {{ $v->nama_kategori }}
-                            </td>
+                    <p class="mt-2 mb-4 text-[13px] text-gray-500 min-h-[40px]">
+                        {{ $v->deskripsi ?: '-' }}
+                    </p>
 
-                            <td class="px-4 py-3.5 text-lg">{{ $v->icon ?: '-' }}</td>
+                    <div class="mt-auto flex items-center justify-between gap-4 pt-4 border-t border-gray-200">
+                        <span class="text-xs text-gray-500">{{ $warna ?: '-' }}</span>
 
-                            <td class="px-4 py-3.5 min-w-[180px]">
-                                {{ $v->deskripsi ?: '-' }}
-                            </td>
+                        <div class="flex items-center gap-4 text-sm font-semibold whitespace-nowrap">
+                            <a href="{{ route('super_admin.kategori.show', $v->id) }}"
+                               class="text-cyan-4 no-underline hover:no-underline hover:opacity-80 transition">Detail</a>
 
-                            <td class="px-4 py-3.5 whitespace-nowrap">
-                                @if ($isHex)
-                                    <span class="inline-flex items-center gap-2">
-                                        <span class="w-5 h-5 rounded-md border border-abu-muda"
-                                              style="background-color: {{ $warna }}"></span>
-                                        {{ $warna }}
-                                    </span>
-                                @else
-                                    {{ $warna ?: '-' }}
-                                @endif
-                            </td>
+                            <a href="{{ route('super_admin.kategori.edit', $v->id) }}"
+                               class="text-oranye no-underline hover:no-underline hover:opacity-80 transition">Edit</a>
 
-                            <td class="px-4 py-3.5">
-                                <span @class([
-                                    'inline-block px-3 py-1 rounded-full text-xs font-semibold',
-                                    'bg-hijau/10 text-hijau' => $aktif,
-                                    'bg-abu-muda text-abu-tua' => !$aktif,
-                                ])>
-                                    {{ $v->status ?: '-' }}
-                                </span>
-                            </td>
+                            <form method="POST"
+                                  action="{{ route('super_admin.kategori.destroy', $v->id) }}"
+                                  onsubmit="return confirm('Yakin ingin menghapus kategori ini?')">
+                                @csrf
+                                @method('DELETE')
 
-                            <td class="px-4 py-3.5">
-                                <div class="flex items-center justify-center gap-4 text-sm font-semibold whitespace-nowrap">
-                                    <a href="{{ route('super_admin.kategori.show', $v->id) }}"
-                                       class="text-cyan-4 hover:underline">Detail</a>
-
-                                    <a href="{{ route('super_admin.kategori.edit', $v->id) }}"
-                                       class="text-oranye hover:underline">Edit</a>
-
-                                    <form method="POST"
-                                          action="{{ route('super_admin.kategori.destroy', $v->id) }}"
-                                          onsubmit="return confirm('Yakin ingin menghapus kategori ini?')">
-                                        @csrf
-                                        @method('DELETE')
-
-                                        <button type="submit" class="text-merah hover:underline">
-                                            Hapus
-                                        </button>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="7" class="px-4 py-10 text-center text-gray-400">
-                                Belum ada data kategori.
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
+                                <button type="submit" class="text-merah hover:opacity-80 transition">
+                                    Hapus
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @empty
+            <div class="col-span-full bg-white rounded-2xl shadow px-4 py-10 text-center text-gray-400">
+                Belum ada data kategori.
+            </div>
+        @endforelse
     </div>
 </div>
 @endsection

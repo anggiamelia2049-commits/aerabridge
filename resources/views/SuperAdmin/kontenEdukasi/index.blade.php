@@ -18,23 +18,19 @@
         </div>
     @endif
 
+    {{-- Tombol di luar card --}}
+    <div class="mb-4 flex justify-end">
+        <a href="{{ route('super_admin.konten-edukasi.create') }}"
+           class="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-lg bg-cyan-4 hover:bg-cyan-6 text-white text-sm font-bold no-underline hover:no-underline transition">
+            <span class="text-base leading-none">+</span> Tambah Konten
+        </a>
+    </div>
+
     <div class="bg-white rounded-2xl shadow overflow-hidden">
-        {{-- Header --}}
-        <div class="flex items-center justify-between gap-4 px-6 py-5">
-            <p class="text-sm text-gray-600">
-                Kelola materi edukasi perawatan fasilitas publik.
-            </p>
-
-            <a href="{{ route('super_admin.konten-edukasi.create') }}"
-               class="shrink-0 px-5 py-2.5 rounded-lg bg-cyan-4 hover:bg-cyan-6 text-white text-sm font-bold transition">
-                + Tambah Konten
-            </a>
-        </div>
-
         {{-- Tabel --}}
         <div class="overflow-x-auto">
             <table class="w-full text-sm text-left">
-                <thead class="bg-cyan-6 text-white">
+                <thead class="bg-gray-400/20 text-gray-700">
                     <tr>
                         <th class="px-4 py-3.5 font-semibold">No</th>
                         <th class="px-4 py-3.5 font-semibold">Thumbnail</th>

@@ -4,39 +4,33 @@
 
 @section('content')
 @php
-    // 'grad' = warna gradien kotak ikon, 'deco' = lingkaran dekoratif di pojok card.
-    // Kelas ditulis utuh (bukan hasil gabungan string) agar terbaca oleh Tailwind saat build.
     $cards = [
         [
             'label' => 'Total Aduan',
             'value' => $stats['total'],
             'note'  => 'Bulan ini: +' . number_format($stats['bulan_ini'], 0, ',', '.'),
-            'grad'  => 'from-[#2563eb] to-[#60a5fa]',
-            'deco'  => 'bg-[#2563eb]/10',
+            'warna' => 'bg-[#E6F1FB] text-[#185FA5]',
             'icon'  => '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
         ],
         [
             'label' => 'Belum Direspon',
             'value' => $stats['belum_direspon'],
             'note'  => 'Direspon: ' . number_format($stats['direspon'], 0, ',', '.'),
-            'grad'  => 'from-[#ef4444] to-[#f87171]',
-            'deco'  => 'bg-[#ef4444]/10',
+            'warna' => 'bg-[#FCEBEB] text-[#A32D2D]',
             'icon'  => '<path d="M14 9a2 2 0 0 1-2 2H6l-4 4V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2z"/><path d="M18 9h2a2 2 0 0 1 2 2v11l-4-4h-6a2 2 0 0 1-2-2v-1"/>',
         ],
         [
             'label' => 'Dalam Progress',
             'value' => $stats['dalam_progress'],
             'note'  => 'Perbaikan Infrastruktur',
-            'grad'  => 'from-[#f59e0b] to-[#fcd34d]',
-            'deco'  => 'bg-[#f59e0b]/10',
+            'warna' => 'bg-[#FAEEDA] text-[#854F0B]',
             'icon'  => '<circle cx="12" cy="12" r="9" stroke-dasharray="2 3"/><path d="M12 7v5l3 2"/>',
         ],
         [
             'label' => 'Selesai',
             'value' => $stats['selesai'],
             'note'  => 'Data Penyelesaian',
-            'grad'  => 'from-[#16a34a] to-[#4ade80]',
-            'deco'  => 'bg-[#16a34a]/10',
+            'warna' => 'bg-[#EAF3DE] text-[#3B6D11]',
             'icon'  => '<path d="M20 6L9 17l-5-5"/>',
         ],
     ];
@@ -52,19 +46,16 @@
 {{-- ===== Kartu Statistik ===== --}}
 <section class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
     @foreach ($cards as $c)
-        <div class="relative overflow-hidden bg-white rounded-2xl shadow-md px-4 py-4 flex items-center gap-3">
-            {{-- Lingkaran dekoratif di pojok --}}
-            <span class="pointer-events-none absolute -right-6 -top-6 w-[90px] h-[90px] rounded-full {{ $c['deco'] }}"></span>
-
-            {{-- Ikon gradien di kiri --}}
-            <span class="relative w-14 h-14 shrink-0 rounded-2xl bg-gradient-to-br {{ $c['grad'] }} flex items-center justify-center text-white shadow-md">
+        <div class="bg-white rounded-2xl shadow-md px-4 py-4 flex items-center gap-3">
+            {{-- Ikon di kiri (berwarna sesuai status) --}}
+            <span class="w-14 h-14 shrink-0 rounded-full {{ $c['warna'] }} flex items-center justify-center">
                 <svg fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" style="width:26px;height:26px;">
                     {!! $c['icon'] !!}
                 </svg>
             </span>
 
             {{-- Teks di kanan --}}
-            <div class="relative flex flex-col leading-tight min-w-0">
+            <div class="flex flex-col leading-tight min-w-0">
                 <div class="text-sm font-extrabold text-black uppercase truncate">{{ $c['label'] }}</div>
                 <div class="text-2xl font-extrabold text-black leading-tight">
                     {{ number_format($c['value'], 0, ',', '.') }}

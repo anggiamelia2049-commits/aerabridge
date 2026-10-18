@@ -5,10 +5,7 @@
 <div class="p-6">
     <div class="bg-white rounded-2xl shadow overflow-hidden">
 
-        <div class="px-6 py-5">
-            <p class="text-sm text-gray-600">
-                Tambahkan kategori kerusakan baru untuk laporan warga.
-            </p>
+        <div class="px-6 py-4">
         </div>
 
         <form action="{{ route('super_admin.kategori.store') }}" method="POST">
@@ -72,16 +69,17 @@
                 </div>
             </div>
 
-            <div class="flex items-center gap-4 border-t border-gray-200 px-6 py-5">
+                        {{-- Tombol di kanan bawah, tanpa garis pemisah --}}
+            <div class="flex items-center justify-end gap-3 px-6 pt-4 pb-6">
+                <a href="{{ route('super_admin.kategori.index') }}"
+                   class="px-5 py-2.5 rounded-lg bg-white border border-gray-300 text-gray-700 text-sm font-bold no-underline hover:no-underline transition hover:bg-gray-100">
+                    Batal
+                </a>
+
                 <button type="submit"
                         class="px-5 py-2.5 rounded-lg bg-cyan-4 hover:bg-cyan-6 text-white text-sm font-bold transition">
                     Simpan
                 </button>
-
-                <a href="{{ route('super_admin.kategori.index') }}"
-                   class="text-sm font-semibold text-gray-600 hover:underline">
-                    Batal
-                </a>
             </div>
         </form>
     </div>

@@ -3,7 +3,6 @@
 @section('title', 'Edit User')
 
 @section('content')
-
 @php
     $field = 'w-full h-11 px-4 rounded-lg border border-abu-muda bg-white text-sm text-gray-900 placeholder:text-gray-400 focus:border-cyan-4 focus:ring-1 focus:ring-cyan-4';
     $label = 'block text-sm font-semibold text-cyan-6 mb-1.5';
@@ -31,12 +30,6 @@
 <div class="p-6">
     <div class="max-w-5xl mx-auto">
 
-        {{-- ===== Judul & subjudul (di luar card) ===== --}}
-        <div class="mb-8">
-            <h1 class="text-h1 mb-0">Edit User</h1>
-            <p class="text-subtitle mt-2 mb-0">Ubah data akun pengguna.</p>
-        </div>
-
         <form action="{{ route('super_admin.user.update', $u->id) }}" method="POST" enctype="multipart/form-data">
             @csrf
             @method('PUT')
@@ -46,7 +39,7 @@
                 {{-- Banner + profil ringkas --}}
                 <div class="-mx-6 -mt-6 h-24 bg-gradient-to-r from-cyan-6 to-cyan-4"></div>
 
-                <div class="-mt-12 mb-6 flex flex-wrap items-end gap-5">
+                <div class="-mt-12 mb-6 flex flex-wrap items-start gap-5">
                     <div class="w-24 h-24 shrink-0">
                         <img id="previewFoto" src="{{ $u->foto ? asset('storage/' . $u->foto) : '' }}" alt="{{ $u->nama }}"
                              class="{{ $u->foto ? '' : 'hidden' }} w-24 h-24 rounded-full object-cover border-4 border-white bg-white">
@@ -56,7 +49,7 @@
                         </div>
                     </div>
 
-                    <div class="pb-1">
+                    <div class="sm:pt-14">
                         <p class="text-h3">{{ $u->nama }}</p>
                         <div class="mt-1 flex flex-wrap gap-2">
                             <span class="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-cyan-3/20 text-cyan-6">{{ str_replace('_', ' ', ucfirst($u->role)) }}</span>

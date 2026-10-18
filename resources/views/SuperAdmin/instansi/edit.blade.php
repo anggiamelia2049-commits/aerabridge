@@ -9,9 +9,6 @@
 
 <div class="p-6">
     <div class="max-w-3xl mx-auto bg-white rounded-2xl shadow overflow-hidden">
-        <div class="px-6 py-5">
-            <p class="text-sm text-gray-600">Ubah data instansi.</p>
-        </div>
 
         <form method="POST" action="{{ route('super_admin.instansi.update', $instansi->id) }}" enctype="multipart/form-data" class="px-6 pb-6 space-y-5">
             @csrf
@@ -80,12 +77,12 @@
                 @error('logo') <p class="text-xs text-merah mt-1">{{ $message }}</p> @enderror
             </div>
 
-            <div class="flex items-center justify-end gap-3 pt-3">
-                <a href="{{ route('super_admin.instansi.index') }}"
-                   class="px-5 py-2.5 rounded-lg border border-gray-300 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition">Batal</a>
-                <button type="submit"
-                        class="px-6 py-2.5 rounded-lg bg-cyan-4 hover:bg-cyan-6 text-white text-sm font-bold transition">Simpan Perubahan</button>
-            </div>
+            <div class="flex items-center justify-end gap-3 pt-5 border-t border-gray-200">
+    <a href="{{ route('super_admin.instansi.index') }}"
+       class="px-5 py-2.5 rounded-lg border border-gray-300 bg-white text-sm font-semibold text-gray-700 !no-underline hover:!no-underline hover:bg-gray-50 transition">Batal</a>
+    <button type="submit"
+            class="px-6 py-2.5 rounded-lg bg-cyan-4 hover:bg-cyan-6 text-white text-sm font-bold transition">Simpan Perubahan</button>
+</div>
         </form>
     </div>
 </div>
