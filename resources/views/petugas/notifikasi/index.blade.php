@@ -35,7 +35,7 @@
     {{-- Judul halaman (di luar kartu) --}}
     <div class="mb-6">
         <h1 class="text-h1">Notifikasi</h1>
-        <p class="text-subtitle mt-1">Pantau kabar terbaru seputar penugasan dan laporan kamu</p>
+        <p class="text-subtitle mt-1">Pantau kabar terbaru seputar penugasan dan laporan anda</p>
     </div>
 
     <div class="bg-white rounded-2xl shadow overflow-hidden">
