@@ -39,10 +39,6 @@
 @endphp
 
 <div class="mb-5 flex items-center justify-between">
-    <h1 class="text-3xl font-bold text-cyan-6">Detail Penugasan</h1>
-    <a href="{{ route('instansi.penugasan.index') }}" class="text-sm font-medium text-cyan-4 hover:text-cyan-6">
-        &larr; Kembali
-    </a>
 </div>
 
 @if (session('success'))

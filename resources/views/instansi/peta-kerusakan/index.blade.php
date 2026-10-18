@@ -9,8 +9,6 @@
 {{-- ==================== JUDUL + MODE PETA ==================== --}}
 <div class="mb-5 flex flex-wrap items-end justify-between gap-3">
     <div>
-        <h1 class="text-h1 leading-tight">Peta Kerusakan</h1>
-        <p class="text-subtitle mt-1">Pantau persebaran kerusakan infrastruktur di Kota Depok berdasarkan kategori, status, dan prioritas AI</p>
     </div>
 
     <div class="inline-flex rounded-xl bg-white p-1 shadow" role="group" aria-label="Mode tampilan peta">

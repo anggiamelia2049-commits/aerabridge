@@ -18,20 +18,20 @@
     <div class="p-6">
 
         {{-- ===== Ringkasan ===== --}}
-<div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-    <div class="bg-white rounded-2xl shadow px-5 py-4">
-        <p class="m-0 text-[28px] font-bold leading-tight text-cyan-6">{{ $total }}</p>
-        <p class="m-0 text-[13px] text-gray-500">Total instansi</p>
-    </div>
-    <div class="bg-white rounded-2xl shadow px-5 py-4">
-        <p class="m-0 text-[28px] font-bold leading-tight text-hijau">{{ $aktif }}</p>
-        <p class="m-0 text-[13px] text-gray-500">Aktif</p>
-    </div>
-    <div class="bg-white rounded-2xl shadow px-5 py-4">
-        <p class="m-0 text-[28px] font-bold leading-tight text-abu-tua">{{ $nonaktif }}</p>
-        <p class="m-0 text-[13px] text-gray-500">Nonaktif</p>
-    </div>
-</div>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+            <div class="bg-white rounded-2xl shadow px-5 py-4">
+                <p class="m-0 text-[28px] font-bold leading-tight text-cyan-6">{{ $total }}</p>
+                <p class="m-0 text-[13px] text-gray-500">Total instansi</p>
+            </div>
+            <div class="bg-white rounded-2xl shadow px-5 py-4">
+                <p class="m-0 text-[28px] font-bold leading-tight text-hijau">{{ $aktif }}</p>
+                <p class="m-0 text-[13px] text-gray-500">Aktif</p>
+            </div>
+            <div class="bg-white rounded-2xl shadow px-5 py-4">
+                <p class="m-0 text-[28px] font-bold leading-tight text-abu-tua">{{ $nonaktif }}</p>
+                <p class="m-0 text-[13px] text-gray-500">Nonaktif</p>
+            </div>
+        </div>
 
         {{-- ===== Toolbar: filter status (kiri) + pencarian & tombol (kanan) ===== --}}
         <div class="flex flex-wrap items-center justify-between gap-3 mb-6">

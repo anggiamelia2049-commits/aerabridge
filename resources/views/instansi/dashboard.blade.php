@@ -25,8 +25,8 @@
 
 {{-- ==================== SAMBUTAN ==================== --}}
 <div class="mb-5">
-    <h1 class="text-3xl font-bold text-gray-900">Selamat Datang, {{ $namaInstansi }} <span class="inline-block">👋</span></h1>
-    <p class="mt-1 text-base text-gray-900">Kelola laporan dan pantau penanganan kerusakan infrastruktur</p>
+    <h1 class="text-h1">Selamat Datang, {{ $namaInstansi }} <span class="inline-block">👋</span></h1>
+    <p class="mt-1 text-subtitle">Kelola laporan dan pantau penanganan kerusakan infrastruktur</p>
 </div>
 
 {{-- ==================== KARTU STATISTIK ==================== --}}

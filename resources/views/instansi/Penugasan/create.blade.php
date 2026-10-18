@@ -5,13 +5,6 @@
 @section('content')
 
 <div class="rounded-xl border border-gray-200 bg-white shadow-sm">
-    <div class="border-b border-gray-200 px-6 py-4">
-        <h2 class="text-lg font-semibold text-cyan-6">Disposisi Tugas</h2>
-        <p class="mt-1 text-sm text-abu-tua">
-            Pilih laporan dan tim satgas. Countdown SLA akan aktif otomatis sesuai tingkat prioritas laporan
-            (Kritis 12 jam, Sedang 3 hari, Rendah 7 hari).
-        </p>
-    </div>
 
     <form action="{{ route('instansi.penugasan.store') }}" method="POST" class="p-6">
         @csrf

@@ -5,12 +5,10 @@
 @section('content')
 <div>
     <div class="mb-6">
-        <h1 class="text-h1 leading-tight">Statistik</h1>
-        <p class="text-subtitle mt-1">Ringkasan laporan dan penugasan di instansi Anda.</p>
     </div>
 
     {{-- Ringkasan --}}
-    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-5">
         @foreach ([
             ['Total laporan', $totalLaporan],
             ['Menunggu verifikasi', $menungguVerifikasi],

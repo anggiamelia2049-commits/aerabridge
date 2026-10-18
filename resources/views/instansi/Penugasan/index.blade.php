@@ -26,12 +26,12 @@
     {{-- ==================== JUDUL ==================== --}}
     <div class="mb-6 flex flex-wrap items-end justify-between gap-3">
         <div>
-            <h1 class="text-h1 leading-tight">Penugasan</h1>
-            <p class="text-subtitle mt-1">Pantau disposisi tugas, tim Satgas, dan batas waktu penyelesaian (SLA).</p>
+            <h1 class="text-h1 leading-tight"></h1>
+            <p class="text-subtitle mt-1"></p>
         </div>
         <a href="{{ route('instansi.penugasan.create') }}"
             class="inline-flex items-center gap-2 rounded-xl bg-cyan-4 px-5 py-2.5 text-[14px] font-semibold text-white no-underline shadow-sm transition hover:bg-cyan-6">
-            <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <svg class="h-4 w-6" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                 <path stroke-linecap="round" d="M12 5v14M5 12h14" />
             </svg>
             Disposisi Tugas

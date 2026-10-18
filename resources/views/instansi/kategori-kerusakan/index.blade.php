@@ -14,10 +14,6 @@
 @endphp
 
 <div class="mb-5">
-    <h1 class="text-h1">Data Kategori</h1>
-    <p class="text-subtitle">
-        Kategori kerusakan infrastruktur yang dapat dilaporkan dan dideteksi oleh sistem AI
-    </p>
 </div>
 
 {{-- ==================== DAFTAR KATEGORI ==================== --}}

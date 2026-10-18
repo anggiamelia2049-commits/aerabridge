@@ -13,12 +13,6 @@
 
 <div class="mx-auto w-full max-w-[820px]">
 
-    {{-- Judul di tengah --}}
-    <div class="mb-5 mt-4 text-center">
-        <h1 class="text-h1 leading-tight">Tambah Tim Satgas</h1>
-        <p class="text-subtitle mt-1">Isi data tim yang akan menangani laporan</p>
-    </div>
-
     <form method="POST" action="{{ route('instansi.tim-satgas.store') }}" class="rounded-lg bg-white p-7 shadow">
         @csrf
 

@@ -7,16 +7,12 @@
 <div class="mb-3 flex items-end justify-between">
 
     <div>
-        <h1 class="text-h1 leading-none">Tim Satgas</h1>
-        <p class="text-subtitle mt-2 leading-tight">
-            Kelola tim satgas yang menangani laporan kerusakan infrastruktur
-        </p>
     </div>
 
-    <a href="{{ route('instansi.tim-satgas.create') }}"
-       class="rounded-lg bg-cyan-4 px-5 py-2.5 text-sm font-medium text-white hover:bg-cyan-6">
-        + Tambah Tim
-    </a>
+   <a href="{{ route('instansi.tim-satgas.create') }}"
+      class="rounded-lg bg-cyan-4 px-5 py-2.5 text-sm font-medium text-white no-underline hover:bg-cyan-6 hover:no-underline">
+       + Tambah Tim
+   </a>
 </div>
 {{-- Kartu ringkasan --}}
 <div class="mb-5 grid grid-cols-1 gap-4 sm:grid-cols-4">

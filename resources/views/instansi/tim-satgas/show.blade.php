@@ -19,10 +19,6 @@
 
 {{-- Judul + subtitle + aksi --}}
 <div class="mb-5 mt-2 flex flex-wrap items-end justify-between gap-4">
-    <div>
-        <h1 class="text-h1 leading-tight">{{ $tim->nama_tim }}</h1>
-        <p class="text-subtitle mt-1">Detail tim dan riwayat penugasan laporan</p>
-    </div>
 
     <div class="flex items-center gap-3">
         <span class="rounded-full px-3 py-1 text-caption {{ $tim->status === 'aktif' ? 'bg-hijau/10 text-hijau' : 'bg-gray-200 text-abu-tua' }}">
