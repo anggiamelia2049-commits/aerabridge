@@ -51,7 +51,7 @@
                     @forelse ($laporan as $v)
                         <tr class="hover:bg-gray-50">
                             <td class="px-4 py-3.5">{{ $loop->iteration }}</td>
-                            <td class="px-4 py-3.5 font-semibold">{{ $v->user->nama ?? '-' }}</td>
+                            <td class="px-4 py-3.5 font-semibold">{{ $v->nama_pelapor }}</td>
                             <td class="px-4 py-3.5">{{ $v->kategori->nama_kategori ?? '-' }}</td>
                             <td class="px-4 py-3.5">{{ $v->instansi->nama_instansi ?? '-' }}</td>
 
@@ -61,9 +61,9 @@
                             </td>
 
                             <td class="px-4 py-3.5">
-                                @if ($v->foto)
-                                    <img src="{{ asset('storage/' . $v->foto) }}" alt="Foto laporan"
-                                         class="w-12 h-12 object-cover rounded-lg border border-abu-muda">
+                                @if ($v->gambar_utama)
+                                    <img src="{{ asset('storage/' . $v->gambar_utama) }}" alt="Foto laporan"
+                                        class="w-12 h-12 object-cover rounded-lg border border-abu-muda">
                                 @else
                                     <div class="w-12 h-12 rounded-lg bg-gray-100 border border-abu-muda flex items-center justify-center text-[10px] text-gray-400">Tidak ada</div>
                                 @endif

@@ -53,6 +53,31 @@ class Laporan extends Model
         return $this->is_anonim || ! $this->user ? 'Anonim' : $this->user->nama;
     }
 
+    // Gambar utama: foto kamera, atau lampiran kalau berupa gambar
+    public function getGambarUtamaAttribute(): ?string
+    {
+        if ($this->foto) {
+            return $this->foto;
+        }
+
+        if ($this->lampiran
+            && in_array(strtolower(pathinfo($this->lampiran, PATHINFO_EXTENSION)), ['jpg', 'jpeg', 'png'], true)) {
+            return $this->lampiran;
+        }
+
+        return null;
+    }
+
+    // Teks lokasi: kecamatan (laporan baru) atau alamat (laporan lama)
+    public function getLokasiTeksAttribute(): string
+    {
+        if ($this->kecamatan) {
+            return 'Kecamatan ' . $this->kecamatan;
+        }
+
+        return $this->alamat ?: '-';
+    }
+
     // User yang membuat laporan
     public function user()
     {

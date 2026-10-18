@@ -5,10 +5,17 @@
     $sub = 'block rounded-lg py-2 pl-11 pr-3 font-semibold text-white no-underline transition hover:bg-white/10 hover:text-white';
     $subAktif = 'bg-white/10';
 
+    // Saat membuka detail tugas, pakai status tugas itu untuk menentukan menu aktif
+    $tugasDibuka = isset($penugasan) && $penugasan instanceof \App\Models\Penugasan ? $penugasan : null;
+    $selesaiDibuka = $tugasDibuka && $tugasDibuka->status === 'selesai';
+
     $aktifDashboard = request()->routeIs('petugas.dashboard');
     $aktifLaporan = request()->routeIs('petugas.laporan.*');
-    $aktifPeta = request()->routeIs('petugas.penugasan.*') && request('filter') !== 'selesai';
-    $aktifRiwayat = request()->routeIs('petugas.penugasan.index') && request('filter') === 'selesai';
+    $aktifPeta = request()->routeIs('petugas.penugasan.*')
+        && request('filter') !== 'selesai'
+        && ! $selesaiDibuka;
+    $aktifRiwayat = $selesaiDibuka
+        || (request()->routeIs('petugas.penugasan.index') && request('filter') === 'selesai');
     $aktifNotif = request()->routeIs('petugas.notifikasi.*');
 
     // Nilai kunci harus sama dengan isi kolom notifikasis.tipe di database

@@ -14,20 +14,21 @@
         <div class="px-6 pb-6 flex flex-col sm:flex-row gap-6 text-sm text-gray-700">
 
             <div class="shrink-0">
-                @if ($laporan->foto)
-                    <a href="{{ asset('storage/' . $laporan->foto) }}" target="_blank" rel="noopener">
-                        <img src="{{ asset('storage/' . $laporan->foto) }}" alt="Foto laporan"
-                             class="w-48 h-48 rounded-xl object-cover border border-abu-muda">
+                @if ($laporan->gambar_utama)
+                    <a href="{{ asset('storage/' . $laporan->gambar_utama) }}" target="_blank" rel="noopener">
+                        <img src="{{ asset('storage/' . $laporan->gambar_utama) }}" alt="Foto laporan"
+                            class="w-full max-h-72 rounded-xl border border-abu-muda bg-gray-50 object-contain">
                     </a>
+                @elseif ($laporan->lampiran)
+                    <a href="{{ asset('storage/' . $laporan->lampiran) }}" target="_blank" rel="noopener"
+                    class="text-cyan-4 font-semibold hover:underline">Buka lampiran (PDF)</a>
                 @else
-                    <div class="w-48 h-48 rounded-xl bg-gray-100 border border-abu-muda flex items-center justify-center text-xs text-gray-400 text-center px-2">Tidak ada foto</div>
+                    <p class="text-gray-400">Tidak ada foto laporan.</p>
                 @endif
             </div>
 
             <div class="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
-                <div><p class="text-xs text-gray-500">Pelapor</p><p class="font-semibold">{{ $laporan->user->nama ?? '-' }}</p></div>
-                <div><p class="text-xs text-gray-500">Kategori</p><p class="font-semibold">{{ $laporan->kategori->nama_kategori ?? '-' }}</p></div>
-                <div><p class="text-xs text-gray-500">Instansi</p><p class="font-semibold">{{ $laporan->instansi->nama_instansi ?? '-' }}</p></div>
+                <div><p class="text-xs text-gray-500">Pelapor</p><p class="font-semibold">{{ $laporan->nama_pelapor }}</p></div>                <div><p class="text-xs text-gray-500">Instansi</p><p class="font-semibold">{{ $laporan->instansi->nama_instansi ?? '-' }}</p></div>
                 <div><p class="text-xs text-gray-500">Diverifikasi oleh</p><p class="font-semibold">{{ $laporan->diverifikasiOleh->nama ?? '-' }}</p></div>
 
                 <div>
@@ -43,8 +44,8 @@
                 <div><p class="text-xs text-gray-500">Longitude</p><p class="font-semibold">{{ $laporan->longitude ?? '-' }}</p></div>
 
                 <div class="sm:col-span-2">
-                    <p class="text-xs text-gray-500">Alamat</p>
-                    <p class="font-semibold">{{ $laporan->alamat ?: '-' }}</p>
+                    <p class="text-xs text-gray-500">Lokasi</p>
+                    <p class="font-semibold">{{ $laporan->lokasi_teks }}</p>
                 </div>
 
                 <div class="sm:col-span-2">
@@ -55,7 +56,9 @@
         </div>
 
         <div class="px-6 pb-6">
-            <a href="{{ route('petugas.laporan.index') }}" class="text-sm text-gray-500 hover:underline">← Kembali ke daftar laporan</a>
+            <div class="px-6 pb-6">
+                <a href="{{ route('petugas.laporan.index') }}" class="text-sm text-gray-500">Kembali ke daftar laporan</a>
+            </div>        
         </div>
     </div>
 </div>

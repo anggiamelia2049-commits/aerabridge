@@ -6,16 +6,25 @@
 @php
     $laporan = $penugasan->laporan;
     $adaKoordinat = filled($laporan->latitude) && filled($laporan->longitude);
+    $selesai = $penugasan->status === 'selesai';
+
+    $prioritasClass = match ((string) $laporan->tingkat_prioritas) {
+        'Kritis' => 'bg-merah/10 text-merah',
+        'Sedang' => 'bg-oranye/10 text-oranye',
+        'Rendah' => 'bg-hijau/10 text-hijau',
+        default  => 'bg-abu-muda text-abu-tua',
+    };
+    $statusClass = match ($penugasan->status) {
+        'selesai'      => 'bg-hijau/10 text-hijau',
+        'dalam_proses' => 'bg-oranye/10 text-oranye',
+        'ditugaskan'   => 'bg-cyan-3/20 text-cyan-6',
+        'dibatalkan'   => 'bg-merah/10 text-merah',
+        default        => 'bg-abu-muda text-abu-tua',
+    };
 @endphp
 
 <div class="p-6">
     <div class="max-w-4xl mx-auto">
-        @if (session('success'))
-    <div class="mb-4 rounded-lg border border-hijau/30 bg-hijau/10 px-4 py-3 text-sm font-medium text-hijau" role="status">{{ session('success') }}</div>
-@endif
-@if (session('error'))
-    <div class="mb-4 rounded-lg border border-merah/30 bg-merah/10 px-4 py-3 text-sm font-medium text-merah" role="alert">{{ session('error') }}</div>
-@endif
 
         <div class="bg-white rounded-2xl shadow overflow-hidden">
 
@@ -25,8 +34,8 @@
                     <p class="text-sm text-gray-600">{{ $laporan->kategori->nama_kategori ?? '-' }}</p>
                 </div>
                 <div class="flex shrink-0 flex-wrap gap-2">
-                    <span class="inline-block whitespace-nowrap rounded-full px-3 py-1 text-xs font-semibold {{ match ((string) ($laporan->tingkat_prioritas)) { 'Kritis' => 'bg-merah/10 text-merah', 'Sedang' => 'bg-oranye/10 text-oranye', 'Rendah' => 'bg-hijau/10 text-hijau', default => 'bg-abu-muda text-abu-tua' } }}">{{ ($laporan->tingkat_prioritas) ?: '-' }}</span>
-                    <span class="inline-block whitespace-nowrap rounded-full px-3 py-1 text-xs font-semibold {{ match (strtolower((string) ($penugasan->status))) { 'selesai' => 'bg-hijau/10 text-hijau', 'dalam_proses', 'diproses' => 'bg-oranye/10 text-oranye', 'ditugaskan', 'diverifikasi' => 'bg-cyan-3/20 text-cyan-6', 'dibatalkan', 'ditolak' => 'bg-merah/10 text-merah', default => 'bg-abu-muda text-abu-tua' } }}">{{ $penugasan->labelStatus() }}</span>
+                    <span class="inline-block whitespace-nowrap rounded-full px-3 py-1 text-xs font-semibold {{ $prioritasClass }}">{{ $laporan->tingkat_prioritas ?: '-' }}</span>
+                    <span class="inline-block whitespace-nowrap rounded-full px-3 py-1 text-xs font-semibold {{ $statusClass }}">{{ $penugasan->labelStatus() }}</span>
                 </div>
             </div>
 
@@ -34,14 +43,12 @@
 
                 <h3 class="mb-3 text-sm font-semibold text-cyan-6">Informasi laporan</h3>
                 <div class="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2">
-                    <div><p class="text-xs text-gray-500">Kategori</p><p class="font-semibold">{{ $laporan->kategori->nama_kategori ?? '-' }}</p></div>
+                    <div><p class="text-xs text-gray-500">Pelapor</p><p class="font-semibold">{{ $laporan->nama_pelapor }}</p></div>
                     <div><p class="text-xs text-gray-500">Instansi</p><p class="font-semibold">{{ $laporan->instansi->nama_instansi ?? '-' }}</p></div>
-                    <div><p class="text-xs text-gray-500">Latitude</p><p class="font-semibold">{{ $laporan->latitude ?? '-' }}</p></div>
-                    <div><p class="text-xs text-gray-500">Longitude</p><p class="font-semibold">{{ $laporan->longitude ?? '-' }}</p></div>
-
-                    <div class="sm:col-span-2">
-                        <p class="text-xs text-gray-500">Alamat</p>
-                        <p class="font-semibold">{{ $laporan->alamat ?: '-' }}</p>
+                    <div><p class="text-xs text-gray-500">Lokasi</p><p class="font-semibold">{{ $laporan->lokasi_teks }}</p></div>
+                    <div>
+                        <p class="text-xs text-gray-500">Koordinat</p>
+                        <p class="font-semibold">{{ $laporan->latitude ?? '-' }}, {{ $laporan->longitude ?? '-' }}</p>
                     </div>
 
                     <div class="sm:col-span-2">
@@ -75,20 +82,23 @@
                     </div>
                 </div>
 
-                <div class="mt-8 grid grid-cols-1 gap-6 border-t border-gray-200 pt-6 {{ $penugasan->status === 'selesai' ? 'md:grid-cols-2' : '' }}">
+                <div class="mt-8 grid grid-cols-1 gap-6 border-t border-gray-200 pt-6 {{ $selesai ? 'md:grid-cols-2' : '' }}">
                     <div>
                         <h3 class="mb-3 text-sm font-semibold text-cyan-6">Foto laporan</h3>
-                        @if ($laporan->foto)
-                            <a href="{{ asset('storage/' . $laporan->foto) }}" target="_blank" rel="noopener">
-                                <img src="{{ asset('storage/' . $laporan->foto) }}" alt="Foto laporan"
+                        @if ($laporan->gambar_utama)
+                            <a href="{{ asset('storage/' . $laporan->gambar_utama) }}" target="_blank" rel="noopener">
+                                <img src="{{ asset('storage/' . $laporan->gambar_utama) }}" alt="Foto laporan"
                                      class="w-full max-h-72 rounded-xl border border-abu-muda bg-gray-50 object-contain">
                             </a>
+                        @elseif ($laporan->lampiran)
+                            <a href="{{ asset('storage/' . $laporan->lampiran) }}" target="_blank" rel="noopener"
+                               class="font-semibold text-cyan-4 hover:underline">Buka lampiran (PDF)</a>
                         @else
                             <p class="text-gray-400">Tidak ada foto laporan.</p>
                         @endif
                     </div>
 
-                    @if ($penugasan->status === 'selesai')
+                    @if ($selesai)
                         <div>
                             <h3 class="mb-3 text-sm font-semibold text-cyan-6">Hasil perbaikan</h3>
                             @if ($penugasan->foto_hasil)
@@ -109,7 +119,7 @@
             </div>
 
             <div class="flex flex-wrap items-center justify-end gap-3 border-t border-gray-200 px-6 py-5">
-                <a href="{{ route('petugas.penugasan.index') }}"
+                <a href="{{ route('petugas.penugasan.index', $selesai ? ['filter' => 'selesai'] : []) }}"
                    class="mr-auto text-sm text-gray-500 hover:underline">← Kembali ke daftar</a>
 
                 @if ($adaKoordinat)
