@@ -105,7 +105,7 @@ class DashboardController extends Controller
                 return [
                     'id' => $penugasan->id,
                     'judul' => $laporan->judul,
-                    'alamat' => $laporan->alamat ?: '-',
+                    'alamat' => $laporan->alamat ?: ('Kec. ' . ($laporan->kecamatan ?? '-')),
                     'kategori' => $laporan->kategori->nama_kategori ?? '-',
 
                     'prioritas' => $prioritas['label'],
@@ -122,9 +122,9 @@ class DashboardController extends Controller
                     'lat' => $lat,
                     'lng' => $lng,
 
-                    'foto' => $laporan->foto
-                        ? asset('storage/' . $laporan->foto)
-                        : null,
+                    'foto' => $laporan->lampiran
+    ? asset('storage/' . $laporan->lampiran)
+    : null,
 
                     'detail' => route(
                         'petugas.penugasan.show',

@@ -32,6 +32,7 @@
                 @else
                     <form action="{{ route('warga.user-edukasi.selesai', $konten->id) }}" method="POST">
                         @csrf
+                        @method('PUT')
                         <button type="submit"
                                 class="px-6 py-2.5 rounded-lg bg-cyan-4 hover:bg-cyan-6 text-white text-sm font-bold transition">
                             Tandai Selesai (+10 poin)

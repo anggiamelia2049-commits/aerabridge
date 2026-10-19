@@ -43,7 +43,7 @@
                            class="ml-2 text-cyan-4 hover:underline">Buka peta</a>
                     </p>
                 </div>
-                <div><p class="text-xs text-gray-500">Diverifikasi Oleh</p><p class="font-semibold">{{ $laporan->diverifikasiOleh->name ?? '-' }}</p></div>
+                <div><p class="text-xs text-gray-500">Diverifikasi Oleh</p><p class="font-semibold">{{ $laporan->diverifikasiOleh->nama ?? '-' }}</p></div>
             </div>
 
             <div>
